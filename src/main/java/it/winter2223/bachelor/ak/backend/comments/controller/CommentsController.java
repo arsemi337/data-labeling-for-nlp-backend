@@ -1,6 +1,7 @@
 package it.winter2223.bachelor.ak.backend.comments.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.winter2223.bachelor.ak.backend.comments.dto.CommentInput;
 import it.winter2223.bachelor.ak.backend.comments.dto.CommentOutput;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+
+import static it.winter2223.bachelor.ak.backend.comments.controller.swagger.CommentSwaggerSample.PAGEABLE_EXAMPLE;
 
 @RestController
 @Tag(name = "Conference")
@@ -34,7 +37,9 @@ class CommentsController {
 
     @GetMapping("/comments")
     @Operation(summary = "Fetch list of comments")
-    ResponseEntity<Page<CommentOutput>> fetchCommentsList(Pageable pageable) {
+    ResponseEntity<Page<CommentOutput>> fetchCommentsList(
+            @Parameter(example = PAGEABLE_EXAMPLE)
+            Pageable pageable) {
         return ResponseEntity.ok(commentsService.fetchCommentsList(pageable));
     }
 }
