@@ -1,4 +1,4 @@
-package it.winter2223.bachelor.ak.backend.comments.controller.swagger;
+package it.winter2223.bachelor.ak.backend.comment.controller.swagger;
 
 public class CommentSwaggerSample {
 

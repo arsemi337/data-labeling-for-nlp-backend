@@ -1,4 +1,4 @@
-package it.winter2223.bachelor.ak.backend.comments.persistence;
+package it.winter2223.bachelor.ak.backend.comment.persistence;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

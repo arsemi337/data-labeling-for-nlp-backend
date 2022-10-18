@@ -1,12 +1,12 @@
-package it.winter2223.bachelor.ak.backend.comments.exception;
+package it.winter2223.bachelor.ak.backend.comment.exception;
 
-public enum CommentsExceptionMessages {
+public enum CommentExceptionMessages {
 
     INVALID_WHATEVER("Something is invalid");
 
     private final String message;
 
-    CommentsExceptionMessages(String message) {
+    CommentExceptionMessages(String message) {
         this.message = message;
     }
 

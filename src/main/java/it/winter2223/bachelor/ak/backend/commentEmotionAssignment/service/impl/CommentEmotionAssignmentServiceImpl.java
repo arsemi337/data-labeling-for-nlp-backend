@@ -1,0 +1,54 @@
+package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.impl;
+
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentInput;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentOutput;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentException;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.CommentEmotionAssignment;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.Emotion;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.repository.CommentEmotionAssignmentRepository;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.CommentEmotionAssignmentService;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.COMMENT_NOT_FOUND;
+import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.WRONG_EMOTION;
+
+@Service
+public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssignmentService {
+
+    private final CommentEmotionAssignmentRepository assignmentRepository;
+    private final CommentEmotionAssignmentMapper commentEmotionAssignmentMapper;
+
+    CommentEmotionAssignmentServiceImpl(CommentEmotionAssignmentRepository assignmentRepository) {
+        this.assignmentRepository = assignmentRepository;
+        this.commentEmotionAssignmentMapper = new CommentEmotionAssignmentMapper();
+    }
+
+    @Override
+    public CommentEmotionAssignmentOutput postCommentEmotionAssignment(CommentEmotionAssignmentInput assignmentInput) {
+        validateCommentId(assignmentInput);
+        Emotion emotion = getEnumFrom(assignmentInput.emotion());
+
+        CommentEmotionAssignment commentEmotionAssignment = CommentEmotionAssignment.builder()
+                .commentEmotionAssignmentId(UUID.randomUUID())
+                .commentId(assignmentInput.commentId())
+                .emotion(emotion)
+                .build();
+
+        return commentEmotionAssignmentMapper.mapToCommentEmotionAssignmentOutput(assignmentRepository.save(commentEmotionAssignment));
+    }
+
+    private Emotion getEnumFrom(String emotion) {
+        if(!Emotion.contains(emotion)) {
+            throw new CommentEmotionAssignmentException(WRONG_EMOTION.getMessage());
+        }
+        return Emotion.valueOf(emotion);
+    }
+
+    private void validateCommentId(CommentEmotionAssignmentInput assignmentInput) {
+        if(!assignmentRepository.existsById(assignmentInput.commentId())) {
+            throw new CommentEmotionAssignmentException(COMMENT_NOT_FOUND.getMessage());
+        }
+    }
+}

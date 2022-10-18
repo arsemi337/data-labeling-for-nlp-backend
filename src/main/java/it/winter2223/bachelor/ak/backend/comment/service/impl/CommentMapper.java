@@ -1,8 +1,8 @@
-package it.winter2223.bachelor.ak.backend.comments.service.impl;
+package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
-import it.winter2223.bachelor.ak.backend.comments.dto.CommentInput;
-import it.winter2223.bachelor.ak.backend.comments.dto.CommentOutput;
-import it.winter2223.bachelor.ak.backend.comments.persistence.Comment;
+import it.winter2223.bachelor.ak.backend.comment.dto.CommentInput;
+import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
+import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 
 import java.util.UUID;
 
