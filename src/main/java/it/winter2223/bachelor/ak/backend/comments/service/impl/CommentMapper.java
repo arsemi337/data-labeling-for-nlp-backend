@@ -15,10 +15,11 @@ class CommentMapper {
                 .build();
     }
 
-    Comment mapToComment(CommentInput commentInput) {
+    Comment mapToComment(CommentInput commentInput, boolean isAssigned) {
         return Comment.builder()
                 .commentId(UUID.randomUUID())
                 .content(commentInput.content())
+                .isAssigned(isAssigned)
                 .build();
     }
 }

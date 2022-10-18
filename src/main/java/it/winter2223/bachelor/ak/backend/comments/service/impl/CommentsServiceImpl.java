@@ -21,23 +21,10 @@ class CommentsServiceImpl implements CommentsService {
         this.commentMapper = new CommentMapper();
     }
 
-//    @Override
-//    public CommentOutput testSaveMethod(CommentInput commentInput) {
-//        commentsRepository.save(new Model(commentInput.name()));
-//        return new CommentOutput(commentInput.name());
-//    }
-//
-//    @Override
-//    public CommentOutput testReadMethod(String name) {
-//        Model model = commentsRepository.findByName(name).orElseThrow(() -> new CommentsException(INVALID_WHATEVER.getMessage()));
-//        return new CommentOutput(model.name());
-//    }
-
-
     @Override
-    public String putComments(List<CommentInput> commentInputList) {
+    public String putComments(List<CommentInput> commentInputList, boolean isAssigned) {
         commentInputList.stream()
-                .map(commentMapper::mapToComment)
+                .map(commentInput -> commentMapper.mapToComment(commentInput, isAssigned))
                 .forEach(commentsRepository::save);
         return "Done";
     }

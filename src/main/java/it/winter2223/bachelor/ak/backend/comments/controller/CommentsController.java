@@ -22,25 +22,14 @@ import java.util.List;
 class CommentsController {
     private final CommentsService commentsService;
 
-//    @PostMapping("/test")
-//    @Operation(summary = "Test save")
-//    ResponseEntity<CommentOutput> testSaveController(@RequestBody CommentInput commentInput) {
-//        return ResponseEntity.ok(commentsService.testSaveMethod(commentInput));
-//    }
-//
-//    @GetMapping("/test/{name}")
-//    @Operation(summary = "Test read")
-//    ResponseEntity<CommentOutput> testReadController(@PathVariable String name) {
-//        return ResponseEntity.ok(commentsService.testReadMethod(name));
-//    }
-
-    @PostMapping("/")
+    @PostMapping("/{isAssigned}")
     @Operation(summary = "Produce comments")
     ResponseEntity<String> putComments(
             @RequestBody
             @NotEmpty(message = "Input comments list cannot be empty. ")
-            List<@Valid CommentInput> commentInputList) {
-        return ResponseEntity.ok(commentsService.putComments(commentInputList));
+            List<@Valid CommentInput> commentInputList,
+            @PathVariable boolean isAssigned) {
+        return ResponseEntity.ok(commentsService.putComments(commentInputList, isAssigned));
     }
 
     @GetMapping("/comments")

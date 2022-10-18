@@ -9,11 +9,7 @@ import java.util.List;
 
 public interface CommentsService {
 
-//    CommentOutput testSaveMethod(CommentInput commentInput);
-//
-//    CommentOutput testReadMethod(String name);
-
-    String putComments(List<CommentInput> commentInputList);
+    String putComments(List<CommentInput> commentInputList, boolean isAssigned);
 
     Page<CommentOutput> fetchCommentsList(Pageable number);
 }
