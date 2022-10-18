@@ -1,4 +1,9 @@
 package it.winter2223.bachelor.ak.backend.comments.dto;
 
-public record CommentOutput(String name) {
+import lombok.Builder;
+
+import java.util.UUID;
+
+@Builder
+public record CommentOutput(UUID commentId, String content) {
 }
