@@ -5,5 +5,5 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record UserOutput(UUID userId, String token) {
+public record UserOutput(String email, String idToken, String refreshToken) {
 }

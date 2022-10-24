@@ -23,10 +23,11 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.csrf().disable()
+                .authorizeRequests()
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/index.html").permitAll()
-//                .anyRequest().permitAll();
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
+//                .anyRequest().authenticated();
 
         http.oauth2ResourceServer()
                 .jwt();
