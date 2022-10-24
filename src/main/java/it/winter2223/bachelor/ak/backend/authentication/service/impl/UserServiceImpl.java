@@ -3,7 +3,6 @@ package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 import com.google.firebase.auth.FirebaseAuth;
 import it.winter2223.bachelor.ak.backend.authentication.dto.*;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
