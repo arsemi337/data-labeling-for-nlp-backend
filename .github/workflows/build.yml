@@ -13,4 +13,4 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
         env:
-          FIREBASE_API_KEY: AIzaSyCr9Z_MEfTNqFcaU2HAo86ns1i070UlE30
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
