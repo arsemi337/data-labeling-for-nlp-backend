@@ -12,3 +12,5 @@ jobs:
           java-version: '17'
       - name: Build with Maven
         run: mvn clean install
+        env:
+          firebase.api.key: AIzaSyCr9Z_MEfTNqFcaU2HAo86ns1i070UlE30
