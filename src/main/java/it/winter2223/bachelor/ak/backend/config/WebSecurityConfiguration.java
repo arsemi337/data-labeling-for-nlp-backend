@@ -1,37 +1,45 @@
 package it.winter2223.bachelor.ak.backend.config;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-//@Configuration
-//public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests()
-//                .anyRequest()
-//                .authenticated();
-//
-//        http.oauth2ResourceServer()
-//                .jwt();
-//    }
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/index.html").permitAll()
-                .anyRequest().permitAll();
-//                .anyRequest().authenticated();
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/index.html", "/api/v1/auth/**").permitAll()
+//                .anyRequest().permitAll();
+                .anyRequest().authenticated();
 
         http.oauth2ResourceServer()
-                .jwt();
+                .jwt()
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 
         return http.build();
+    }
+
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+        converter.setJwtGrantedAuthoritiesConverter(jwt ->
+                Optional.ofNullable(jwt.getClaimAsStringList("custom_claims"))
+                        .stream()
+                        .flatMap(Collection::stream)
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList())
+        );
+
+        return converter;
     }
 }

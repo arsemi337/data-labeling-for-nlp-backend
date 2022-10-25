@@ -1,6 +1,8 @@
 package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import it.winter2223.bachelor.ak.backend.authentication.Permission;
 import it.winter2223.bachelor.ak.backend.authentication.dto.*;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
@@ -10,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.SOMETHING_WENT_WRONG;
 
@@ -48,6 +54,22 @@ public class UserServiceImpl implements UserService {
                         error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
                 .bodyToMono(GoogleSignUpResponse.class)
                 .block();
+
+        List<Permission> requestedPermissions = new ArrayList<>();
+        requestedPermissions.add(Permission.USER);
+
+        List<String> permissions = requestedPermissions
+                .stream()
+                .map(Enum::toString)
+                .toList();
+
+        Map<String, Object> claims = Map.of("custom_claims", permissions);
+
+        try {
+            firebaseAuth.setCustomUserClaims(response.localId(), claims);
+        } catch (FirebaseAuthException e) {
+            throw new FirebaseAuthenticationException(e.getMessage());
+        }
 
         return new UserOutput(response.email(), response.idToken(), response.refreshToken());
     }

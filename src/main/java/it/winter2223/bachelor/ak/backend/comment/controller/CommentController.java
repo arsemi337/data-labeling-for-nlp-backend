@@ -2,6 +2,7 @@ package it.winter2223.bachelor.ak.backend.comment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentInput;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,12 +23,14 @@ import static it.winter2223.bachelor.ak.backend.comment.controller.swagger.Comme
 @RestController
 @Tag(name = "Comment")
 @RequestMapping("/api/v1/comment")
+@SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
 class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{isAssigned}")
     @Operation(summary = "Produce comments")
+    @PreAuthorize("hasAuthority('USER')")
     ResponseEntity<String> postComments(
             @RequestBody
             @NotEmpty(message = "Input comments list cannot be empty. ")
@@ -37,6 +41,7 @@ class CommentController {
 
     @GetMapping
     @Operation(summary = "Fetch list of comments")
+//    @PreAuthorize("hasAuthority('USER')")
     ResponseEntity<Page<CommentOutput>> fetchCommentsList(
             @Parameter(example = PAGEABLE_EXAMPLE)
             Pageable pageable) {
