@@ -2,6 +2,7 @@ package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 
 import com.google.firebase.auth.FirebaseAuth;
 import it.winter2223.bachelor.ak.backend.authentication.dto.*;
+import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.SOMETHING_WENT_WRONG;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -42,7 +45,7 @@ public class UserServiceImpl implements UserService {
                 .body(BodyInserters.fromValue(body))
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() != 200,
-                        error -> Mono.error(new Exception(error.toString())))
+                        error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
                 .bodyToMono(GoogleSignUpResponse.class)
                 .block();
 
@@ -51,11 +54,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserOutput signIn(UserInput userInput) {
-        return null;
+        return new UserOutput("abc", "abc", "abc");
     }
 
     @Override
     public RefreshTokenOutput refreshToken(RefreshTokenInput refreshTokenInput) {
-        return null;
+        return new RefreshTokenOutput("abc", "abc");
     }
 }

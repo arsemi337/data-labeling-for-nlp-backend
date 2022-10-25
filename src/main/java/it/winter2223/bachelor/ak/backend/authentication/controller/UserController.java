@@ -2,6 +2,8 @@ package it.winter2223.bachelor.ak.backend.authentication.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import it.winter2223.bachelor.ak.backend.authentication.dto.RefreshTokenInput;
+import it.winter2223.bachelor.ak.backend.authentication.dto.RefreshTokenOutput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.UserInput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.UserOutput;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @Tag(name = "Authentication")
 @RequestMapping("/api/v1/auth")
@@ -21,9 +21,21 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping()
     @Operation(summary = "Sign up")
     ResponseEntity<UserOutput> signUp(UserInput userInput) {
         return ResponseEntity.ok(userService.singUp(userInput));
+    }
+
+    @PostMapping("/user")
+    @Operation(summary = "Sign in")
+    ResponseEntity<UserOutput> signIn(UserInput userInput) {
+        return ResponseEntity.ok(userService.signIn(userInput));
+    }
+
+    @PostMapping("token")
+    @Operation(summary = "Refresh token")
+    ResponseEntity<RefreshTokenOutput> refreshToken(RefreshTokenInput refreshTokenInput) {
+        return ResponseEntity.ok(userService.refreshToken(refreshTokenInput));
     }
 }
