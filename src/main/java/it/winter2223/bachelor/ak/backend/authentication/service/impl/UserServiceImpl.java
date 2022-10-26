@@ -25,24 +25,32 @@ public class UserServiceImpl implements UserService {
         GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(
                 new RefreshTokenInput(signUpResponse.refreshToken()));
 
-        return new UserOutput(
-                signUpResponse.email(),
-                refreshTokenResponse.id_token(),
-                refreshTokenResponse.refresh_token());
+        return UserOutput.builder()
+                .email(signUpResponse.email())
+                .idToken(refreshTokenResponse.id_token())
+                .refreshToken(refreshTokenResponse.refresh_token())
+                .build();
     }
 
     @Override
     public UserOutput signIn(UserInput userInput) {
         GoogleSignInResponse signInResponse = firebaseAuthService.signInUser(userInput);
 
-        return new UserOutput(signInResponse.email(), signInResponse.idToken(), signInResponse.refreshToken());
+        return UserOutput.builder()
+                .email(signInResponse.email())
+                .idToken(signInResponse.idToken())
+                .refreshToken(signInResponse.refreshToken())
+                .build();
     }
 
     @Override
     public RefreshTokenOutput refreshToken(RefreshTokenInput refreshTokenInput) {
         GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(refreshTokenInput);
 
-        return new RefreshTokenOutput(refreshTokenResponse.id_token(), refreshTokenResponse.refresh_token());
+        return RefreshTokenOutput.builder()
+                .idToken(refreshTokenResponse.id_token())
+                .refreshToken(refreshTokenResponse.refresh_token())
+                .build();
     }
 
 
