@@ -20,7 +20,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/index.html", "/api/v1/auth/**").permitAll()
+                .antMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui/index.html",
+                        "/swagger-ui/**",
+                        "/api/v1/auth/**"
+                ).permitAll()
 //                .anyRequest().permitAll();
                 .anyRequest().authenticated();
 
