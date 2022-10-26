@@ -7,4 +7,7 @@ public class FirebaseAuthenticationException extends BusinessLogicException {
     public FirebaseAuthenticationException(String errorMessage) {
         super(errorMessage);
     }
+    public FirebaseAuthenticationException(String errorMessage, Throwable throwable) {
+        super(errorMessage, throwable);
+    }
 }
