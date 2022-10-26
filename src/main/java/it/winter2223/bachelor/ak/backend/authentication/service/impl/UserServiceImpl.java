@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import it.winter2223.bachelor.ak.backend.authentication.Permission;
 import it.winter2223.bachelor.ak.backend.authentication.dto.*;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefreshTokenResponse;
+import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
@@ -37,20 +38,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserOutput singUp(UserInput userInput) {
-        String body = String.format("""
-                {
-                    "email":"%s",
-                    "password":"%s",
-                    "returnSecureToken":true
-                }
-                """, userInput.email(), userInput.password());
-
         GoogleSignUpResponse response = client.post()
                 .uri(String.format("""
                         https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s
                         """, firebaseApiKey))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(body))
+                .body(BodyInserters.fromValue(getUserInputBody(userInput)))
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() != 200,
                         error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
@@ -84,7 +77,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserOutput signIn(UserInput userInput) {
-        return new UserOutput("abc", "abc", "abc");
+        GoogleSignInResponse response = client.post()
+                .uri(String.format("""
+                        https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s
+                        """, firebaseApiKey))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(getUserInputBody(userInput)))
+                .retrieve()
+                .onStatus(httpStatus -> httpStatus.value() != 200,
+                        error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
+                .bodyToMono(GoogleSignInResponse.class)
+                .block();
+
+        return new UserOutput(response.email(), response.idToken(), response.refreshToken());
     }
 
     @Override
@@ -92,6 +97,16 @@ public class UserServiceImpl implements UserService {
         GoogleRefreshTokenResponse response = requestRefreshToken(refreshTokenInput);
 
         return new RefreshTokenOutput(response.id_token(), response.refresh_token());
+    }
+
+    private static String getUserInputBody(UserInput userInput) {
+        return String.format("""
+                {
+                    "email":"%s",
+                    "password":"%s",
+                    "returnSecureToken":true
+                }
+                """, userInput.email(), userInput.password());
     }
 
     private GoogleRefreshTokenResponse requestRefreshToken(RefreshTokenInput refreshTokenInput) {
