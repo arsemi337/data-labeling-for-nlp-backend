@@ -30,7 +30,6 @@ class CommentController {
 
     @PostMapping("/{isAssigned}")
     @Operation(summary = "Produce comments")
-    @PreAuthorize("hasAuthority('USER')")
     ResponseEntity<String> postComments(
             @RequestBody
             @NotEmpty(message = "Input comments list cannot be empty. ")
@@ -41,7 +40,7 @@ class CommentController {
 
     @GetMapping
     @Operation(summary = "Fetch list of comments")
-//    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     ResponseEntity<Page<CommentOutput>> fetchCommentsList(
             @Parameter(example = PAGEABLE_EXAMPLE)
             Pageable pageable) {

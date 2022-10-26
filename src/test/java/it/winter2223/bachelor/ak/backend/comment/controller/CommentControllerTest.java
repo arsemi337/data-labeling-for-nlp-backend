@@ -10,8 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +34,7 @@ class CommentControllerTest {
     CommentService commentService;
 
     @Test
+    @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
     @DisplayName("when correct pageable passed, list of comments should be returned")
     void shouldFetchCommentsList() throws Exception {
         UUID commentId = UUID.randomUUID();
@@ -45,6 +48,7 @@ class CommentControllerTest {
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment?page=" + pageNumber + "&size=" + pageSize))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.content.[0].commentId", equalTo(commentOutput.commentId().toString())))
                 .andExpect(jsonPath("$.content.[0].content", equalTo("Test content")));
         verify(commentService).fetchCommentsList(pageRequest);

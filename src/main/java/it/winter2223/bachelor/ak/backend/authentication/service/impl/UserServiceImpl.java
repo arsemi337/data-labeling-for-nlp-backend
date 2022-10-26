@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
                 .block();
 
         List<Permission> requestedPermissions = new ArrayList<>();
-        requestedPermissions.add(Permission.USER);
+        requestedPermissions.add(Permission.USER_READ_WRITE);
 
         List<String> permissions = requestedPermissions
                 .stream()
