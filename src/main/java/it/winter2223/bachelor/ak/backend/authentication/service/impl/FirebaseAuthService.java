@@ -98,7 +98,7 @@ public class FirebaseAuthService {
                 """, refreshToken);
     }
 
-    protected void setCustomUserClaims(GoogleSignUpResponse response) {
+    public void setCustomUserClaims(GoogleSignUpResponse response) {
         Map<String, Object> claims = Map.of("custom_claims", List.of(Permission.USER_READ_WRITE.toString()));
 
         try {

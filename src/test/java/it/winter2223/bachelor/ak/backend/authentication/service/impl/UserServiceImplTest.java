@@ -48,6 +48,7 @@ class UserServiceImplTest {
                 "project_id");
 
         when(firebaseAuthService.signUpUser(any(UserInput.class))).thenReturn(signUpResponse);
+        doNothing().when(firebaseAuthService).setCustomUserClaims(any(GoogleSignUpResponse.class));
         when(firebaseAuthService.requestRefreshToken(any(RefreshTokenInput.class))).thenReturn(refreshTokenResponse);
         UserOutput userOutput = underTest.singUp(userInput);
 
