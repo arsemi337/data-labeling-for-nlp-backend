@@ -1,5 +1,6 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.impl;
 
+import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentInput;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentOutput;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentException;
@@ -18,10 +19,13 @@ import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.excepti
 public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssignmentService {
 
     private final CommentEmotionAssignmentRepository assignmentRepository;
+    private final CommentRepository commentRepository;
     private final CommentEmotionAssignmentMapper commentEmotionAssignmentMapper;
 
-    CommentEmotionAssignmentServiceImpl(CommentEmotionAssignmentRepository assignmentRepository) {
+    CommentEmotionAssignmentServiceImpl(CommentEmotionAssignmentRepository assignmentRepository,
+                                        CommentRepository commentRepository) {
         this.assignmentRepository = assignmentRepository;
+        this.commentRepository = commentRepository;
         this.commentEmotionAssignmentMapper = new CommentEmotionAssignmentMapper();
     }
 
@@ -39,16 +43,16 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
         return commentEmotionAssignmentMapper.mapToCommentEmotionAssignmentOutput(assignmentRepository.save(commentEmotionAssignment));
     }
 
+    private void validateCommentId(CommentEmotionAssignmentInput assignmentInput) {
+        if(!commentRepository.existsById(assignmentInput.commentId())) {
+            throw new CommentEmotionAssignmentException(COMMENT_NOT_FOUND.getMessage());
+        }
+    }
+
     private Emotion getEnumFrom(String emotion) {
         if(!Emotion.contains(emotion)) {
             throw new CommentEmotionAssignmentException(WRONG_EMOTION.getMessage());
         }
         return Emotion.valueOf(emotion);
-    }
-
-    private void validateCommentId(CommentEmotionAssignmentInput assignmentInput) {
-        if(!assignmentRepository.existsById(assignmentInput.commentId())) {
-            throw new CommentEmotionAssignmentException(COMMENT_NOT_FOUND.getMessage());
-        }
     }
 }
