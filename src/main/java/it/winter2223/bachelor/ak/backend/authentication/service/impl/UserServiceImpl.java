@@ -4,8 +4,13 @@ import it.winter2223.bachelor.ak.backend.authentication.dto.*;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefreshTokenResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
+import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
+
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.INVALID_EMAIL_ADDRESS;
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.INVALID_PASSWORD;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,9 +24,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserOutput singUp(UserInput userInput) {
+        validateEmail(userInput.email());
+        validatePassword(userInput.password());
+
         GoogleSignUpResponse signUpResponse = firebaseAuthService.signUpUser(userInput);
 
-        firebaseAuthService.setCustomUserClaims(signUpResponse);
+        firebaseAuthService.setCustomUserClaims(signUpResponse.localId());
         GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(
                 new RefreshTokenInput(signUpResponse.refreshToken()));
 
@@ -34,6 +42,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserOutput signIn(UserInput userInput) {
+        validateEmail(userInput.email());
+
         GoogleSignInResponse signInResponse = firebaseAuthService.signInUser(userInput);
 
         return UserOutput.builder()
@@ -53,8 +63,16 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    private void validateEmail(String email) {
+        if (!EmailValidator.getInstance().isValid(email)) {
+            throw new FirebaseAuthenticationException(INVALID_EMAIL_ADDRESS.getMessage());
+        }
+    }
 
-
-
+    private void validatePassword(String password) {
+        if (password == null || password.length() < 6) {
+            throw new FirebaseAuthenticationException(INVALID_PASSWORD.getMessage());
+        }
+    }
 
 }

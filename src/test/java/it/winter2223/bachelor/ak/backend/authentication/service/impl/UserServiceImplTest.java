@@ -8,14 +8,20 @@ import it.winter2223.bachelor.ak.backend.authentication.dto.UserOutput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefreshTokenResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
+import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +54,7 @@ class UserServiceImplTest {
                 "project_id");
 
         when(firebaseAuthService.signUpUser(any(UserInput.class))).thenReturn(signUpResponse);
-        doNothing().when(firebaseAuthService).setCustomUserClaims(any(GoogleSignUpResponse.class));
+        doNothing().when(firebaseAuthService).setCustomUserClaims(anyString());
         when(firebaseAuthService.requestRefreshToken(any(RefreshTokenInput.class))).thenReturn(refreshTokenResponse);
         UserOutput userOutput = underTest.singUp(userInput);
 
@@ -56,9 +62,56 @@ class UserServiceImplTest {
         assertEquals(userOutput.idToken(), refreshTokenResponse.id_token());
         assertEquals(userOutput.refreshToken(), refreshTokenResponse.refresh_token());
         verify(firebaseAuthService).signUpUser(userInput);
-        verify(firebaseAuthService).setCustomUserClaims(signUpResponse);
+        verify(firebaseAuthService).setCustomUserClaims(signUpResponse.localId());
         verify(firebaseAuthService).requestRefreshToken(new RefreshTokenInput(signUpResponse.refreshToken()));
     }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"test.pl", "test@test", "test@test.", "@test.pl"})
+    @DisplayName("when invalid email address is passed while signing up, FirebaseAuthenticationException " +
+            "with INVALID_EMAIL_ADDRESS message should be thrown")
+    void shouldThrowFirebaseAuthenticationExceptionWhenSigningUpWithInvalidEmailAddress(String email) {
+        UserInput userInput = UserInput.builder()
+                        .email(email)
+                        .password("password")
+                        .build();
+        assertThatExceptionOfType(FirebaseAuthenticationException.class)
+                .isThrownBy(() -> underTest.singUp(userInput)).withMessage(INVALID_EMAIL_ADDRESS.getMessage());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"a", "ab", "abc", "abcd", "abcde"})
+    @DisplayName("when invalid password is passed while signing up, FirebaseAuthenticationException " +
+            "with INVALID_PASSWORD message should be thrown")
+    void shouldThrowFirebaseAuthenticationExceptionWhenSigningUpWithInvalidPassword(String password) {
+        UserInput userInput = UserInput.builder()
+                .email("test@test.pl")
+                .password(password)
+                .build();
+        assertThatExceptionOfType(FirebaseAuthenticationException.class)
+                .isThrownBy(() -> underTest.singUp(userInput)).withMessage(INVALID_PASSWORD.getMessage());
+    }
+
+    @Test
+    @DisplayName("when system fails to sign up a user on Firebase Auth, FirebaseAuthenticationException " +
+            "with SIGNING_UP_FAILED message should be thrown")
+    void shouldThrowFirebaseAuthenticationExceptionWhenFailsToSignUpUser() {
+        UserInput userInput = UserInput.builder()
+                .email("test@test.pl")
+                .password("password")
+                .build();
+        when(firebaseAuthService.signUpUser(userInput))
+                .thenThrow(new FirebaseAuthenticationException(SIGNING_UP_FAILED.getMessage()));
+
+        assertThatExceptionOfType(FirebaseAuthenticationException.class)
+                .isThrownBy(() -> underTest.singUp(userInput)).withMessage(SIGNING_UP_FAILED.getMessage());
+
+        verify(firebaseAuthService, never()).setCustomUserClaims(anyString());
+        verify(firebaseAuthService, never()).requestRefreshToken(any(RefreshTokenInput.class));
+    }
+
 
     @Test
     @DisplayName("signs in a user with entered email and password")
@@ -81,6 +134,35 @@ class UserServiceImplTest {
         verify(firebaseAuthService).signInUser(userInput);
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"test.pl", "test@test", "test@test.", "@test.pl"})
+    @DisplayName("when invalid email address is passed while signing in, FirebaseAuthenticationException " +
+            "with INVALID_EMAIL_ADDRESS message should be thrown")
+    void shouldThrowFirebaseAuthenticationExceptionWhenSigningInWithInvalidEmailAddress(String email) {
+        UserInput userInput = UserInput.builder()
+                .email(email)
+                .password("password")
+                .build();
+        assertThatExceptionOfType(FirebaseAuthenticationException.class)
+                .isThrownBy(() -> underTest.signIn(userInput)).withMessage(INVALID_EMAIL_ADDRESS.getMessage());
+    }
+
+    @Test
+    @DisplayName("when system fails to sign in a user on Firebase Auth, FirebaseAuthenticationException " +
+            "with SIGNING_IN_FAILED message should be thrown")
+    void shouldThrowFirebaseAuthenticationExceptionWhenFailsToSignInUser() {
+        UserInput userInput = UserInput.builder()
+                .email("test@test.pl")
+                .password("password")
+                .build();
+        when(firebaseAuthService.signInUser(userInput))
+                .thenThrow(new FirebaseAuthenticationException(SIGNING_IN_FAILED.getMessage()));
+
+        assertThatExceptionOfType(FirebaseAuthenticationException.class)
+                .isThrownBy(() -> underTest.signIn(userInput)).withMessage(SIGNING_IN_FAILED.getMessage());
+    }
+
     @Test
     @DisplayName("returns new idToken and refreshToken when valid refreshToken is passed")
     void shouldRefreshToken() {
@@ -99,5 +181,19 @@ class UserServiceImplTest {
         assertEquals(refreshTokenOutput.idToken(), refreshTokenResponse.id_token());
         assertEquals(refreshTokenOutput.refreshToken(), refreshTokenOutput.refreshToken());
         verify(firebaseAuthService).requestRefreshToken(refreshTokenInput);
+    }
+
+    @Test
+    @DisplayName("when system fails to refresh token on Firebase Auth, FirebaseAuthenticationException " +
+            "with TOKEN_REFRESHING_FAILED message should be thrown")
+    void shouldThrowFirebaseAuthenticationExceptionWhenFailsToRefreshToken() {
+        RefreshTokenInput refreshTokenInput = RefreshTokenInput.builder()
+                        .refreshToken("refreshToken")
+                        .build();
+        when(firebaseAuthService.requestRefreshToken(refreshTokenInput))
+                .thenThrow(new FirebaseAuthenticationException(TOKEN_REFRESHING_FAILED.getMessage()));
+
+        assertThatExceptionOfType(FirebaseAuthenticationException.class)
+                .isThrownBy(() -> underTest.refreshToken(refreshTokenInput)).withMessage(TOKEN_REFRESHING_FAILED.getMessage());
     }
 }

@@ -1,7 +1,12 @@
 package it.winter2223.bachelor.ak.backend.authentication.exception;
 
 public enum FirebaseAuthenticationExceptionMessages {
-    SOMETHING_WENT_WRONG("Something went wrong");
+    INVALID_EMAIL_ADDRESS("Email address is invalid"),
+    INVALID_PASSWORD("Password must be at least 6 characters"),
+    SIGNING_UP_FAILED("Failed to sign up"),
+    SIGNING_IN_FAILED("Failed to sign in"),
+    TOKEN_REFRESHING_FAILED("Failed to refresh token"),
+    SETTING_USER_CLAIMS_FAILED("Failed to set user claims");
 
     private final String message;
 

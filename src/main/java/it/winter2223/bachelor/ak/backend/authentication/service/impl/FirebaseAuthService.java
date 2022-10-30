@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
-import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.SOMETHING_WENT_WRONG;
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.*;
 
 @Service
 public class FirebaseAuthService {
@@ -44,7 +44,7 @@ public class FirebaseAuthService {
                 .body(BodyInserters.fromValue(getUserInputBody(userInput)))
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() != 200,
-                        error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
+                        error -> Mono.error(new FirebaseAuthenticationException(SIGNING_UP_FAILED.getMessage())))
                 .bodyToMono(GoogleSignUpResponse.class)
                 .block();
     }
@@ -58,7 +58,7 @@ public class FirebaseAuthService {
                 .body(BodyInserters.fromValue(getUserInputBody(userInput)))
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() != 200,
-                        error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
+                        error -> Mono.error(new FirebaseAuthenticationException(SIGNING_IN_FAILED.getMessage())))
                 .bodyToMono(GoogleSignInResponse.class)
                 .block();
     }
@@ -74,7 +74,7 @@ public class FirebaseAuthService {
                 .body(BodyInserters.fromValue(body))
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() != 200,
-                        error -> Mono.error(new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage())))
+                        error -> Mono.error(new FirebaseAuthenticationException(TOKEN_REFRESHING_FAILED.getMessage())))
                 .bodyToMono(GoogleRefreshTokenResponse.class)
                 .block();
     }
@@ -98,13 +98,13 @@ public class FirebaseAuthService {
                 """, refreshToken);
     }
 
-    public void setCustomUserClaims(GoogleSignUpResponse response) {
+    public void setCustomUserClaims(String localId) {
         Map<String, Object> claims = Map.of("custom_claims", List.of(Permission.USER_READ_WRITE.toString()));
 
         try {
-            firebaseAuth.setCustomUserClaims(response.localId(), claims);
+            firebaseAuth.setCustomUserClaims(localId, claims);
         } catch (FirebaseAuthException exception) {
-            throw new FirebaseAuthenticationException(SOMETHING_WENT_WRONG.getMessage(), exception);
+            throw new FirebaseAuthenticationException(SETTING_USER_CLAIMS_FAILED.getMessage(), exception);
         }
     }
 }
