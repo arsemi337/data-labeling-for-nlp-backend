@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface CommentService {
 
+    String getYTComments();
+
     String putComments(List<CommentInput> commentInputList, boolean isAssigned);
 
     Page<CommentOutput> fetchCommentsList(Pageable number);

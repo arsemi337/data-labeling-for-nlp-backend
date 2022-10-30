@@ -28,6 +28,11 @@ import static it.winter2223.bachelor.ak.backend.comment.controller.swagger.Comme
 class CommentController {
     private final CommentService commentService;
 
+    @GetMapping("/youtube")
+    ResponseEntity<String> getYTComments() {
+        return ResponseEntity.ok(commentService.getYTComments());
+    }
+
     @PostMapping("/{isAssigned}")
     @Operation(summary = "Produce comments")
     ResponseEntity<String> postComments(

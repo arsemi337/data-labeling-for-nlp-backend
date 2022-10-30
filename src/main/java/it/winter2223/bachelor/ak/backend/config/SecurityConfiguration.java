@@ -26,8 +26,8 @@ public class SecurityConfiguration {
                         "/swagger-ui/**",
                         "/api/v1/auth/**"
                 ).permitAll()
-//                .anyRequest().permitAll();
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
+//                .anyRequest().authenticated();
 
         http.oauth2ResourceServer()
                 .jwt()
