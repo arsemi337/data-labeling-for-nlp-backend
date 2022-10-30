@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.UUID;
 
@@ -33,6 +35,7 @@ class CommentEmotionAssignmentControllerTest {
     CommentEmotionAssignmentService commentEmotionAssignmentService;
 
     @Test
+    @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
     @DisplayName("when correct data is passed, CommentEmotionAssignmentOutput should be returned")
     void shouldPostCommentEmotionAssignment() throws Exception {
         UUID assignmentId = UUID.randomUUID();
@@ -43,6 +46,7 @@ class CommentEmotionAssignmentControllerTest {
         CommentEmotionAssignmentOutput assignmentOutput = getAssignmentOutput(assignmentId, commentId);
 
         mockMvc.perform(getAssignmentPostRequest(commentId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.assignmentId", equalTo(assignmentOutput.assignmentId().toString())))
                 .andExpect(jsonPath("$.commentId", equalTo(assignmentOutput.commentId().toString())))
                 .andExpect(jsonPath("$.emotionDto", equalTo(EmotionDto.JOY.toString())));
