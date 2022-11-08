@@ -39,7 +39,7 @@ class CommentEmotionAssignmentControllerTest {
     @DisplayName("when correct data is passed, CommentEmotionAssignmentOutput should be returned")
     void shouldPostCommentEmotionAssignment() throws Exception {
         UUID assignmentId = UUID.randomUUID();
-        UUID commentId = UUID.randomUUID();
+        String commentId = "randomId";
 
         when(commentEmotionAssignmentService.postCommentEmotionAssignment(any(CommentEmotionAssignmentInput.class)))
                 .thenReturn(getAssignmentOutput(assignmentId, commentId));
@@ -48,12 +48,12 @@ class CommentEmotionAssignmentControllerTest {
         mockMvc.perform(getAssignmentPostRequest(commentId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.assignmentId", equalTo(assignmentOutput.assignmentId().toString())))
-                .andExpect(jsonPath("$.commentId", equalTo(assignmentOutput.commentId().toString())))
+                .andExpect(jsonPath("$.commentId", equalTo(assignmentOutput.commentId())))
                 .andExpect(jsonPath("$.emotionDto", equalTo(EmotionDto.JOY.toString())));
         verify(commentEmotionAssignmentService).postCommentEmotionAssignment(any(CommentEmotionAssignmentInput.class));
     }
 
-    private static MockHttpServletRequestBuilder getAssignmentPostRequest(UUID commentId) {
+    private static MockHttpServletRequestBuilder getAssignmentPostRequest(String commentId) {
         return MockMvcRequestBuilders.post("/api/v1/assignment")
                 .contentType("application/json")
                 .content(String.format("""
@@ -64,7 +64,7 @@ class CommentEmotionAssignmentControllerTest {
                         """, commentId));
     }
 
-    private CommentEmotionAssignmentOutput getAssignmentOutput(UUID assignmentId, UUID commentId) {
+    private CommentEmotionAssignmentOutput getAssignmentOutput(UUID assignmentId, String commentId) {
         return CommentEmotionAssignmentOutput.builder()
                 .assignmentId(assignmentId)
                 .commentId(commentId)
