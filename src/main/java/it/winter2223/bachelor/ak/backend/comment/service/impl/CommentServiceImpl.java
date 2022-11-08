@@ -1,9 +1,10 @@
 package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
-import it.winter2223.bachelor.ak.backend.comment.dto.CommentInput;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
+import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.CommentService;
 import it.winter2223.bachelor.ak.backend.config.YouTubeServiceConfig;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,31 +35,64 @@ class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public String getYTComments() {
+    public List<CommentOutput> getYTComments() {
         VideoListResponse response = null;
         try {
-            System.out.println(youtubeApiKey);
             YouTube.Videos.List request = youTubeService.videos()
-                    .list(List.of("snippet"));
+                    .list(List.of("id"));
              response = request.setKey(youtubeApiKey)
                     .setChart("mostPopular")
                     .setRegionCode("pl")
-                    .setFields("items(id, snippet(title))")
+                    .setFields("items(id)")
                     .execute();
-            System.out.println(response);
         } catch (IOException e) {
 
         }
-        return response.getItems().toString();
+
+        List<Comment> comments = new ArrayList<>();
+        try {
+            CommentThreadListResponse commentsResponse = new CommentThreadListResponse();
+
+            System.out.println(commentsResponse.getEtag());
+
+            YouTube.CommentThreads.List commentsRequest = youTubeService.commentThreads().list(List.of("snippet"));
+            commentsResponse = commentsRequest.setKey(youtubeApiKey)
+                    .setPart(List.of("snippet"))
+                    .setVideoId(response.getItems().get(0).getId())
+                    .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
+                    .execute();
+
+            commentsResponse.getItems().forEach(commentThread -> {
+                System.out.println(commentThread.getSnippet().getTopLevelComment().toString());
+
+                com.google.api.services.youtube.model.Comment ytComment = commentThread.getSnippet().getTopLevelComment();
+
+                if (commentRepository.findById(ytComment.getId()).isEmpty()) {
+                    comments.add(Comment.builder()
+                            .commentId(ytComment.getId())
+                            .content(ytComment.getSnippet().getTextDisplay())
+                            .isAssigned(false)
+                            .build());
+                }
+
+            });
+        } catch (IOException ioException) {
+
+        }
+
+        List<CommentOutput> commentOutputList = new ArrayList<>();
+        comments.forEach(c -> commentOutputList.add(commentMapper.mapToCommentOutput(commentRepository.save(c))));
+        return commentOutputList;
+
     }
 
-    @Override
-    public String putComments(List<CommentInput> commentInputList, boolean isAssigned) {
-        commentInputList.stream()
-                .map(commentInput -> commentMapper.mapToComment(commentInput, isAssigned))
-                .forEach(commentRepository::save);
-        return "Done";
-    }
+//    @Override
+//    public String putComments(List<CommentInput> commentInputList, boolean isAssigned) {
+//        commentInputList.stream()
+//                .map(commentInput -> commentMapper.mapToComment(commentInput, isAssigned))
+//                .forEach(commentRepository::save);
+//        return "Done";
+//    }
 
     @Override
     public Page<CommentOutput> fetchCommentsList(Pageable pageable) {
