@@ -10,7 +10,5 @@ public interface CommentService {
 
     List<CommentOutput> getYTComments();
 
-//    String putComments(List<CommentInput> commentInputList, boolean isAssigned);
-
     Page<CommentOutput> fetchCommentsList(Pageable number);
 }

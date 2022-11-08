@@ -30,16 +30,6 @@ class CommentController {
         return ResponseEntity.ok(commentService.getYTComments());
     }
 
-//    @PostMapping("/{isAssigned}")
-//    @Operation(summary = "Produce comments")
-//    ResponseEntity<String> postComments(
-//            @RequestBody
-//            @NotEmpty(message = "Input comments list cannot be empty. ")
-//            List<@Valid CommentInput> commentInputList,
-//            @PathVariable boolean isAssigned) {
-//        return ResponseEntity.ok(commentService.putComments(commentInputList, isAssigned));
-//    }
-
     @GetMapping
     @Operation(summary = "Fetch list of comments")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")

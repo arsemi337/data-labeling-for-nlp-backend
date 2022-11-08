@@ -86,14 +86,6 @@ class CommentServiceImpl implements CommentService {
 
     }
 
-//    @Override
-//    public String putComments(List<CommentInput> commentInputList, boolean isAssigned) {
-//        commentInputList.stream()
-//                .map(commentInput -> commentMapper.mapToComment(commentInput, isAssigned))
-//                .forEach(commentRepository::save);
-//        return "Done";
-//    }
-
     @Override
     public Page<CommentOutput> fetchCommentsList(Pageable pageable) {
         return commentRepository.findByIsAssigned(false, pageable)

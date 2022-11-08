@@ -11,12 +11,4 @@ class CommentMapper {
                 .content(comment.getContent())
                 .build();
     }
-
-//    Comment mapToComment(CommentInput commentInput, boolean isAssigned) {
-//        return Comment.builder()
-//                .commentId(UUID.randomUUID())
-//                .content(commentInput.content())
-//                .isAssigned(isAssigned)
-//                .build();
-//    }
 }
