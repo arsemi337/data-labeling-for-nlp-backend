@@ -7,6 +7,7 @@ import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
+import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
 import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.CommentService;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import static com.github.pemistahl.lingua.api.Language.POLISH;
+import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.COMMENTS_FETCHING_ERROR;
+import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.VIDEOS_FETCHING_ERROR;
 
 @Service
 class CommentServiceImpl implements CommentService {
@@ -82,7 +85,7 @@ class CommentServiceImpl implements CommentService {
     }
 
     private VideoListResponse fetchMostPopularYTVideos() {
-        VideoListResponse videos = null;
+        VideoListResponse videos;
         try {
             YouTube.Videos.List request = youTubeService.videos()
                     .list(List.of("id"));
@@ -92,14 +95,14 @@ class CommentServiceImpl implements CommentService {
                     .setMaxResults(50L)
                     .setFields("items(id)")
                     .execute();
-        } catch (IOException e) {
-
+        } catch (IOException ioException) {
+            throw new CommentException(VIDEOS_FETCHING_ERROR.getMessage(), ioException);
         }
         return videos;
     }
 
     private CommentThreadListResponse fetchMostPopularYTComments(String videoId) {
-        CommentThreadListResponse commentsResponse = null;
+        CommentThreadListResponse commentsResponse;
         try {
             YouTube.CommentThreads.List commentsRequest = youTubeService.commentThreads().list(List.of("snippet"));
             commentsResponse = commentsRequest.setKey(youtubeApiKey)
@@ -111,7 +114,7 @@ class CommentServiceImpl implements CommentService {
                     .execute();
 
         } catch (IOException ioException) {
-
+            throw new CommentException(COMMENTS_FETCHING_ERROR.getMessage(), ioException);
         }
         return commentsResponse;
     }

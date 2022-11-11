@@ -1,7 +1,8 @@
 package it.winter2223.bachelor.ak.backend.comment.exception;
 
 public enum CommentExceptionMessages {
-    INVALID_EMAIL_ADDRESS("Email address is invalid");
+    VIDEOS_FETCHING_ERROR("Error while fetching You Tube videos list"),
+    COMMENTS_FETCHING_ERROR("Error while fetching You Tube comments list");
 
     private final String message;
 
