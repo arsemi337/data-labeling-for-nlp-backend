@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.github.pemistahl.lingua.api.Language.*;
+import static com.github.pemistahl.lingua.api.Language.POLISH;
 
 @Service
 class CommentServiceImpl implements CommentService {
@@ -45,8 +45,44 @@ class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentOutput> getYTComments() {
-        VideoListResponse videos = null;
         List<Comment> comments = new ArrayList<>();
+        List<CommentOutput> commentOutputList = new ArrayList<>();
+
+        VideoListResponse ytVideos = fetchMostPopularYTVideos();
+        if (ytVideos == null) {
+            return commentOutputList;
+        }
+
+        CommentThreadListResponse commentsResponse;
+        for (Video video : ytVideos.getItems()) {
+            commentsResponse = fetchMostPopularYTComments(video.getId());
+            if (commentsResponse == null) {
+                continue;
+            }
+
+            commentsResponse.getItems().forEach(commentThread -> {
+                com.google.api.services.youtube.model.Comment ytComment = commentThread.getSnippet().getTopLevelComment();
+
+                String commentId = ytComment.getId();
+                String commentContent = ytComment.getSnippet().getTextDisplay();
+
+                addYTCommentToComments(comments, commentId, commentContent);
+            });
+        }
+
+        comments.forEach(c -> commentOutputList.add(commentMapper.mapToCommentOutput(commentRepository.save(c))));
+        return commentOutputList;
+
+    }
+
+    @Override
+    public Page<CommentOutput> fetchCommentsList(Pageable pageable) {
+        return commentRepository.findByIsAssigned(false, pageable)
+                .map(commentMapper::mapToCommentOutput);
+    }
+
+    private VideoListResponse fetchMostPopularYTVideos() {
+        VideoListResponse videos = null;
         try {
             YouTube.Videos.List request = youTubeService.videos()
                     .list(List.of("id"));
@@ -59,55 +95,36 @@ class CommentServiceImpl implements CommentService {
         } catch (IOException e) {
 
         }
-
-        if (videos != null) {
-            for (Video video : videos.getItems()) {
-                try {
-                    CommentThreadListResponse commentsResponse;
-
-                    YouTube.CommentThreads.List commentsRequest = youTubeService.commentThreads().list(List.of("snippet"));
-                    commentsResponse = commentsRequest.setKey(youtubeApiKey)
-                            .setPart(List.of("snippet"))
-                            .setVideoId(video.getId())
-                            .setMaxResults(50L)
-                            .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
-                            .execute();
-
-                    commentsResponse.getItems().forEach(commentThread -> {
-                        System.out.println(commentThread.getSnippet().getTopLevelComment().toString());
-
-                        com.google.api.services.youtube.model.Comment ytComment = commentThread.getSnippet().getTopLevelComment();
-
-                        String commentId = ytComment.getId();
-                        String commentContent = ytComment.getSnippet().getTextDisplay();
-
-                        commentContent = removeHtmlTags(commentContent);
-
-                        if (commentRepository.findById(commentId).isEmpty() && isCommentLengthValid(commentContent) && isCommentPolish(commentContent)) {
-                            comments.add(Comment.builder()
-                                    .commentId(commentId)
-                                    .content(commentContent)
-                                    .isAssigned(false)
-                                    .build());
-                        }
-
-                    });
-                } catch (IOException ioException) {
-
-                }
-            }
-        }
-
-        List<CommentOutput> commentOutputList = new ArrayList<>();
-        comments.forEach(c -> commentOutputList.add(commentMapper.mapToCommentOutput(commentRepository.save(c))));
-        return commentOutputList;
-
+        return videos;
     }
 
-    @Override
-    public Page<CommentOutput> fetchCommentsList(Pageable pageable) {
-        return commentRepository.findByIsAssigned(false, pageable)
-                .map(commentMapper::mapToCommentOutput);
+    private CommentThreadListResponse fetchMostPopularYTComments(String videoId) {
+        CommentThreadListResponse commentsResponse = null;
+        try {
+            YouTube.CommentThreads.List commentsRequest = youTubeService.commentThreads().list(List.of("snippet"));
+            commentsResponse = commentsRequest.setKey(youtubeApiKey)
+                    .setPart(List.of("snippet"))
+                    .setVideoId(videoId)
+                    .setMaxResults(50L)
+                    .setOrder("relevance")
+                    .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
+                    .execute();
+
+        } catch (IOException ioException) {
+
+        }
+        return commentsResponse;
+    }
+
+    private void addYTCommentToComments(List<Comment> comments, String commentId, String commentContent) {
+        commentContent = removeHtmlTags(commentContent);
+        if (commentRepository.findById(commentId).isEmpty() && isCommentLengthValid(commentContent) && isCommentPolish(commentContent)) {
+            comments.add(Comment.builder()
+                    .commentId(commentId)
+                    .content(commentContent)
+                    .isAssigned(false)
+                    .build());
+        }
     }
 
     private String removeHtmlTags(String commentContent) {
