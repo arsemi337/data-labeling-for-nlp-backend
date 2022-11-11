@@ -4,12 +4,14 @@ import com.github.pemistahl.lingua.api.LanguageDetector;
 import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
+import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
 import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.CommentService;
 import it.winter2223.bachelor.ak.backend.config.YouTubeServiceConfig;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,53 +45,58 @@ class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentOutput> getYTComments() {
-        VideoListResponse response = null;
+        VideoListResponse videos = null;
+        List<Comment> comments = new ArrayList<>();
         try {
             YouTube.Videos.List request = youTubeService.videos()
                     .list(List.of("id"));
-            response = request.setKey(youtubeApiKey)
+            videos = request.setKey(youtubeApiKey)
                     .setChart("mostPopular")
                     .setRegionCode("pl")
+                    .setMaxResults(50L)
                     .setFields("items(id)")
                     .execute();
         } catch (IOException e) {
 
         }
 
-        List<Comment> comments = new ArrayList<>();
-        try {
-            CommentThreadListResponse commentsResponse = new CommentThreadListResponse();
+        if (videos != null) {
+            for (Video video : videos.getItems()) {
+                try {
+                    CommentThreadListResponse commentsResponse;
 
-            System.out.println(commentsResponse.getEtag());
+                    YouTube.CommentThreads.List commentsRequest = youTubeService.commentThreads().list(List.of("snippet"));
+                    commentsResponse = commentsRequest.setKey(youtubeApiKey)
+                            .setPart(List.of("snippet"))
+                            .setVideoId(video.getId())
+                            .setMaxResults(50L)
+                            .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
+                            .execute();
 
-            YouTube.CommentThreads.List commentsRequest = youTubeService.commentThreads().list(List.of("snippet"));
-            commentsResponse = commentsRequest.setKey(youtubeApiKey)
-                    .setPart(List.of("snippet"))
-                    .setVideoId(response.getItems().get(0).getId())
-                    .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
-                    .execute();
+                    commentsResponse.getItems().forEach(commentThread -> {
+                        System.out.println(commentThread.getSnippet().getTopLevelComment().toString());
 
-            commentsResponse.getItems().forEach(commentThread -> {
-                System.out.println(commentThread.getSnippet().getTopLevelComment().toString());
+                        com.google.api.services.youtube.model.Comment ytComment = commentThread.getSnippet().getTopLevelComment();
 
-                com.google.api.services.youtube.model.Comment ytComment = commentThread.getSnippet().getTopLevelComment();
+                        String commentId = ytComment.getId();
+                        String commentContent = ytComment.getSnippet().getTextDisplay();
 
-                String commentId = ytComment.getId();
-                String commentContent = ytComment.getSnippet().getTextDisplay();
+                        commentContent = removeHtmlTags(commentContent);
 
-                if (commentRepository.findById(commentId).isEmpty() && isCommentLengthValid(commentContent) && isCommentPolish(commentContent)) {
-                    comments.add(Comment.builder()
-                            .commentId(commentId)
-                            .content(commentContent)
-                            .isAssigned(false)
-                            .build());
+                        if (commentRepository.findById(commentId).isEmpty() && isCommentLengthValid(commentContent) && isCommentPolish(commentContent)) {
+                            comments.add(Comment.builder()
+                                    .commentId(commentId)
+                                    .content(commentContent)
+                                    .isAssigned(false)
+                                    .build());
+                        }
+
+                    });
+                } catch (IOException ioException) {
+
                 }
-
-            });
-        } catch (IOException ioException) {
-
+            }
         }
-
 
         List<CommentOutput> commentOutputList = new ArrayList<>();
         comments.forEach(c -> commentOutputList.add(commentMapper.mapToCommentOutput(commentRepository.save(c))));
@@ -103,13 +110,16 @@ class CommentServiceImpl implements CommentService {
                 .map(commentMapper::mapToCommentOutput);
     }
 
-    private boolean isCommentLengthValid(String comment) {
-        int tokensNumber = new StringTokenizer(comment).countTokens();
+    private String removeHtmlTags(String commentContent) {
+        return Jsoup.parse(commentContent).text();
+    }
+
+    private boolean isCommentLengthValid(String commentContent) {
+        int tokensNumber = new StringTokenizer(commentContent).countTokens();
         return tokensNumber > 5 && tokensNumber < 250;
     }
 
     private boolean isCommentPolish(String commentContent) {
-        boolean value = detector.detectLanguageOf(commentContent) == POLISH;
-        return value;
+        return detector.detectLanguageOf(commentContent) == POLISH;
     }
 }
