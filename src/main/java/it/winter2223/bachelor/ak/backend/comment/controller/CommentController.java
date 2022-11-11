@@ -26,6 +26,8 @@ class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/youtube")
+    @Operation(summary = "Save comments from You Tube")
+    @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     ResponseEntity<List<CommentOutput>> getYTComments() {
         return ResponseEntity.ok(commentService.getYTComments());
     }
