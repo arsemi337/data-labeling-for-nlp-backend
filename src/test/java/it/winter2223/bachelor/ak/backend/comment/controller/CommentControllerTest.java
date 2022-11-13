@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.verify;
@@ -35,9 +34,26 @@ class CommentControllerTest {
 
     @Test
     @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
+    @DisplayName("list of comments from youtube should be returned")
+    void shouldGetYTComments() throws Exception {
+        String commentId = "randomId";
+
+        when(commentService.fetchYTComments()).thenReturn(List.of(getCommentOutput(commentId)));
+        CommentOutput commentOutput = getCommentOutput(commentId);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment/youtube"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[0].commentId", equalTo(commentOutput.commentId())))
+                .andExpect(jsonPath("$[0].content", equalTo("Test content")));
+        verify(commentService).fetchYTComments();
+    }
+
+    @Test
+    @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
     @DisplayName("when correct pageable passed, list of comments should be returned")
     void shouldFetchCommentsList() throws Exception {
-        UUID commentId = UUID.randomUUID();
+        String commentId = "randomId";
         PageImpl<CommentOutput> mockedValue = new PageImpl<>(List.of(getCommentOutput(commentId)));
         int pageNumber = 0;
         int pageSize = 1;
@@ -49,12 +65,12 @@ class CommentControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment?page=" + pageNumber + "&size=" + pageSize))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.content.[0].commentId", equalTo(commentOutput.commentId().toString())))
+                .andExpect(jsonPath("$.content.[0].commentId", equalTo(commentOutput.commentId())))
                 .andExpect(jsonPath("$.content.[0].content", equalTo("Test content")));
         verify(commentService).fetchCommentsList(pageRequest);
     }
 
-    private CommentOutput getCommentOutput(UUID commentId) {
+    private CommentOutput getCommentOutput(String commentId) {
         return CommentOutput.builder()
                 .commentId(commentId)
                 .content("Test content")
