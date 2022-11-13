@@ -36,6 +36,7 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
 
         CommentEmotionAssignment commentEmotionAssignment = CommentEmotionAssignment.builder()
                 .commentEmotionAssignmentId(UUID.randomUUID())
+                .userId(assignmentInput.userId())
                 .commentId(assignmentInput.commentId())
                 .emotion(emotion)
                 .build();

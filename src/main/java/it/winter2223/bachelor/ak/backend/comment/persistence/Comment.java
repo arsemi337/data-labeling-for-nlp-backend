@@ -15,6 +15,4 @@ public class Comment {
     private String commentId;
 
     private String content;
-
-    private boolean isAssigned;
 }

@@ -57,7 +57,7 @@ public class CommentServiceImplTest {
         int pageNumber = 0;
         int pageSize = 1;
         PageRequest defaultPageRequest = PageRequest.of(pageNumber, pageSize);
-        when(commentRepository.findByIsAssigned(false, defaultPageRequest)).thenReturn(mockerValue);
+        when(commentRepository.findAll(defaultPageRequest)).thenReturn(mockerValue);
 
         Page<CommentOutput> commentOutputPage = underTest.fetchCommentsList(defaultPageRequest);
         CommentOutput commentOutput1 = commentOutputPage.getContent().get(0);
@@ -67,7 +67,7 @@ public class CommentServiceImplTest {
         assertEquals("testContent1", commentOutput1.content());
         assertEquals("testId2", commentOutput2.commentId());
         assertEquals("testContent2", commentOutput2.content());
-        verify(commentRepository).findByIsAssigned(false, defaultPageRequest);
+        verify(commentRepository).findAll(defaultPageRequest);
     }
 
     private List<Comment> getCommentsList() {
@@ -75,12 +75,10 @@ public class CommentServiceImplTest {
                 Comment.builder()
                         .commentId("testId1")
                         .content("testContent1")
-                        .isAssigned(false)
                         .build(),
                 Comment.builder()
                         .commentId("testId2")
                         .content("testContent2")
-                        .isAssigned(false)
                         .build()
         );
     }

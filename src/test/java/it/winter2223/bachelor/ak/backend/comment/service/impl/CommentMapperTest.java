@@ -26,7 +26,6 @@ public class CommentMapperTest {
         return Comment.builder()
                 .commentId("testId")
                 .content("testContent")
-                .isAssigned(false)
                 .build();
     }
 }

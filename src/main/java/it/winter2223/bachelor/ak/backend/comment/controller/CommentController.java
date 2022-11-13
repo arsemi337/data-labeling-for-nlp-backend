@@ -40,4 +40,11 @@ class CommentController {
             Pageable pageable) {
         return ResponseEntity.ok(commentService.fetchCommentsList(pageable));
     }
+
+    @GetMapping("/{userId}")
+    @Operation(summary = "Fetch comments to be assigned by the user with userId")
+    ResponseEntity<List<CommentOutput>> fetchCommentsToBeAssigned(
+            @PathVariable("userId") String userId) {
+        return ResponseEntity.ok(commentService.fetchCommentsToBeAssigned(userId));
+    }
 }
