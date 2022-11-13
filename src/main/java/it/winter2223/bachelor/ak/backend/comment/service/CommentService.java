@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<CommentOutput> getYTComments();
+    List<CommentOutput> fetchYTComments();
 
     Page<CommentOutput> fetchCommentsList(Pageable number);
 }

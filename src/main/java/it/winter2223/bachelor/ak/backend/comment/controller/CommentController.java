@@ -26,14 +26,14 @@ class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/youtube")
-    @Operation(summary = "Save comments from You Tube")
+    @Operation(summary = "Fetch comments from You Tube")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     ResponseEntity<List<CommentOutput>> getYTComments() {
-        return ResponseEntity.ok(commentService.getYTComments());
+        return ResponseEntity.ok(commentService.fetchYTComments());
     }
 
     @GetMapping
-    @Operation(summary = "Fetch list of comments")
+    @Operation(summary = "Fetch list of comments from database")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     ResponseEntity<Page<CommentOutput>> fetchCommentsList(
             @Parameter(example = PAGEABLE_EXAMPLE)
