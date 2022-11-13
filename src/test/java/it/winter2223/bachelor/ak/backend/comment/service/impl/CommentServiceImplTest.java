@@ -1,10 +1,9 @@
 package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
-import com.google.api.services.youtube.model.VideoListResponse;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
 import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
-import it.winter2223.bachelor.ak.backend.comment.service.YouTubeService;
+import it.winter2223.bachelor.ak.backend.comment.service.InternetCommentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,16 +29,14 @@ public class CommentServiceImplTest {
     CommentRepository commentRepository;
 
     @Mock
-    YouTubeService youTubeService;
+    InternetCommentService internetCommentService;
 
     @Test
     @DisplayName("should fetch list of youtube videos and then list of comments for these videos")
     void shouldFetchListOfYouTubeComments() {
-        VideoListResponse ytVideos = new VideoListResponse();
         List<Comment> comments = getCommentsList();
 
-        when(youTubeService.fetchMostPopularYTVideos()).thenReturn(ytVideos);
-        when(youTubeService.fetchYTCommentsByVideoIds(any(VideoListResponse.class))).thenReturn(comments);
+        when(internetCommentService.fetchYTCommentsOfPopularVideos()).thenReturn(comments);
         when(commentRepository.save(any())).thenAnswer(answer -> answer.getArgument(0));
 
         List<CommentOutput> commentOutputs = underTest.fetchYTComments();
