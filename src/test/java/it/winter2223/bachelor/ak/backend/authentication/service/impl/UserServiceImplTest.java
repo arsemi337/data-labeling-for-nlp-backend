@@ -9,6 +9,8 @@ import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefresh
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
+import it.winter2223.bachelor.ak.backend.authentication.persistence.User;
+import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,8 @@ class UserServiceImplTest {
     @MockBean
     FirebaseAuth firebaseAuth;
     @Mock
+    UserRepository userRepository;
+    @Mock
     FirebaseAuthService firebaseAuthService;
     @InjectMocks
     UserServiceImpl underTest;
@@ -52,10 +56,12 @@ class UserServiceImplTest {
                 "id_token",
                 "user_id",
                 "project_id");
+        User user = User.builder().userId("userId").build();
 
         when(firebaseAuthService.signUpUser(any(UserInput.class))).thenReturn(signUpResponse);
         doNothing().when(firebaseAuthService).setCustomUserClaims(anyString());
         when(firebaseAuthService.requestRefreshToken(any(RefreshTokenInput.class))).thenReturn(refreshTokenResponse);
+        when(userRepository.save(any(User.class))).thenReturn(user);
         UserOutput userOutput = underTest.singUp(userInput);
 
         assertEquals(userOutput.email(), signUpResponse.email());
@@ -65,6 +71,7 @@ class UserServiceImplTest {
         verify(firebaseAuthService).signUpUser(userInput);
         verify(firebaseAuthService).setCustomUserClaims(signUpResponse.localId());
         verify(firebaseAuthService).requestRefreshToken(new RefreshTokenInput(signUpResponse.refreshToken()));
+        verify(userRepository).save(any(User.class));
     }
 
     @ParameterizedTest
