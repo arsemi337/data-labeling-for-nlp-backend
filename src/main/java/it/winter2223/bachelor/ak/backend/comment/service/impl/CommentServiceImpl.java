@@ -1,5 +1,7 @@
 package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
+import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
+import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
 import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
@@ -15,19 +17,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
+
 @Service
 class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentEmotionAssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
     private final InternetCommentService internetCommentService;
     private final CommentMapper commentMapper;
 
     CommentServiceImpl(CommentRepository commentRepository,
                        CommentEmotionAssignmentRepository assignmentRepository,
+                       UserRepository userRepository,
                        InternetCommentService internetCommentService) {
         this.commentRepository = commentRepository;
         this.assignmentRepository = assignmentRepository;
+        this.userRepository = userRepository;
         this.internetCommentService = internetCommentService;
         this.commentMapper = new CommentMapper();
     }
@@ -52,6 +59,9 @@ class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentOutput> fetchCommentsToBeAssigned(String userId) {
+        userRepository.findByUserId(userId)
+                .orElseThrow(() -> new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage()));
+
         List<CommentEmotionAssignment> assignments = assignmentRepository.findByUserId(userId);
         List<String> userAssignedCommentsIds = new ArrayList<>();
         assignments.forEach(assignment -> userAssignedCommentsIds.add(assignment.getCommentId()));
