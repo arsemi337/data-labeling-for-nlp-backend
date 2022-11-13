@@ -59,18 +59,37 @@ class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentOutput> fetchCommentsToBeAssigned(String userId) {
+        validateUserId(userId);
+
+        List<String> userAssignedCommentsIds = getIdsOfCommentsAssignedByUser(userId);
+
+        List<Comment> notAssignedComments = getCommentsNotAssignedByUser(userAssignedCommentsIds);
+
+        return getCommentsToBeAssigned(notAssignedComments);
+    }
+
+    private void validateUserId(String userId) {
         userRepository.findByUserId(userId)
                 .orElseThrow(() -> new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage()));
+    }
 
+    private List<String> getIdsOfCommentsAssignedByUser(String userId) {
         List<CommentEmotionAssignment> assignments = assignmentRepository.findByUserId(userId);
         List<String> userAssignedCommentsIds = new ArrayList<>();
         assignments.forEach(assignment -> userAssignedCommentsIds.add(assignment.getCommentId()));
+        return userAssignedCommentsIds;
+    }
 
-        List<Comment> notAssignedComments = new ArrayList<>(commentRepository.findAll().stream()
+    private List<Comment> getCommentsNotAssignedByUser(List<String> userAssignedCommentsIds) {
+        return new ArrayList<>(commentRepository.findAll().stream()
                 .filter(comment -> !userAssignedCommentsIds.contains(comment.getCommentId())).toList());
+    }
+
+    private List<CommentOutput> getCommentsToBeAssigned(List<Comment> notAssignedComments) {
         Collections.shuffle(notAssignedComments);
         int elementsNumber = Math.min(notAssignedComments.size(), 20);
         List<Comment> commentsSublist = notAssignedComments.subList(0, elementsNumber - 1);
+
         List<CommentOutput> commentsToBeAssigned = new ArrayList<>();
         commentsSublist.forEach(comment -> commentsToBeAssigned.add(commentMapper.mapToCommentOutput(comment)));
         return commentsToBeAssigned;
