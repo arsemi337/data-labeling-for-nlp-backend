@@ -27,4 +27,4 @@ Additionally, the following command executed in the project directory will run t
 The application has a Swagger platform configured, which gives access to the application's REST API in a visualized and interactive form. 
 This can be accessed by entering the following url address:
 
-`localhost:8080`
+`localhost:8080/swagger-ui/index.html`

@@ -19,7 +19,7 @@ public class CommentEmotionAssignment {
     @Id
     private UUID commentEmotionAssignmentId;
 
-    private UUID commentId;
+    private String commentId;
 
     private Emotion emotion;
 }
