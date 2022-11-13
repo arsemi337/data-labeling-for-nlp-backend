@@ -34,6 +34,23 @@ class CommentControllerTest {
 
     @Test
     @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
+    @DisplayName("list of comments from youtube should be returned")
+    void shouldGetYTComments() throws Exception {
+        String commentId = "randomId";
+
+        when(commentService.fetchYTComments()).thenReturn(List.of(getCommentOutput(commentId)));
+        CommentOutput commentOutput = getCommentOutput(commentId);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment/youtube"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[0].commentId", equalTo(commentOutput.commentId())))
+                .andExpect(jsonPath("$[0].content", equalTo("Test content")));
+        verify(commentService).fetchYTComments();
+    }
+
+    @Test
+    @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
     @DisplayName("when correct pageable passed, list of comments should be returned")
     void shouldFetchCommentsList() throws Exception {
         String commentId = "randomId";
