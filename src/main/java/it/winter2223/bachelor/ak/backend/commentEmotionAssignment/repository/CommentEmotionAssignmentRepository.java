@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface CommentEmotionAssignmentRepository extends MongoRepository<CommentEmotionAssignment, UUID> {
 
     List<CommentEmotionAssignment> findByUserId(String userId);
+    List<CommentEmotionAssignment> findByCommentId(String commentId);
 }
