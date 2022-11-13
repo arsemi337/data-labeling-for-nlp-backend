@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
         return UserOutput.builder()
                 .email(signUpResponse.email())
+                .userId(refreshTokenResponse.user_id())
                 .idToken(refreshTokenResponse.id_token())
                 .refreshToken(refreshTokenResponse.refresh_token())
                 .build();
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
 
         return UserOutput.builder()
                 .email(signInResponse.email())
+                .userId(signInResponse.localId())
                 .idToken(signInResponse.idToken())
                 .refreshToken(signInResponse.refreshToken())
                 .build();
@@ -58,6 +60,7 @@ public class UserServiceImpl implements UserService {
         GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(refreshTokenInput);
 
         return RefreshTokenOutput.builder()
+                .userId(refreshTokenResponse.user_id())
                 .idToken(refreshTokenResponse.id_token())
                 .refreshToken(refreshTokenResponse.refresh_token())
                 .build();
