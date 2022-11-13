@@ -22,21 +22,15 @@ public class CommentScheduler {
 
     @Scheduled(cron = "${cron.expression}")
     public void downloadYTComments() {
-        System.out.println("starting");
         List<Comment> comments;
 
         VideoListResponse ytVideos = youTubeService.fetchMostPopularYTVideos();
         if (ytVideos == null) {
             return;
         }
-        System.out.println("videos: " + ytVideos.getItems().size());
 
         comments = youTubeService.fetchYTCommentsByVideoIds(ytVideos);
 
-        System.out.println("comments: " + comments.size());
-
         commentRepository.saveAll(comments);
-
-        System.out.println("finished");
     }
 }
