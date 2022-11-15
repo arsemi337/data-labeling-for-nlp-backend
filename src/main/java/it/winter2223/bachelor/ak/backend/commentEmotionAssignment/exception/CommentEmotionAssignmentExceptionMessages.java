@@ -2,7 +2,7 @@ package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception;
 
 public enum CommentEmotionAssignmentExceptionMessages {
 
-    COMMENT_NOT_FOUND("Comment with entered ID does not exist"),
+    ASSIGNMENT_ALREADY_EXISTS("There already exists this user's assignment for this comment"),
     WRONG_EMOTION("Entered emotion does not exist");
 
     private final String message;

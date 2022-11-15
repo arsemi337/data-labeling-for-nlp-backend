@@ -37,7 +37,7 @@ public class YouTubeServiceImpl implements YouTubeService {
             videos = request.setKey(youtubeApiKey)
                     .setChart("mostPopular")
                     .setRegionCode("pl")
-                    .setMaxResults(50L)
+                    .setMaxResults(1L)
                     .setFields("items(id)")
                     .execute();
         } catch (IOException ioException) {
@@ -54,7 +54,7 @@ public class YouTubeServiceImpl implements YouTubeService {
             commentsResponse = commentsRequest.setKey(youtubeApiKey)
                     .setPart(List.of("snippet"))
                     .setVideoId(videoId)
-                    .setMaxResults(50L)
+                    .setMaxResults(10L)
                     .setOrder("relevance")
                     .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
                     .execute();

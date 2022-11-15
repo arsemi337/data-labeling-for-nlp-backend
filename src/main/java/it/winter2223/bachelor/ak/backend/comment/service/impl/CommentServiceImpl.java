@@ -63,24 +63,9 @@ class CommentServiceImpl implements CommentService {
 
         List<Comment> notAssignedComments = getCommentsNotAssignedByUser(userAssignedCommentsIds);
 
-        Map<Comment, Integer> assignmentsNumberPerComment = new HashMap<>();
+        Collections.sort(notAssignedComments);
 
-        notAssignedComments.forEach(comment -> {
-            List<CommentEmotionAssignment> assignments = assignmentRepository.findByCommentId(comment.getCommentId());
-            assignmentsNumberPerComment.put(comment, assignments.size());
-        });
-
-        List<Map.Entry<Comment, Integer>> list = new LinkedList<>(assignmentsNumberPerComment.entrySet());
-
-        list.sort((Map.Entry.comparingByValue()));
-
-        Map<Comment, Integer> sortedMap = new LinkedHashMap<>();
-        list.forEach(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
-
-        List<Comment> commentsSublist = new ArrayList<>();
-        int elementsNumber = Math.min(sortedMap.size(), 20);
-        sortedMap.entrySet().stream().limit(elementsNumber).forEach(entry -> commentsSublist.add(entry.getKey()));
-
+        List<Comment> commentsSublist = getCommentsSublist(notAssignedComments);
 
         List<CommentOutput> commentsToBeAssigned = new ArrayList<>();
         commentsSublist.forEach(comment -> commentsToBeAssigned.add(commentMapper.mapToCommentOutput(comment)));
@@ -103,6 +88,15 @@ class CommentServiceImpl implements CommentService {
     private List<Comment> getCommentsNotAssignedByUser(List<String> userAssignedCommentsIds) {
         return new ArrayList<>(commentRepository.findAll().stream()
                 .filter(comment -> !userAssignedCommentsIds.contains(comment.getCommentId())).toList());
+    }
+
+    private static List<Comment> getCommentsSublist(List<Comment> notAssignedComments) {
+        List<Comment> commentsSublist = new ArrayList<>();
+        int elementsNumber = Math.min(notAssignedComments.size(), 20);
+        if (elementsNumber > 0) {
+            commentsSublist = notAssignedComments.subList(0, elementsNumber);
+        }
+        return commentsSublist;
     }
 
 }
