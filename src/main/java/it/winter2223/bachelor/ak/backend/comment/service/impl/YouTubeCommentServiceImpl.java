@@ -65,7 +65,7 @@ public class YouTubeCommentServiceImpl implements InternetCommentService {
             comments.add(Comment.builder()
                     .commentId(commentId)
                     .content(commentContent)
-                    .isAssigned(false)
+                    .assignmentsNumber(0)
                     .build());
         }
     }

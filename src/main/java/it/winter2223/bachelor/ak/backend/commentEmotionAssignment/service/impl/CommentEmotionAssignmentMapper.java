@@ -14,6 +14,7 @@ class CommentEmotionAssignmentMapper {
     CommentEmotionAssignmentOutput mapToCommentEmotionAssignmentOutput(CommentEmotionAssignment commentEmotionAssignment) {
         return CommentEmotionAssignmentOutput.builder()
                 .assignmentId(commentEmotionAssignment.getCommentEmotionAssignmentId())
+                .userId(commentEmotionAssignment.getUserId())
                 .commentId(commentEmotionAssignment.getCommentId())
                 .emotionDto(
                         emotionMapper.mapToEmotionDto(

@@ -10,5 +10,7 @@ public interface CommentService {
 
     List<CommentOutput> fetchYTComments();
 
-    Page<CommentOutput> fetchCommentsList(Pageable number);
+    Page<CommentOutput> fetchCommentsList(Pageable pageable);
+
+    List<CommentOutput> fetchCommentsToBeAssigned(String userId);
 }
