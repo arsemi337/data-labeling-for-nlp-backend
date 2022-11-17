@@ -1,4 +1,7 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto;
 
-public record CommentEmotionAssignmentInput(String commentId, String emotion) {
+import lombok.Builder;
+
+@Builder
+public record CommentEmotionAssignmentInput(String userId, String commentId, String emotion) {
 }

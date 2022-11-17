@@ -19,7 +19,7 @@ public class CommentScheduler {
         this.internetCommentService = internetCommentService;
     }
 
-    @Scheduled(cron = "${cron.expression}")
+//    @Scheduled(cron = "${cron.expression}")
     public void downloadYTComments() {
         List<Comment> comments;
 

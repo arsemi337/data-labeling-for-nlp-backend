@@ -39,34 +39,38 @@ class CommentEmotionAssignmentControllerTest {
     @DisplayName("when correct data is passed, CommentEmotionAssignmentOutput should be returned")
     void shouldPostCommentEmotionAssignment() throws Exception {
         UUID assignmentId = UUID.randomUUID();
-        String commentId = "randomId";
+        String userId = "userId";
+        String commentId = "commentId";
 
         when(commentEmotionAssignmentService.postCommentEmotionAssignment(any(CommentEmotionAssignmentInput.class)))
-                .thenReturn(getAssignmentOutput(assignmentId, commentId));
-        CommentEmotionAssignmentOutput assignmentOutput = getAssignmentOutput(assignmentId, commentId);
+                .thenReturn(getAssignmentOutput(assignmentId, userId, commentId));
+        CommentEmotionAssignmentOutput assignmentOutput = getAssignmentOutput(assignmentId, userId, commentId);
 
-        mockMvc.perform(getAssignmentPostRequest(commentId))
+        mockMvc.perform(getAssignmentPostRequest(userId, commentId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.assignmentId", equalTo(assignmentOutput.assignmentId().toString())))
+                .andExpect(jsonPath("$.userId", equalTo(assignmentOutput.userId())))
                 .andExpect(jsonPath("$.commentId", equalTo(assignmentOutput.commentId())))
                 .andExpect(jsonPath("$.emotionDto", equalTo(EmotionDto.JOY.toString())));
         verify(commentEmotionAssignmentService).postCommentEmotionAssignment(any(CommentEmotionAssignmentInput.class));
     }
 
-    private static MockHttpServletRequestBuilder getAssignmentPostRequest(String commentId) {
+    private static MockHttpServletRequestBuilder getAssignmentPostRequest(String userId, String commentId) {
         return MockMvcRequestBuilders.post("/api/v1/assignment")
                 .contentType("application/json")
                 .content(String.format("""
                         {
+                            "userId": "%s",
                             "commentId": "%s",
                             "emotion": "JOY"
                         }
-                        """, commentId));
+                        """, userId, commentId));
     }
 
-    private CommentEmotionAssignmentOutput getAssignmentOutput(UUID assignmentId, String commentId) {
+    private CommentEmotionAssignmentOutput getAssignmentOutput(UUID assignmentId, String userId, String commentId) {
         return CommentEmotionAssignmentOutput.builder()
                 .assignmentId(assignmentId)
+                .userId(userId)
                 .commentId(commentId)
                 .emotionDto(EmotionDto.JOY)
                 .build();

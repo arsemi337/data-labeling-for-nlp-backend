@@ -5,5 +5,5 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record CommentEmotionAssignmentOutput(UUID assignmentId, String commentId, EmotionDto emotionDto) {
+public record CommentEmotionAssignmentOutput(UUID assignmentId, String userId, String commentId, EmotionDto emotionDto) {
 }

@@ -19,6 +19,8 @@ public class CommentEmotionAssignment {
     @Id
     private UUID commentEmotionAssignmentId;
 
+    private String userId;
+
     private String commentId;
 
     private Emotion emotion;

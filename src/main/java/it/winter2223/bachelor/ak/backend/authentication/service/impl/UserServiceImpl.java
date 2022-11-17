@@ -5,6 +5,8 @@ import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefresh
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
+import it.winter2223.bachelor.ak.backend.authentication.persistence.User;
+import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,11 @@ import static it.winter2223.bachelor.ak.backend.authentication.exception.Firebas
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
     private final FirebaseAuthService firebaseAuthService;
 
-
-    public UserServiceImpl(FirebaseAuthService firebaseAuthService) {
+    public UserServiceImpl(UserRepository userRepository, FirebaseAuthService firebaseAuthService) {
+        this.userRepository = userRepository;
         this.firebaseAuthService = firebaseAuthService;
     }
 
@@ -33,8 +36,14 @@ public class UserServiceImpl implements UserService {
         GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(
                 new RefreshTokenInput(signUpResponse.refreshToken()));
 
+        userRepository.save(
+                User.builder()
+                .userId(refreshTokenResponse.user_id())
+                .build());
+
         return UserOutput.builder()
                 .email(signUpResponse.email())
+                .userId(refreshTokenResponse.user_id())
                 .idToken(refreshTokenResponse.id_token())
                 .refreshToken(refreshTokenResponse.refresh_token())
                 .build();
@@ -48,6 +57,7 @@ public class UserServiceImpl implements UserService {
 
         return UserOutput.builder()
                 .email(signInResponse.email())
+                .userId(signInResponse.localId())
                 .idToken(signInResponse.idToken())
                 .refreshToken(signInResponse.refreshToken())
                 .build();
@@ -58,6 +68,7 @@ public class UserServiceImpl implements UserService {
         GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(refreshTokenInput);
 
         return RefreshTokenOutput.builder()
+                .userId(refreshTokenResponse.user_id())
                 .idToken(refreshTokenResponse.id_token())
                 .refreshToken(refreshTokenResponse.refresh_token())
                 .build();
