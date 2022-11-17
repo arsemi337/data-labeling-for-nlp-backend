@@ -74,8 +74,9 @@ class CommentServiceImpl implements CommentService {
     }
 
     private void validateUserId(String userId) {
-        userRepository.findByUserId(userId)
-                .orElseThrow(() -> new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage()));
+        if (!userRepository.existsById(userId)) {
+            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage());
+        }
     }
 
     private List<String> getIdsOfCommentsAssignedByUser(String userId) {

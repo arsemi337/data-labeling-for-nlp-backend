@@ -1,9 +1,11 @@
 package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
+import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
 import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.InternetCommentService;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.repository.CommentEmotionAssignmentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,6 +27,12 @@ public class CommentServiceImplTest {
 
     @InjectMocks
     CommentServiceImpl underTest;
+
+    @Mock
+    CommentEmotionAssignmentRepository assignmentRepository;
+
+    @Mock
+    UserRepository userRepository;
 
     @Mock
     CommentRepository commentRepository;
@@ -70,15 +79,37 @@ public class CommentServiceImplTest {
         verify(commentRepository).findAll(defaultPageRequest);
     }
 
+    @Test
+    @DisplayName("should fetch list of comments to be assigned by user")
+    void shouldFetchCommentsToBeAssigned() {
+        String userId = "userId";
+
+        when(userRepository.existsById(anyString())).thenReturn(true);
+        when(assignmentRepository.findByUserId(anyString())).thenReturn(Collections.emptyList());
+        when(commentRepository.findAll()).thenReturn(getCommentsList());
+
+        List<CommentOutput> commentOutputs = underTest.fetchCommentsToBeAssigned(userId);
+
+        assertEquals("testId2", commentOutputs.get(0).commentId());
+        assertEquals("testContent2", commentOutputs.get(0).content());
+        assertEquals("testId1", commentOutputs.get(1).commentId());
+        assertEquals("testContent1", commentOutputs.get(1).content());
+        verify(userRepository).existsById(anyString());
+        verify(assignmentRepository).findByUserId(anyString());
+        verify(commentRepository).findAll();
+    }
+
     private List<Comment> getCommentsList() {
         return List.of(
                 Comment.builder()
                         .commentId("testId1")
                         .content("testContent1")
+                        .assignmentsNumber(5)
                         .build(),
                 Comment.builder()
                         .commentId("testId2")
                         .content("testContent2")
+                        .assignmentsNumber(2)
                         .build()
         );
     }
