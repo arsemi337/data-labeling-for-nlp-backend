@@ -1,5 +1,7 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.impl;
 
+import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
+import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
 import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
 import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
 import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.ASSIGNMENT_ALREADY_EXISTS;
 import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.WRONG_EMOTION;
@@ -22,12 +25,15 @@ import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.excepti
 @Service
 public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssignmentService {
 
+    private final UserRepository userRepository;
     private final CommentEmotionAssignmentRepository assignmentRepository;
     private final CommentRepository commentRepository;
     private final CommentEmotionAssignmentMapper commentEmotionAssignmentMapper;
 
-    CommentEmotionAssignmentServiceImpl(CommentEmotionAssignmentRepository assignmentRepository,
+    CommentEmotionAssignmentServiceImpl(UserRepository userRepository,
+                                        CommentEmotionAssignmentRepository assignmentRepository,
                                         CommentRepository commentRepository) {
+        this.userRepository = userRepository;
         this.assignmentRepository = assignmentRepository;
         this.commentRepository = commentRepository;
         this.commentEmotionAssignmentMapper = new CommentEmotionAssignmentMapper();
@@ -36,7 +42,7 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
     @Override
     @Transactional
     public CommentEmotionAssignmentOutput postCommentEmotionAssignment(CommentEmotionAssignmentInput assignmentInput) {
-        validateCommentId(assignmentInput);
+        validateUserId(assignmentInput.userId());
         Emotion emotion = getEnumFrom(assignmentInput.emotion());
 
         Comment comment = commentRepository.findByCommentId(assignmentInput.commentId())
@@ -59,9 +65,9 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
         return commentEmotionAssignmentMapper.mapToCommentEmotionAssignmentOutput(assignmentRepository.save(commentEmotionAssignment));
     }
 
-    private void validateCommentId(CommentEmotionAssignmentInput assignmentInput) {
-        if(!commentRepository.existsById(assignmentInput.commentId())) {
-            throw new CommentException(NO_COMMENT_WITH_ENTERED_ID.getMessage());
+    private void validateUserId(String userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage());
         }
     }
 
