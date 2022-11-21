@@ -15,6 +15,8 @@ import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.Commen
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
@@ -41,15 +43,27 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
 
     @Override
     @Transactional
-    public CommentEmotionAssignmentOutput postCommentEmotionAssignment(CommentEmotionAssignmentInput assignmentInput) {
+    public List<CommentEmotionAssignmentOutput> postCommentEmotionAssignment(List<CommentEmotionAssignmentInput> assignmentInputs) {
+        List<CommentEmotionAssignmentOutput> assignmentOutputs = new ArrayList<>();
+
+        assignmentInputs.forEach(assignmentInput -> processAssignmentInput(assignmentOutputs, assignmentInput));
+
+        return assignmentOutputs;
+    }
+
+    private void processAssignmentInput(
+            List<CommentEmotionAssignmentOutput> assignmentOutputs,
+            CommentEmotionAssignmentInput assignmentInput) {
         validateUserId(assignmentInput.userId());
         Emotion emotion = getEnumFrom(assignmentInput.emotion());
 
         Comment comment = commentRepository.findByCommentId(assignmentInput.commentId())
-                .orElseThrow(() -> new CommentException(NO_COMMENT_WITH_ENTERED_ID.getMessage()));
+                .orElseThrow(() -> new CommentException(
+                        NO_COMMENT_WITH_ENTERED_ID.getMessage() + " '" + assignmentInput.commentId() + "'"));
         if (assignmentRepository.findByUserIdAndCommentId(
                 assignmentInput.userId(), assignmentInput.commentId()).isPresent()) {
-            throw new CommentEmotionAssignmentException(ASSIGNMENT_ALREADY_EXISTS.getMessage());
+            throw new CommentEmotionAssignmentException(
+                    ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + assignmentInput.commentId() + ")");
         }
 
         comment.increaseAssignmentsNumber();
@@ -62,18 +76,21 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
                 .emotion(emotion)
                 .build();
 
-        return commentEmotionAssignmentMapper.mapToCommentEmotionAssignmentOutput(assignmentRepository.save(commentEmotionAssignment));
+        assignmentOutputs.add(
+                commentEmotionAssignmentMapper
+                        .mapToCommentEmotionAssignmentOutput(
+                                assignmentRepository.save(commentEmotionAssignment)));
     }
 
     private void validateUserId(String userId) {
         if (!userRepository.existsById(userId)) {
-            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage());
+            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage() + " '" + userId + "'");
         }
     }
 
     private Emotion getEnumFrom(String emotion) {
         if(!Emotion.contains(emotion)) {
-            throw new CommentEmotionAssignmentException(WRONG_EMOTION.getMessage());
+            throw new CommentEmotionAssignmentException(WRONG_EMOTION.getMessage() + " (" + emotion + ")");
         }
         return Emotion.valueOf(emotion);
     }

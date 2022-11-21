@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Tag(name = "Comment emotion assignment")
 @RequestMapping("/api/v1/assignment")
@@ -26,8 +28,8 @@ class CommentEmotionAssignmentController {
     @PostMapping
     @Operation(summary = "Post comment-emotion assignment")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
-    ResponseEntity<CommentEmotionAssignmentOutput> postCommentEmotionAssignment(
-            @RequestBody CommentEmotionAssignmentInput commentEmotionAssignmentInput) {
+    ResponseEntity<List<CommentEmotionAssignmentOutput>> postCommentEmotionAssignment(
+            @RequestBody List<CommentEmotionAssignmentInput> commentEmotionAssignmentInput) {
         return ResponseEntity.ok(commentEmotionAssignmentService.postCommentEmotionAssignment(commentEmotionAssignmentInput));
     }
 }
