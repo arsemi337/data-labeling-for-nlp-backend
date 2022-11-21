@@ -32,7 +32,7 @@ class CommentController {
         return ResponseEntity.ok(commentService.fetchYTComments());
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Fetch list of comments from database")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     ResponseEntity<Page<CommentOutput>> fetchCommentsList(
@@ -41,10 +41,11 @@ class CommentController {
         return ResponseEntity.ok(commentService.fetchCommentsList(pageable));
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping
     @Operation(summary = "Fetch comments to be assigned by the user with userId")
     ResponseEntity<List<CommentOutput>> fetchCommentsToBeAssigned(
-            @PathVariable("userId") String userId) {
-        return ResponseEntity.ok(commentService.fetchCommentsToBeAssigned(userId));
+            @RequestParam(name = "userId") String userId,
+            @RequestParam(name = "commentsNumber") String commentsNumber) {
+        return ResponseEntity.ok(commentService.fetchCommentsToBeAssigned(userId, commentsNumber));
     }
 }

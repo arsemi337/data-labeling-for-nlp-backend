@@ -12,5 +12,5 @@ public interface CommentService {
 
     Page<CommentOutput> fetchCommentsList(Pageable pageable);
 
-    List<CommentOutput> fetchCommentsToBeAssigned(String userId);
+    List<CommentOutput> fetchCommentsToBeAssigned(String userId, String commentsNumber);
 }

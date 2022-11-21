@@ -63,11 +63,30 @@ class CommentControllerTest {
         CommentOutput commentOutput = getCommentOutput(commentId);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment?page=" + pageNumber + "&size=" + pageSize))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment/all?page=" + pageNumber + "&size=" + pageSize))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.content.[0].commentId", equalTo(commentOutput.commentId())))
                 .andExpect(jsonPath("$.content.[0].content", equalTo("Test content")));
         verify(commentService).fetchCommentsList(pageRequest);
+    }
+
+    @Test
+    @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
+    @DisplayName("when correct parameters are passed, list of comments to be assigned should be returned")
+    void shouldFetchCommentsToBeAssigned() throws Exception {
+        String commentId = "commentId";
+        String userId = "userId";
+        String commentsNumber = "1";
+
+        when(commentService.fetchCommentsToBeAssigned(userId, commentsNumber)).thenReturn(List.of(getCommentOutput(commentId)));
+        CommentOutput commentOutput = getCommentOutput(commentId);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment?userId=" + userId + "&commentsNumber=" + commentsNumber))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$[0].commentId", equalTo(commentOutput.commentId())))
+                .andExpect(jsonPath("$[0].content", equalTo("Test content")));
+        verify(commentService).fetchCommentsToBeAssigned(userId, commentsNumber);
     }
 
     private CommentOutput getCommentOutput(String commentId) {
