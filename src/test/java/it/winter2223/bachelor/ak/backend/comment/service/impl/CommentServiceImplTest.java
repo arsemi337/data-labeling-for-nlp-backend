@@ -83,13 +83,15 @@ public class CommentServiceImplTest {
     @DisplayName("should fetch list of comments to be assigned by user")
     void shouldFetchCommentsToBeAssigned() {
         String userId = "userId";
+        String commentsNumber = "2";
 
         when(userRepository.existsById(anyString())).thenReturn(true);
         when(assignmentRepository.findByUserId(anyString())).thenReturn(Collections.emptyList());
         when(commentRepository.findAll()).thenReturn(getCommentsList());
 
-        List<CommentOutput> commentOutputs = underTest.fetchCommentsToBeAssigned(userId);
+        List<CommentOutput> commentOutputs = underTest.fetchCommentsToBeAssigned(userId, commentsNumber);
 
+        assertEquals(2, commentOutputs.size());
         assertEquals("testId2", commentOutputs.get(0).commentId());
         assertEquals("testContent2", commentOutputs.get(0).content());
         assertEquals("testId1", commentOutputs.get(1).commentId());

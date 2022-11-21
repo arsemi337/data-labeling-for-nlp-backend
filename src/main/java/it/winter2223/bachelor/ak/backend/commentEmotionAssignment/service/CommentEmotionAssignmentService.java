@@ -3,7 +3,9 @@ package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentInput;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentOutput;
 
+import java.util.List;
+
 public interface CommentEmotionAssignmentService {
 
-    CommentEmotionAssignmentOutput postCommentEmotionAssignment(CommentEmotionAssignmentInput assignmentInput);
+    List<CommentEmotionAssignmentOutput> postCommentEmotionAssignment(List<CommentEmotionAssignmentInput> assignmentInputs);
 }

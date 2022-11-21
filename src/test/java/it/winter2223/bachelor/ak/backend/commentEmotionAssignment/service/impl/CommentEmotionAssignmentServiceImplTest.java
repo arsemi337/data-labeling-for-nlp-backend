@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
@@ -50,11 +51,11 @@ public class CommentEmotionAssignmentServiceImplTest {
     @EnumSource(Emotion.class)
     @DisplayName("when proper assignment input is passed, a comment emotion assignment should be created")
     void shouldPostEmotionAssignment(Emotion emotion) {
-        CommentEmotionAssignmentInput input = CommentEmotionAssignmentInput.builder()
+        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
                 .commentId("commentId")
                 .emotion(emotion.toString())
-                .build();
+                .build());
         Comment comment = Comment.builder()
                         .commentId("commentId")
                         .content("content")
@@ -67,11 +68,11 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(commentRepository.save(any(Comment.class))).thenAnswer(answer -> answer.getArgument(0));
         when(assignmentRepository.save(any(CommentEmotionAssignment.class))).thenAnswer(answer -> answer.getArgument(0));
 
-        CommentEmotionAssignmentOutput output = underTest.postCommentEmotionAssignment(input);
+        List<CommentEmotionAssignmentOutput> output = underTest.postCommentEmotionAssignment(input);
 
-        assertEquals("userId", output.userId());
-        assertEquals("commentId", output.commentId());
-        assertEquals(emotion.toString(), output.emotionDto().toString());
+        assertEquals("userId", output.get(0).userId());
+        assertEquals("commentId", output.get(0).commentId());
+        assertEquals(emotion.toString(), output.get(0).emotionDto().toString());
         verify(commentRepository).save(any());
         verify(assignmentRepository).save(any());
     }
@@ -80,60 +81,63 @@ public class CommentEmotionAssignmentServiceImplTest {
     @EnumSource(Emotion.class)
     @DisplayName("when invalid user id is passed, a FirebaseAuthenticationException exception should be thrown")
     void shouldThrowFirebaseAuthenticationExceptionWhenPostingAssignmentForWrongUserId(Emotion emotion) {
-        CommentEmotionAssignmentInput input = CommentEmotionAssignmentInput.builder()
+        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
                 .commentId("commentId")
                 .emotion(emotion.toString())
-                .build();
+                .build());
 
         when(userRepository.existsById(anyString())).thenReturn(false);
 
         assertThatExceptionOfType(FirebaseAuthenticationException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input)).withMessage(NO_USER_WITH_PASSED_ID.getMessage());
+                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .withMessage(NO_USER_WITH_PASSED_ID.getMessage() + " '" + input.get(0).userId() + "'");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"joy", "enjoyment", "peace"})
     @DisplayName("when invalid emotion is passed, a CommentEmotionAssignmentException exception should be thrown")
     void shouldThrowCommentEmotionAssignmentExceptionWhenPostingAssignmentForWrongEmotion(String emotion) {
-        CommentEmotionAssignmentInput input = CommentEmotionAssignmentInput.builder()
+        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
                 .commentId("commentId")
                 .emotion(emotion)
-                .build();
+                .build());
 
         when(userRepository.existsById(anyString())).thenReturn(true);
 
         assertThatExceptionOfType(CommentEmotionAssignmentException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input)).withMessage(WRONG_EMOTION.getMessage());
+                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .withMessage(WRONG_EMOTION.getMessage() + " (" + input.get(0).emotion() + ")");
     }
 
     @ParameterizedTest
     @EnumSource(Emotion.class)
     @DisplayName("when invalid comment id is passed, a CommentException exception should be thrown")
     void shouldThrowCommentExceptionWhenPostingAssignmentForWrongCommentId(Emotion emotion) {
-        CommentEmotionAssignmentInput input = CommentEmotionAssignmentInput.builder()
+        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
                 .commentId("commentId")
                 .emotion(emotion.toString())
-                .build();
+                .build());
 
         when(userRepository.existsById(anyString())).thenReturn(true);
         when(commentRepository.findByCommentId(anyString())).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(CommentException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input)).withMessage(NO_COMMENT_WITH_ENTERED_ID.getMessage());
+                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .withMessage(NO_COMMENT_WITH_ENTERED_ID.getMessage() + " '" + input.get(0).commentId() + "'");
     }
 
     @ParameterizedTest
     @EnumSource(Emotion.class)
     @DisplayName("when already existing assignment is passe, a CommentEmotionAssignmentException exception should be thrown")
     void shouldThrowCommentEmotionAssignmentExceptionWhenTryingToDuplicateAssignment(Emotion emotion) {
-        CommentEmotionAssignmentInput input = CommentEmotionAssignmentInput.builder()
+        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
                 .commentId("commentId")
                 .emotion(emotion.toString())
-                .build();
+                .build());
         Comment comment = Comment.builder()
                 .commentId("commentId")
                 .content("content")
@@ -149,6 +153,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(assignmentRepository.findByUserIdAndCommentId(anyString(), anyString())).thenReturn(Optional.of(assignment));
 
         assertThatExceptionOfType(CommentEmotionAssignmentException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input)).withMessage(ASSIGNMENT_ALREADY_EXISTS.getMessage());
+                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .withMessage(ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + input.get(0).commentId() + ")");
     }
 }

@@ -1,6 +1,5 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.controller;
 
-import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentInput;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentOutput;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.EmotionDto;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.CommentEmotionAssignmentService;
@@ -16,10 +15,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,37 +42,39 @@ class CommentEmotionAssignmentControllerTest {
         String userId = "userId";
         String commentId = "commentId";
 
-        when(commentEmotionAssignmentService.postCommentEmotionAssignment(any(CommentEmotionAssignmentInput.class)))
+        when(commentEmotionAssignmentService.postCommentEmotionAssignment(anyList()))
                 .thenReturn(getAssignmentOutput(assignmentId, userId, commentId));
-        CommentEmotionAssignmentOutput assignmentOutput = getAssignmentOutput(assignmentId, userId, commentId);
+        List<CommentEmotionAssignmentOutput> assignmentOutput = getAssignmentOutput(assignmentId, userId, commentId);
 
         mockMvc.perform(getAssignmentPostRequest(userId, commentId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.assignmentId", equalTo(assignmentOutput.assignmentId().toString())))
-                .andExpect(jsonPath("$.userId", equalTo(assignmentOutput.userId())))
-                .andExpect(jsonPath("$.commentId", equalTo(assignmentOutput.commentId())))
-                .andExpect(jsonPath("$.emotionDto", equalTo(EmotionDto.JOY.toString())));
-        verify(commentEmotionAssignmentService).postCommentEmotionAssignment(any(CommentEmotionAssignmentInput.class));
+                .andExpect(jsonPath("$[0].assignmentId", equalTo(assignmentOutput.get(0).assignmentId().toString())))
+                .andExpect(jsonPath("$[0].userId", equalTo(assignmentOutput.get(0).userId())))
+                .andExpect(jsonPath("$[0].commentId", equalTo(assignmentOutput.get(0).commentId())))
+                .andExpect(jsonPath("$[0].emotionDto", equalTo(EmotionDto.JOY.toString())));
+        verify(commentEmotionAssignmentService).postCommentEmotionAssignment(anyList());
     }
 
     private static MockHttpServletRequestBuilder getAssignmentPostRequest(String userId, String commentId) {
         return MockMvcRequestBuilders.post("/api/v1/assignment")
                 .contentType("application/json")
                 .content(String.format("""
-                        {
-                            "userId": "%s",
-                            "commentId": "%s",
-                            "emotion": "JOY"
-                        }
+                        [
+                            {
+                                "userId": "%s",
+                                "commentId": "%s",
+                                "emotion": "JOY"
+                            }
+                        ]
                         """, userId, commentId));
     }
 
-    private CommentEmotionAssignmentOutput getAssignmentOutput(UUID assignmentId, String userId, String commentId) {
-        return CommentEmotionAssignmentOutput.builder()
+    private List<CommentEmotionAssignmentOutput> getAssignmentOutput(UUID assignmentId, String userId, String commentId) {
+        return List.of(CommentEmotionAssignmentOutput.builder()
                 .assignmentId(assignmentId)
                 .userId(userId)
                 .commentId(commentId)
                 .emotionDto(EmotionDto.JOY)
-                .build();
+                .build());
     }
 }
