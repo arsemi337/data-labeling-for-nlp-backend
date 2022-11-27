@@ -34,7 +34,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("when correct body is passed, a user should be signed up")
     void shouldSignUp() throws Exception {
-        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "idToken", "refreshToken");
+        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "idToken", "expiresIn", "refreshToken");
 
         when(userService.singUp(any(UserInput.class))).thenReturn(mockedValue);
 
@@ -50,7 +50,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("when correct body is passed, a user should be signed in")
     void shouldSignIn() throws Exception {
-        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "idToken", "refreshToken");
+        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "idToken", "expiresIn", "refreshToken");
 
         when(userService.signIn(any(UserInput.class))).thenReturn(mockedValue);
 
@@ -67,7 +67,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("when correct body is passed, a refreshed token should be returned")
     void shouldReturnRefreshedToken() throws Exception {
-        RefreshTokenOutput mockedValue = new RefreshTokenOutput("userId", "idToken", "refreshToken");
+        RefreshTokenOutput mockedValue = new RefreshTokenOutput("userId", "idToken", "expiresIn", "refreshToken");
 
         when(userService.refreshToken(any(RefreshTokenInput.class))).thenReturn(mockedValue);
 
