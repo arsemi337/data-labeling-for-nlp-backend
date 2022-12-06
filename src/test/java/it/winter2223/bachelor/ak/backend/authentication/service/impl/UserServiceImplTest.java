@@ -67,6 +67,7 @@ class UserServiceImplTest {
         assertEquals(userOutput.email(), signUpResponse.email());
         assertEquals(userOutput.userId(), refreshTokenResponse.user_id());
         assertEquals(userOutput.idToken(), refreshTokenResponse.id_token());
+        assertEquals(userOutput.expiresIn(), refreshTokenResponse.expires_in());
         assertEquals(userOutput.refreshToken(), refreshTokenResponse.refresh_token());
         verify(firebaseAuthService).signUpUser(userInput);
         verify(firebaseAuthService).setCustomUserClaims(signUpResponse.localId());
@@ -139,6 +140,7 @@ class UserServiceImplTest {
         assertEquals(userOutput.email(), signInResponse.email());
         assertEquals(userOutput.userId(), signInResponse.localId());
         assertEquals(userOutput.idToken(), signInResponse.idToken());
+        assertEquals(userOutput.expiresIn(), signInResponse.expiresIn());
         assertEquals(userOutput.refreshToken(), signInResponse.refreshToken());
         verify(firebaseAuthService).signInUser(userInput);
     }
@@ -189,6 +191,7 @@ class UserServiceImplTest {
 
         assertEquals(refreshTokenOutput.userId(), refreshTokenResponse.user_id());
         assertEquals(refreshTokenOutput.idToken(), refreshTokenResponse.id_token());
+        assertEquals(refreshTokenOutput.expiresIn(), refreshTokenResponse.expires_in());
         assertEquals(refreshTokenOutput.refreshToken(), refreshTokenOutput.refreshToken());
         verify(firebaseAuthService).requestRefreshToken(refreshTokenInput);
     }

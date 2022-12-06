@@ -10,6 +10,7 @@ import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,19 +24,19 @@ public class UserController {
 
     @PostMapping()
     @Operation(summary = "Sign up")
-    ResponseEntity<UserOutput> signUp(UserInput userInput) {
+    ResponseEntity<UserOutput> signUp(@RequestBody UserInput userInput) {
         return ResponseEntity.ok(userService.singUp(userInput));
     }
 
     @PostMapping("/user")
     @Operation(summary = "Sign in")
-    ResponseEntity<UserOutput> signIn(UserInput userInput) {
+    ResponseEntity<UserOutput> signIn(@RequestBody UserInput userInput) {
         return ResponseEntity.ok(userService.signIn(userInput));
     }
 
     @PostMapping("token")
     @Operation(summary = "Refresh token")
-    ResponseEntity<RefreshTokenOutput> refreshToken(RefreshTokenInput refreshTokenInput) {
+    ResponseEntity<RefreshTokenOutput> refreshToken(@RequestBody RefreshTokenInput refreshTokenInput) {
         return ResponseEntity.ok(userService.refreshToken(refreshTokenInput));
     }
 }

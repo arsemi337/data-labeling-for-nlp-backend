@@ -43,6 +43,7 @@ class CommentController {
 
     @GetMapping
     @Operation(summary = "Fetch comments to be assigned by the user with userId")
+    @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     ResponseEntity<List<CommentOutput>> fetchCommentsToBeAssigned(
             @RequestParam(name = "userId") String userId,
             @RequestParam(name = "commentsNumber") String commentsNumber) {

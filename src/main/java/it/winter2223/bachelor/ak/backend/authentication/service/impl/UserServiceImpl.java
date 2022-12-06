@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
                 .email(signUpResponse.email())
                 .userId(refreshTokenResponse.user_id())
                 .idToken(refreshTokenResponse.id_token())
+                .expiresIn(refreshTokenResponse.expires_in())
                 .refreshToken(refreshTokenResponse.refresh_token())
                 .build();
     }
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
                 .email(signInResponse.email())
                 .userId(signInResponse.localId())
                 .idToken(signInResponse.idToken())
+                .expiresIn(signInResponse.expiresIn())
                 .refreshToken(signInResponse.refreshToken())
                 .build();
     }
@@ -70,6 +72,7 @@ public class UserServiceImpl implements UserService {
         return RefreshTokenOutput.builder()
                 .userId(refreshTokenResponse.user_id())
                 .idToken(refreshTokenResponse.id_token())
+                .expiresIn(refreshTokenResponse.expires_in())
                 .refreshToken(refreshTokenResponse.refresh_token())
                 .build();
     }
