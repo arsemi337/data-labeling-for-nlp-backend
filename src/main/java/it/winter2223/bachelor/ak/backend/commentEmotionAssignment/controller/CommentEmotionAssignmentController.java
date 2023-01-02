@@ -31,10 +31,10 @@ class CommentEmotionAssignmentController {
         return ResponseEntity.ok(commentEmotionAssignmentService.postCommentEmotionAssignment(commentEmotionAssignmentInput));
     }
 
-    @GetMapping("/csv")
+    @GetMapping("/dataset")
     @Operation(summary = "get comment-emotion assignments as csv")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     void getCommentEmotionAssignment(HttpServletResponse servletResponse) {
-        commentEmotionAssignmentService.getCommentEmotionAssignments(servletResponse);
+        commentEmotionAssignmentService.generateCommentEmotionAssignmentsDataset(servletResponse);
     }
 }

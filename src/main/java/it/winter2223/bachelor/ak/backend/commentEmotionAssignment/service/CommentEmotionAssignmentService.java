@@ -10,5 +10,5 @@ public interface CommentEmotionAssignmentService {
 
     List<CommentEmotionAssignmentOutput> postCommentEmotionAssignment(List<CommentEmotionAssignmentInput> assignmentInputs);
 
-    void getCommentEmotionAssignments(HttpServletResponse servletResponse);
+    void generateCommentEmotionAssignmentsDataset(HttpServletResponse servletResponse);
 }

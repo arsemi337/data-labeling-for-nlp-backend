@@ -21,11 +21,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
 import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
-import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.ASSIGNMENT_ALREADY_EXISTS;
-import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.WRONG_EMOTION;
+import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.*;
 
 @Service
 public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssignmentService {
@@ -55,36 +55,79 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
     }
 
     @Override
-    public void getCommentEmotionAssignments(HttpServletResponse servletResponse) {
+    public void generateCommentEmotionAssignmentsDataset(HttpServletResponse servletResponse) {
         servletResponse.setContentType("text/csv");
         servletResponse.setCharacterEncoding("UTF-8");
-        servletResponse.addHeader("Content-Disposition","attachment; filename=\"assignments.csv\"");
+        servletResponse.addHeader("Content-Disposition","attachment; filename=\"assignments-dataset.csv\"");
 
         Writer writer;
         try {
             writer = servletResponse.getWriter();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CommentEmotionAssignmentException(FAILED_TO_OBTAIN_STREAM_WRITER.getMessage());
         }
 
-        Map<String, String> thingsToCSV = new HashMap<>();
-//        List<CommentEmotionAssignment> assignments = assignmentRepository.findAll();
-//        assignments.forEach(assignment -> {
-//            Optional<Comment> comment = commentRepository.findById(assignment.getCommentId());
-//            comment.ifPresent(s -> thingsToCSV.put(s.getContent(), assignment.getEmotion().toString()));
-//            if (comment.isEmpty()) {
-//                System.out.println(assignment.getCommentId());
-//            }
-//        });
+        List<CommentEmotionAssignment> assignments = assignmentRepository.findByEmotionNotLike(Emotion.UNSPECIFIABLE);
+
+        Map<String, List<CommentEmotionAssignment>> assignmentsListsGrouped =
+                assignments.stream().collect(Collectors.groupingBy(CommentEmotionAssignment::getCommentId));
+
+        Map<String, List<Emotion>> assignmentsGroupedByCommentId = new HashMap<>();
+        for (Map.Entry<String, List<CommentEmotionAssignment>> entry : assignmentsListsGrouped.entrySet()) {
+            List<Emotion> emotions = entry.getValue().stream().map(CommentEmotionAssignment::getEmotion).toList();
+            assignmentsGroupedByCommentId.put(entry.getKey(), emotions);
+        }
+
+        Map<String, String> mostPopularAssignmentsMap = new HashMap<>();
+        for (Map.Entry<String, List<Emotion>> entry : assignmentsGroupedByCommentId.entrySet()) {
+            mostPopularAssignmentsMap.put(entry.getKey(), mostFrequentEmotion(entry.getValue()));
+        }
+
+        Map<String, String> assignmentsToExport = new HashMap<>();
+        for (Map.Entry<String, String> entry : mostPopularAssignmentsMap.entrySet()) {
+            Optional<Comment> comment = commentRepository.findById(entry.getKey());
+            comment.ifPresent(c -> assignmentsToExport.put(c.getContent(), entry.getValue()));
+            if (comment.isEmpty()) {
+                System.out.println(entry.getKey());
+            }
+        }
 
         try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-//            for (Map.Entry<String, String> entry : thingsToCSV.entrySet()) {
-//                csvPrinter.printRecord(entry.getKey(), entry.getValue());
-//            }
-            csvPrinter.printRecord("ąęćźżóśłńcoto", "ąężćódobrasprawa");
+            csvPrinter.printRecord("comment", "emotion");
+            for (Map.Entry<String, String> entry : assignmentsToExport.entrySet()) {
+                csvPrinter.printRecord(entry.getKey(), entry.getValue());
+            }
         } catch (IOException e) {
-            System.out.println("Error while writing csv " + e);
+            throw new CommentEmotionAssignmentException(FAILED_TO_WRITE_CSV.getMessage() + e);
         }
+    }
+
+    private String mostFrequentEmotion(List<Emotion> emotions) {
+        Map<String, Integer> hp =
+                new HashMap<>();
+
+        emotions.forEach(emotion -> {
+            String key = emotion.toString();
+            if (hp.containsKey(key)) {
+                int freq = hp.get(key);
+                freq++;
+                hp.put(key, freq);
+            } else {
+                hp.put(key, 1);
+            }
+        });
+
+        int maxCount = 0;
+        String emotion = "";
+
+        for (Map.Entry<String, Integer> entry : hp.entrySet()) {
+            if (maxCount < entry.getValue()) {
+                emotion = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+
+        return emotion;
     }
 
     private void processAssignmentInput(
