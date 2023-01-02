@@ -9,11 +9,9 @@ import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.Commen
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -31,5 +29,12 @@ class CommentEmotionAssignmentController {
     ResponseEntity<List<CommentEmotionAssignmentOutput>> postCommentEmotionAssignment(
             @RequestBody List<CommentEmotionAssignmentInput> commentEmotionAssignmentInput) {
         return ResponseEntity.ok(commentEmotionAssignmentService.postCommentEmotionAssignment(commentEmotionAssignmentInput));
+    }
+
+    @GetMapping("/csv")
+    @Operation(summary = "get comment-emotion assignments as csv")
+    @PreAuthorize("hasAuthority('USER_READ_WRITE')")
+    void getCommentEmotionAssignment(HttpServletResponse servletResponse) {
+        commentEmotionAssignmentService.getCommentEmotionAssignments(servletResponse);
     }
 }

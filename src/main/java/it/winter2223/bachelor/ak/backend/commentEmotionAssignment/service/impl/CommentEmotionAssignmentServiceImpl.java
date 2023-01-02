@@ -12,12 +12,15 @@ import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.Co
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.Emotion;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.repository.CommentEmotionAssignmentRepository;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.CommentEmotionAssignmentService;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
 import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
@@ -49,6 +52,39 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
         assignmentInputs.forEach(assignmentInput -> processAssignmentInput(assignmentOutputs, assignmentInput));
 
         return assignmentOutputs;
+    }
+
+    @Override
+    public void getCommentEmotionAssignments(HttpServletResponse servletResponse) {
+        servletResponse.setContentType("text/csv");
+        servletResponse.setCharacterEncoding("UTF-8");
+        servletResponse.addHeader("Content-Disposition","attachment; filename=\"assignments.csv\"");
+
+        Writer writer;
+        try {
+            writer = servletResponse.getWriter();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Map<String, String> thingsToCSV = new HashMap<>();
+//        List<CommentEmotionAssignment> assignments = assignmentRepository.findAll();
+//        assignments.forEach(assignment -> {
+//            Optional<Comment> comment = commentRepository.findById(assignment.getCommentId());
+//            comment.ifPresent(s -> thingsToCSV.put(s.getContent(), assignment.getEmotion().toString()));
+//            if (comment.isEmpty()) {
+//                System.out.println(assignment.getCommentId());
+//            }
+//        });
+
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+//            for (Map.Entry<String, String> entry : thingsToCSV.entrySet()) {
+//                csvPrinter.printRecord(entry.getKey(), entry.getValue());
+//            }
+            csvPrinter.printRecord("ąęćźżóśłńcoto", "ąężćódobrasprawa");
+        } catch (IOException e) {
+            System.out.println("Error while writing csv " + e);
+        }
     }
 
     private void processAssignmentInput(
