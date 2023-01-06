@@ -32,7 +32,7 @@ class CommentEmotionAssignmentController {
     }
 
     @GetMapping("/dataset")
-    @Operation(summary = "get comment-emotion assignments as csv")
+    @Operation(summary = "Get comment-emotion assignments as csv file")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
     void getCommentEmotionAssignment(HttpServletResponse servletResponse) {
         commentEmotionAssignmentService.generateCommentEmotionAssignmentsDataset(servletResponse);

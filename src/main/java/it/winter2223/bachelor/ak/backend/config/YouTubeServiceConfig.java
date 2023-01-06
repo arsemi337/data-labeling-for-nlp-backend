@@ -14,7 +14,7 @@ import java.security.GeneralSecurityException;
 @Configuration
 public class YouTubeServiceConfig {
 
-    private static final String APPLICATION_NAME = "name";
+    private static final String APPLICATION_NAME = "data-labeling";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     @Bean

@@ -96,6 +96,11 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.9.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.tensorflow</groupId>
+			<artifactId>tensorflow-core-platform</artifactId>
+			<version>0.4.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
