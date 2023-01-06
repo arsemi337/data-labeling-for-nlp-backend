@@ -92,7 +92,7 @@ public class UserControllerTest {
     private String getRefreshTokenInputBody() {
         return """
                 {
-                    "refreshToken": "refreshToken",
+                    "refreshToken": "refreshToken"
                 }
                """;
     }

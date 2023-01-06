@@ -6,6 +6,8 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
 import it.winter2223.bachelor.ak.backend.comment.service.YouTubeService;
 import it.winter2223.bachelor.ak.backend.config.YouTubeServiceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +24,12 @@ public class YouTubeServiceImpl implements YouTubeService {
     @Value("${youtube.api.key}")
     private String youtubeApiKey;
     private final YouTube youTube;
+    private final Logger logger;
 
     YouTubeServiceImpl(YouTubeServiceConfig youTubeServiceConfig)
             throws GeneralSecurityException, IOException {
         this.youTube = youTubeServiceConfig.getService();
+        this.logger = LoggerFactory.getLogger(YouTubeServiceImpl.class);
     }
 
     @Override
@@ -54,13 +58,14 @@ public class YouTubeServiceImpl implements YouTubeService {
             commentsResponse = commentsRequest.setKey(youtubeApiKey)
                     .setPart(List.of("snippet"))
                     .setVideoId(videoId)
-                    .setMaxResults(50L)
+                    .setMaxResults(10L)
                     .setOrder("relevance")
                     .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
                     .execute();
 
         } catch (IOException ioException) {
-            throw new CommentException(COMMENTS_FETCHING_ERROR.getMessage(), ioException);
+            logger.error(COMMENTS_FETCHING_ERROR.getMessage() + videoId);
+            commentsResponse = null;
         }
         return commentsResponse;
     }

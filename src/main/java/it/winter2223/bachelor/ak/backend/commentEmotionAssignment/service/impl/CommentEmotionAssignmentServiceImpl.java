@@ -12,17 +12,22 @@ import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.Co
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.Emotion;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.repository.CommentEmotionAssignmentRepository;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.CommentEmotionAssignmentService;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
 import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
-import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.ASSIGNMENT_ALREADY_EXISTS;
-import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.WRONG_EMOTION;
+import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.*;
 
 @Service
 public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssignmentService {
@@ -31,6 +36,7 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
     private final CommentEmotionAssignmentRepository assignmentRepository;
     private final CommentRepository commentRepository;
     private final CommentEmotionAssignmentMapper commentEmotionAssignmentMapper;
+    private final Logger logger;
 
     CommentEmotionAssignmentServiceImpl(UserRepository userRepository,
                                         CommentEmotionAssignmentRepository assignmentRepository,
@@ -39,6 +45,7 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
         this.assignmentRepository = assignmentRepository;
         this.commentRepository = commentRepository;
         this.commentEmotionAssignmentMapper = new CommentEmotionAssignmentMapper();
+        this.logger = LoggerFactory.getLogger(CommentEmotionAssignmentServiceImpl.class);
     }
 
     @Override
@@ -51,20 +58,33 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
         return assignmentOutputs;
     }
 
+    @Override
+    public void generateCommentEmotionAssignmentsDataset(HttpServletResponse servletResponse) {
+        configureResponse(servletResponse);
+
+        Map<String, Emotion> commentToEmotionMap = getAssignmentsToExport();
+
+        try (Writer writer = servletResponse.getWriter();
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+
+            csvPrinter.printRecord("comment", "emotion");
+            for (Map.Entry<String, Emotion> entry : commentToEmotionMap.entrySet()) {
+                csvPrinter.printRecord(entry.getKey(), entry.getValue());
+            }
+
+        } catch (IOException e) {
+            throw new CommentEmotionAssignmentException(FAILED_TO_WRITE_CSV.getMessage(), e);
+        }
+    }
+
     private void processAssignmentInput(
             List<CommentEmotionAssignmentOutput> assignmentOutputs,
             CommentEmotionAssignmentInput assignmentInput) {
         validateUserId(assignmentInput.userId());
         Emotion emotion = getEnumFrom(assignmentInput.emotion());
 
-        Comment comment = commentRepository.findByCommentId(assignmentInput.commentId())
-                .orElseThrow(() -> new CommentException(
-                        NO_COMMENT_WITH_ENTERED_ID.getMessage() + " '" + assignmentInput.commentId() + "'"));
-        if (assignmentRepository.findByUserIdAndCommentId(
-                assignmentInput.userId(), assignmentInput.commentId()).isPresent()) {
-            throw new CommentEmotionAssignmentException(
-                    ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + assignmentInput.commentId() + ")");
-        }
+        Comment comment = getComment(assignmentInput);
+        checkIfAssignmentsExists(assignmentInput);
 
         comment.increaseAssignmentsNumber();
         commentRepository.save(comment);
@@ -89,9 +109,98 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
     }
 
     private Emotion getEnumFrom(String emotion) {
-        if(!Emotion.contains(emotion)) {
+        if (!Emotion.contains(emotion)) {
             throw new CommentEmotionAssignmentException(WRONG_EMOTION.getMessage() + " (" + emotion + ")");
         }
         return Emotion.valueOf(emotion);
+    }
+
+    private Comment getComment(CommentEmotionAssignmentInput assignmentInput) {
+        return commentRepository.findByCommentId(assignmentInput.commentId())
+                .orElseThrow(() -> new CommentException(
+                        NO_COMMENT_WITH_ENTERED_ID.getMessage() + " '" + assignmentInput.commentId() + "'"));
+    }
+
+    private void checkIfAssignmentsExists(CommentEmotionAssignmentInput assignmentInput) {
+        if (assignmentRepository.findByUserIdAndCommentId(
+                assignmentInput.userId(), assignmentInput.commentId()).isPresent()) {
+            throw new CommentEmotionAssignmentException(
+                    ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + assignmentInput.commentId() + ")");
+        }
+    }
+
+    private void configureResponse(HttpServletResponse servletResponse) {
+        servletResponse.setContentType("text/csv");
+        servletResponse.setCharacterEncoding("UTF-8");
+        servletResponse.addHeader("Content-Disposition", "attachment; filename=\"assignments-dataset.csv\"");
+    }
+
+    private Map<String, Emotion> getAssignmentsToExport() {
+        List<CommentEmotionAssignment> assignments = assignmentRepository.findByEmotionNotLike(Emotion.UNSPECIFIABLE);
+
+        Map<String, List<CommentEmotionAssignment>> commentIdToAssigmnentMap = groupAssignmentsByCommentId(assignments);
+        Map<String, List<Emotion>> commentIdToEmotionsListMap = mapToCommentIdToEmotionsListMap(commentIdToAssigmnentMap);
+        Map<String, Emotion> commentIdToMostFrequentEmotionMap = mapToCommentIdToMostFrequentEmotionMap(commentIdToEmotionsListMap);
+
+        return mapToCommentToEmotionMap(commentIdToMostFrequentEmotionMap);
+    }
+
+    private Map<String, List<CommentEmotionAssignment>> groupAssignmentsByCommentId(List<CommentEmotionAssignment> assignments) {
+        return assignments.stream().collect(Collectors.groupingBy(CommentEmotionAssignment::getCommentId));
+    }
+
+    private Map<String, List<Emotion>> mapToCommentIdToEmotionsListMap(Map<String, List<CommentEmotionAssignment>> commentIdToAssigmnentMap) {
+        Map<String, List<Emotion>> commentIdToEmotionsListMap = new HashMap<>();
+        for (Map.Entry<String, List<CommentEmotionAssignment>> entry : commentIdToAssigmnentMap.entrySet()) {
+            List<Emotion> emotions = entry.getValue().stream().map(CommentEmotionAssignment::getEmotion).toList();
+            commentIdToEmotionsListMap.put(entry.getKey(), emotions);
+        }
+        return commentIdToEmotionsListMap;
+    }
+
+    private Map<String, Emotion> mapToCommentIdToMostFrequentEmotionMap(Map<String, List<Emotion>> commentIdToEmotionsListMap) {
+        Map<String, Emotion> commentIdToMostFrequentEmotionMap = new HashMap<>();
+        for (Map.Entry<String, List<Emotion>> entry : commentIdToEmotionsListMap.entrySet()) {
+            commentIdToMostFrequentEmotionMap.put(entry.getKey(), getMostFrequentEmotion(entry.getValue()));
+        }
+        return commentIdToMostFrequentEmotionMap;
+    }
+
+    private Map<String, Emotion> mapToCommentToEmotionMap(Map<String, Emotion> commentIdToMostFrequentEmotionMap) {
+        Map<String, Emotion> commentToEmotionMap = new HashMap<>();
+        for (Map.Entry<String, Emotion> entry : commentIdToMostFrequentEmotionMap.entrySet()) {
+            Optional<Comment> comment = commentRepository.findById(entry.getKey());
+            comment.ifPresentOrElse(
+                    c -> commentToEmotionMap.put(c.getContent(), entry.getValue()),
+                    () -> logger.error("Comment with id: " + entry.getKey() + " not found in the database"));
+        }
+        return commentToEmotionMap;
+    }
+
+    private Emotion getMostFrequentEmotion(List<Emotion> emotions) {
+        Map<Emotion, Integer> emotionToEmotionsNumberMap =
+                new HashMap<>();
+
+        emotions.forEach(emotion -> {
+            if (emotionToEmotionsNumberMap.containsKey(emotion)) {
+                int number = emotionToEmotionsNumberMap.get(emotion);
+                number++;
+                emotionToEmotionsNumberMap.put(emotion, number);
+            } else {
+                emotionToEmotionsNumberMap.put(emotion, 1);
+            }
+        });
+
+        int maxCount = 0;
+        Emotion emotion = null;
+
+        for (Map.Entry<Emotion, Integer> entry : emotionToEmotionsNumberMap.entrySet()) {
+            if (maxCount < entry.getValue()) {
+                emotion = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+
+        return emotion;
     }
 }

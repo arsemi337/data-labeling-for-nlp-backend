@@ -2,7 +2,7 @@ package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import it.winter2223.bachelor.ak.backend.authentication.Permission;
+import it.winter2223.bachelor.ak.backend.authentication.persistence.Permission;
 import it.winter2223.bachelor.ak.backend.authentication.dto.RefreshTokenInput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.UserInput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefreshTokenResponse;
@@ -93,7 +93,7 @@ public class FirebaseAuthService {
         return String.format("""
                 {
                     "grant_type":"refresh_token",
-                    "refresh_token":"%s",
+                    "refresh_token":"%s"
                 }
                 """, refreshToken);
     }
