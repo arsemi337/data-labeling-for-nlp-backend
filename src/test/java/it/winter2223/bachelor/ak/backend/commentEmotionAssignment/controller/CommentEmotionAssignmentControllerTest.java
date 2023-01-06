@@ -15,13 +15,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
@@ -55,7 +56,17 @@ class CommentEmotionAssignmentControllerTest {
         verify(commentEmotionAssignmentService).postCommentEmotionAssignment(anyList());
     }
 
-    private static MockHttpServletRequestBuilder getAssignmentPostRequest(String userId, String commentId) {
+    @Test
+    @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
+    @DisplayName("endpoint for downloading assignments should return 200 status code")
+    void shouldDownloadCSVFileWithAssignments() throws Exception {
+        doNothing().when(commentEmotionAssignmentService).generateCommentEmotionAssignmentsDataset(any(HttpServletResponse.class));
+        mockMvc.perform(getAssignmentGetRequest())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        verify(commentEmotionAssignmentService).generateCommentEmotionAssignmentsDataset(any(HttpServletResponse.class));
+    }
+
+    private MockHttpServletRequestBuilder getAssignmentPostRequest(String userId, String commentId) {
         return MockMvcRequestBuilders.post("/api/v1/assignment")
                 .contentType("application/json")
                 .content(String.format("""
@@ -76,5 +87,9 @@ class CommentEmotionAssignmentControllerTest {
                 .commentId(commentId)
                 .emotionDto(EmotionDto.JOY)
                 .build());
+    }
+
+    private MockHttpServletRequestBuilder getAssignmentGetRequest() {
+        return MockMvcRequestBuilders.get("/api/v1/assignment/dataset");
     }
 }

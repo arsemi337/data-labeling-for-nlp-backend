@@ -93,7 +93,7 @@ public class FirebaseAuthService {
         return String.format("""
                 {
                     "grant_type":"refresh_token",
-                    "refresh_token":"%s",
+                    "refresh_token":"%s"
                 }
                 """, refreshToken);
     }

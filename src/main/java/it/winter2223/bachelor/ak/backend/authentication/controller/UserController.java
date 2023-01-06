@@ -34,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(userService.signIn(userInput));
     }
 
-    @PostMapping("token")
+    @PostMapping("/token")
     @Operation(summary = "Refresh token")
     ResponseEntity<RefreshTokenOutput> refreshToken(@RequestBody RefreshTokenInput refreshTokenInput) {
         return ResponseEntity.ok(userService.refreshToken(refreshTokenInput));
