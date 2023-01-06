@@ -19,7 +19,7 @@ import static it.winter2223.bachelor.ak.backend.emotionAnalysis.exception.Emotio
 @Service
 public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
-    private final String modelPath = "src/main/resources/";
+    private final String modelPath = "src/main/resources/model/";
     private final String feedOperation = "serving_default_text_vectorization_input";
     private final String fetchOperation = "StatefulPartitionedCall_1";
 
