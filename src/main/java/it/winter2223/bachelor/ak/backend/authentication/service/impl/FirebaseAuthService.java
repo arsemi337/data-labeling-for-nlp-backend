@@ -98,7 +98,7 @@ public class FirebaseAuthService {
                 """, refreshToken);
     }
 
-    public void setCustomUserClaims(String localId) {
+    protected void setCustomUserClaims(String localId) {
         Map<String, Object> claims = Map.of("custom_claims", List.of(Permission.USER_READ_WRITE.toString()));
 
         try {
