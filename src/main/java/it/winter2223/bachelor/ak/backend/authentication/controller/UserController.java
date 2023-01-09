@@ -7,7 +7,6 @@ import it.winter2223.bachelor.ak.backend.authentication.dto.RefreshTokenOutput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.UserInput;
 import it.winter2223.bachelor.ak.backend.authentication.dto.UserOutput;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Authentication")
 @RequestMapping("/api/v1/auth")
-@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
+
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping()
     @Operation(summary = "Sign up")

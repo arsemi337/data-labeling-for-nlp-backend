@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
 import it.winter2223.bachelor.ak.backend.comment.service.CommentService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,12 @@ import static it.winter2223.bachelor.ak.backend.comment.controller.swagger.Comme
 @Tag(name = "Comment")
 @RequestMapping("/api/v1/comment")
 @SecurityRequirement(name = "Bearer Authentication")
-@RequiredArgsConstructor
 class CommentController {
     private final CommentService commentService;
+
+    CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @GetMapping("/youtube")
     @Operation(summary = "Fetch comments from You Tube")

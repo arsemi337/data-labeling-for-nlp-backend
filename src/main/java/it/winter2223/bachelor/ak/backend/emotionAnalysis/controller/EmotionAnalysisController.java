@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.dto.CommentEmotionInput;
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.dto.CommentEmotionOutput;
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.service.EmotionAnalysisService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,10 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Emotion Analysis")
 @RequestMapping("/api/v1/emotion")
 @SecurityRequirement(name = "Bearer Authentication")
-@RequiredArgsConstructor
 @Profile("NLPEnabled")
 public class EmotionAnalysisController {
     private final EmotionAnalysisService emotionAnalysisService;
+
+    EmotionAnalysisController(EmotionAnalysisService emotionAnalysisService) {
+        this.emotionAnalysisService = emotionAnalysisService;
+    }
 
     @PostMapping
     @Operation(summary = "Deduce an emotion from a comment")
