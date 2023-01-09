@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CommentEmotionAssignmentService {
 
-    List<CommentEmotionAssignmentOutput> postCommentEmotionAssignment(List<CommentEmotionAssignmentInput> assignmentInputs);
+    List<CommentEmotionAssignmentOutput> postCommentEmotionAssignments(List<CommentEmotionAssignmentInput> assignmentInputs);
 
     void generateCommentEmotionAssignmentsDataset(HttpServletResponse servletResponse);
 }

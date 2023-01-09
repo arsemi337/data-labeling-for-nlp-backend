@@ -46,7 +46,7 @@ public class YouTubeCommentServiceImplTest {
         when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 
         List<it.winter2223.bachelor.ak.backend.comment.persistence.Comment> comments
-                = underTest.fetchYTCommentsOfPopularVideos();
+                = underTest.fetchInternetComments();
 
         assertEquals(1, comments.size());
         assertEquals("commentId", comments.get(0).getCommentId());
@@ -72,7 +72,7 @@ public class YouTubeCommentServiceImplTest {
         when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 
         List<it.winter2223.bachelor.ak.backend.comment.persistence.Comment> comments
-                = underTest.fetchYTCommentsOfPopularVideos();
+                = underTest.fetchInternetComments();
 
         assertEquals(1, comments.size());
         assertEquals("commentId", comments.get(0).getCommentId());
@@ -102,7 +102,7 @@ public class YouTubeCommentServiceImplTest {
         when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 
         List<it.winter2223.bachelor.ak.backend.comment.persistence.Comment> comments
-                = underTest.fetchYTCommentsOfPopularVideos();
+                = underTest.fetchInternetComments();
 
         assertEquals(0, comments.size());
         verify(youTubeService).fetchMostPopularYTVideos();

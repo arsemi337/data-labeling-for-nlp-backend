@@ -28,15 +28,15 @@ class CommentEmotionAssignmentController {
     @PostMapping
     @Operation(summary = "Post comment-emotion assignment")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
-    ResponseEntity<List<CommentEmotionAssignmentOutput>> postCommentEmotionAssignment(
+    ResponseEntity<List<CommentEmotionAssignmentOutput>> postCommentEmotionAssignments(
             @RequestBody List<CommentEmotionAssignmentInput> commentEmotionAssignmentInput) {
-        return ResponseEntity.ok(commentEmotionAssignmentService.postCommentEmotionAssignment(commentEmotionAssignmentInput));
+        return ResponseEntity.ok(commentEmotionAssignmentService.postCommentEmotionAssignments(commentEmotionAssignmentInput));
     }
 
     @GetMapping("/dataset")
-    @Operation(summary = "Get comment-emotion assignments as csv file")
+    @Operation(summary = "Get comment-emotion assignments as CSV file")
     @PreAuthorize("hasAuthority('USER_READ_WRITE')")
-    void getCommentEmotionAssignments(HttpServletResponse servletResponse) {
+    void fetchCommentEmotionAssignments(HttpServletResponse servletResponse) {
         commentEmotionAssignmentService.generateCommentEmotionAssignmentsDataset(servletResponse);
     }
 }

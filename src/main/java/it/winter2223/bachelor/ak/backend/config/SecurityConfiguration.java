@@ -24,10 +24,10 @@ public class SecurityConfiguration {
                         "/v3/api-docs/**",
                         "/swagger-ui/index.html",
                         "/swagger-ui/**",
-                        "/api/v1/auth/**"
+                        "/api/v1/auth/**",
+                        "/"
                 ).permitAll()
-                .anyRequest().permitAll();
-//                .anyRequest().authenticated();
+                .anyRequest().authenticated();
 
         http.oauth2ResourceServer()
                 .jwt()

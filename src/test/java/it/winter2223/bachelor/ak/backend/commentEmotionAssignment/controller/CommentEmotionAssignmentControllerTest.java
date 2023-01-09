@@ -43,7 +43,7 @@ class CommentEmotionAssignmentControllerTest {
         String userId = "userId";
         String commentId = "commentId";
 
-        when(commentEmotionAssignmentService.postCommentEmotionAssignment(anyList()))
+        when(commentEmotionAssignmentService.postCommentEmotionAssignments(anyList()))
                 .thenReturn(getAssignmentOutput(assignmentId, userId, commentId));
         List<CommentEmotionAssignmentOutput> assignmentOutput = getAssignmentOutput(assignmentId, userId, commentId);
 
@@ -53,7 +53,7 @@ class CommentEmotionAssignmentControllerTest {
                 .andExpect(jsonPath("$[0].userId", equalTo(assignmentOutput.get(0).userId())))
                 .andExpect(jsonPath("$[0].commentId", equalTo(assignmentOutput.get(0).commentId())))
                 .andExpect(jsonPath("$[0].emotionDto", equalTo(EmotionDto.JOY.toString())));
-        verify(commentEmotionAssignmentService).postCommentEmotionAssignment(anyList());
+        verify(commentEmotionAssignmentService).postCommentEmotionAssignments(anyList());
     }
 
     @Test

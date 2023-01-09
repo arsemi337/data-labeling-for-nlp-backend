@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FirebaseAuthService firebaseAuthService;
 
-    public UserServiceImpl(UserRepository userRepository, FirebaseAuthService firebaseAuthService) {
+    UserServiceImpl(UserRepository userRepository, FirebaseAuthService firebaseAuthService) {
         this.userRepository = userRepository;
         this.firebaseAuthService = firebaseAuthService;
     }

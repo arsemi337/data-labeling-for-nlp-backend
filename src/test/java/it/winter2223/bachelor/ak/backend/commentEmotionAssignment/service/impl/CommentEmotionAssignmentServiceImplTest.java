@@ -68,7 +68,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(commentRepository.save(any(Comment.class))).thenAnswer(answer -> answer.getArgument(0));
         when(assignmentRepository.save(any(CommentEmotionAssignment.class))).thenAnswer(answer -> answer.getArgument(0));
 
-        List<CommentEmotionAssignmentOutput> output = underTest.postCommentEmotionAssignment(input);
+        List<CommentEmotionAssignmentOutput> output = underTest.postCommentEmotionAssignments(input);
 
         assertEquals("userId", output.get(0).userId());
         assertEquals("commentId", output.get(0).commentId());
@@ -90,7 +90,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(userRepository.existsById(anyString())).thenReturn(false);
 
         assertThatExceptionOfType(FirebaseAuthenticationException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .isThrownBy(() -> underTest.postCommentEmotionAssignments(input))
                 .withMessage(NO_USER_WITH_PASSED_ID.getMessage() + " '" + input.get(0).userId() + "'");
     }
 
@@ -107,7 +107,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(userRepository.existsById(anyString())).thenReturn(true);
 
         assertThatExceptionOfType(CommentEmotionAssignmentException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .isThrownBy(() -> underTest.postCommentEmotionAssignments(input))
                 .withMessage(WRONG_EMOTION.getMessage() + " (" + input.get(0).emotion() + ")");
     }
 
@@ -125,7 +125,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(commentRepository.findByCommentId(anyString())).thenReturn(Optional.empty());
 
         assertThatExceptionOfType(CommentException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .isThrownBy(() -> underTest.postCommentEmotionAssignments(input))
                 .withMessage(NO_COMMENT_WITH_ENTERED_ID.getMessage() + " '" + input.get(0).commentId() + "'");
     }
 
@@ -153,7 +153,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         when(assignmentRepository.findByUserIdAndCommentId(anyString(), anyString())).thenReturn(Optional.of(assignment));
 
         assertThatExceptionOfType(CommentEmotionAssignmentException.class)
-                .isThrownBy(() -> underTest.postCommentEmotionAssignment(input))
+                .isThrownBy(() -> underTest.postCommentEmotionAssignments(input))
                 .withMessage(ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + input.get(0).commentId() + ")");
     }
 }

@@ -50,7 +50,7 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
 
     @Override
     @Transactional
-    public List<CommentEmotionAssignmentOutput> postCommentEmotionAssignment(List<CommentEmotionAssignmentInput> assignmentInputs) {
+    public List<CommentEmotionAssignmentOutput> postCommentEmotionAssignments(List<CommentEmotionAssignmentInput> assignmentInputs) {
         List<CommentEmotionAssignmentOutput> assignmentOutputs = new ArrayList<>();
 
         assignmentInputs.forEach(assignmentInput -> processAssignmentInput(assignmentOutputs, assignmentInput));

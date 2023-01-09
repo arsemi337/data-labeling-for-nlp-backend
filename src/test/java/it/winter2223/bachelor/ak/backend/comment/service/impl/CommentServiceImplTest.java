@@ -45,7 +45,7 @@ public class CommentServiceImplTest {
     void shouldFetchListOfYouTubeComments() {
         List<Comment> comments = getCommentsList();
 
-        when(internetCommentService.fetchYTCommentsOfPopularVideos()).thenReturn(comments);
+        when(internetCommentService.fetchInternetComments()).thenReturn(comments);
         when(commentRepository.save(any())).thenAnswer(answer -> answer.getArgument(0));
 
         List<CommentOutput> commentOutputs = underTest.fetchYTComments();

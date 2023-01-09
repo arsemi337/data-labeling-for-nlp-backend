@@ -45,7 +45,7 @@ class CommentServiceImpl implements CommentService {
         List<Comment> comments;
         List<CommentOutput> commentOutputList = new ArrayList<>();
 
-        comments = internetCommentService.fetchYTCommentsOfPopularVideos();
+        comments = internetCommentService.fetchInternetComments();
 
         comments.forEach(c -> commentOutputList.add(commentMapper.mapToCommentOutput(commentRepository.save(c))));
         return commentOutputList;

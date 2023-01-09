@@ -32,7 +32,7 @@ public class YouTubeCommentServiceImpl implements InternetCommentService {
     }
 
     @Override
-    public List<Comment> fetchYTCommentsOfPopularVideos() {
+    public List<Comment> fetchInternetComments() {
         List<Comment> comments = new ArrayList<>();
 
         VideoListResponse ytVideos = youTubeService.fetchMostPopularYTVideos();
