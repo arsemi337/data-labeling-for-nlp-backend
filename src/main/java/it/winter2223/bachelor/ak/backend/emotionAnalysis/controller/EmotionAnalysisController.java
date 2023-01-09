@@ -7,6 +7,7 @@ import it.winter2223.bachelor.ak.backend.emotionAnalysis.dto.CommentEmotionInput
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.dto.CommentEmotionOutput;
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.service.EmotionAnalysisService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/emotion")
 @SecurityRequirement(name = "Bearer Authentication")
 @RequiredArgsConstructor
+@Profile("NLPEnabled")
 public class EmotionAnalysisController {
     private final EmotionAnalysisService emotionAnalysisService;
 

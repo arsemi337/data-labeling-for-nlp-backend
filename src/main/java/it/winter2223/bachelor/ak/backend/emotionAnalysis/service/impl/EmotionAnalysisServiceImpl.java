@@ -5,6 +5,9 @@ import it.winter2223.bachelor.ak.backend.emotionAnalysis.dto.CommentEmotionOutpu
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.dto.EmotionDto;
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.exception.EmotionAnalysisException;
 import it.winter2223.bachelor.ak.backend.emotionAnalysis.service.EmotionAnalysisService;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Tensor;
@@ -19,14 +22,14 @@ import static it.winter2223.bachelor.ak.backend.emotionAnalysis.exception.Emotio
 @Service
 public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
-    private final String modelPath = "src/main/resources/model/";
     private final String feedOperation = "serving_default_text_vectorization_input";
     private final String fetchOperation = "StatefulPartitionedCall_1";
 
     @Override
     public CommentEmotionOutput classifyCommentEmotion(CommentEmotionInput commentInput) {
-
-        try (SavedModelBundle model = SavedModelBundle.load(modelPath, "serve")) {
+        ResourceLoader loader = new DefaultResourceLoader();
+        Resource resourceModel = loader.getResource("classpath:/model/");
+        try (SavedModelBundle model = SavedModelBundle.load(resourceModel.getFile().getPath(), "serve")) {
             try (Tensor input = TString.vectorOf(commentInput.comment());
                  Tensor output = model.session()
                          .runner()
