@@ -22,14 +22,13 @@ import static it.winter2223.bachelor.ak.backend.emotionAnalysis.exception.Emotio
 @Service
 public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
-    private final String feedOperation = "serving_default_text_vectorization_input";
-    private final String fetchOperation = "StatefulPartitionedCall_1";
-
     @Override
     public CommentEmotionOutput classifyCommentEmotion(CommentEmotionInput commentInput) {
         ResourceLoader loader = new DefaultResourceLoader();
         Resource resourceModel = loader.getResource("classpath:/model/");
         try (SavedModelBundle model = SavedModelBundle.load(resourceModel.getFile().getPath(), "serve")) {
+            String feedOperation = "serving_default_text_vectorization_input";
+            String fetchOperation = "StatefulPartitionedCall_1";
             try (Tensor input = TString.vectorOf(commentInput.comment());
                  Tensor output = model.session()
                          .runner()
