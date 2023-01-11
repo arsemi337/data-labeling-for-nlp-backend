@@ -7,7 +7,7 @@ public enum FirebaseAuthenticationExceptionMessages {
     SIGNING_IN_FAILED("Failed to sign in"),
     TOKEN_REFRESHING_FAILED("Failed to refresh token"),
     SETTING_USER_CLAIMS_FAILED("Failed to set user claims"),
-    NO_USER_WITH_PASSED_ID("There is no user with passed id");
+    NO_USER_WITH_PASSED_ID("There is no user with entered id");
 
     private final String message;
 
