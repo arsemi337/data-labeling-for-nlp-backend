@@ -27,7 +27,7 @@ To start the application, three external services need to be configured and run.
 
 Configuration of these services provides information required for establishing communication between them and Emotion Classification backend. This information needs to be included in the project files of Emotion Classification backend.
 
-*User Manual* document contains a description of the configuration and application running process. 
+[*User Manual*](userManual/userManual.pdf) document contains a description of the configuration and application running process. 
 
 Subchapter 1.1 shows how to connect Emotion Classification backend with the third-party services and how to run it locally or deploy it in the cloud environment.
 
