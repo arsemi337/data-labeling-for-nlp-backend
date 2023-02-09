@@ -1,30 +1,34 @@
-# Data labeling for NLP Backend
+# Emotion Classification backend
 
-Backend project for bachelor thesis. 
-Its goal is to load comments from different Internet websites and give an access to them through REST API. 
-Its aim is also to store the emotions assigned to comments in a database. The emotion list contains: 
+Emotion Classification backend is an application created as a result of work for engineering thesis, the topic of which is:
 
-- anger
-- fear
-- joy
-- love
-- sadness
-- surprise
+### MOBILE APPLICATION SUPPORTING THE PROCESS OF COLLECTING AND LABELING DATA IN NATURAL LANGUAGE PROCESSING – BACKEND MODULE
 
-Based on these comments with labeled emotions an NLP model will be trained.
+Its goal is to load comments from YouTube platform and enable users to assign them with an emotion they most likely express. The set of considered emotions consists of:
 
-The backend is implemented with use of Spring Boot framework based on Java 17 programming language. 
+- anger,
+- fear,
+- joy,
+- love,
+- sandess,
+- surprise,
+- unspecifiable - dedicated to comments, which are difficult to infer an emotion from.
 
-To run the project, one needs to run the container with MongoDB database, which will store the Internet comments
-and comment-emotion assignments. 
+Based on the labelled comments an NLP model was trained.
+The model is incorporated into the application and is able to infer emotions from given comments.
 
-`docker run --name data-labeling-nlp -d -p 27017:27017 mongo:6.0.2`
+The backend application is implemented with use of the Spring Boot framework and Java 17 programming language.
 
-Additionally, the following command executed in the project directory will run the Spring Boot project. 
+To start the application, three external services need to be configured and run. These services are:
 
-`./mvnw spring-boot:run`
+- YouTube Data API - for downloading comments to be labelled with emotions,
+- MongoDB Atlas - to set up a database for application's data storage,
+- Firebase Authentication - for providing the application with authentication services.
 
-The application has a Swagger platform configured, which gives access to the application's REST API in a visualized and interactive form. 
-This can be accessed by entering the following url address:
+Configuration of these services provides information required for establishing communication between them and Emotion Classification backend. This information needs to be included in the project files of Emotion Classification backend.
 
-`localhost:8080/swagger-ui/index.html`
+The fifth chapter of the engineering thesis paper (*Emotion Classification backend application from user's point of view*) contains a description of the configuration and application running process. Subchapter 5.1 shows how to connect Emotion Classification backend with the third-party services and how to run it locally or deploy it in the cloud environment.
+
+Additionally, subchapters 5.2, 5.3, and 5.4 present a user manual containing information on how to use the application, which is already run.
+
+The Emotion Classification backend application's code is stored in *emotion-classification-backend.zip* archive file on the disk. However, the engineering thesis paper is stored as *230457_artur_milosz_inz.pdf* file. 
