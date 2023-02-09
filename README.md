@@ -27,8 +27,8 @@ To start the application, three external services need to be configured and run.
 
 Configuration of these services provides information required for establishing communication between them and Emotion Classification backend. This information needs to be included in the project files of Emotion Classification backend.
 
-The fifth chapter of the engineering thesis paper (*Emotion Classification backend application from user's point of view*) contains a description of the configuration and application running process. Subchapter 5.1 shows how to connect Emotion Classification backend with the third-party services and how to run it locally or deploy it in the cloud environment.
+*User Manual* document contains a description of the configuration and application running process. 
 
-Additionally, subchapters 5.2, 5.3, and 5.4 present a user manual containing information on how to use the application, which is already run.
+Subchapter 1.1 shows how to connect Emotion Classification backend with the third-party services and how to run it locally or deploy it in the cloud environment.
 
-The Emotion Classification backend application's code is stored in *emotion-classification-backend.zip* archive file on the disk. However, the engineering thesis paper is stored as *230457_artur_milosz_inz.pdf* file. 
+Additionally, subchapters 1.2, 1.3, and 1.4 present a user manual containing information on how to use the application, which is already run.
