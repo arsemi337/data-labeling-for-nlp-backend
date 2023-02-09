@@ -1,46 +1,34 @@
-# Data labeling for NLP Backend
+# Emotion Classification backend
 
-Backend project for bachelor thesis. 
-Its goal is to provide data labelling functionality to label YouTube comments 
-with emotions that belong to the following set: 
+Emotion Classification backend is an application created as a result of work for engineering thesis, the topic of which is:
 
-- anger
-- fear
-- joy
-- love
-- sadness
-- surprise
+### MOBILE APPLICATION SUPPORTING THE PROCESS OF COLLECTING AND LABELING DATA IN NATURAL LANGUAGE PROCESSING – BACKEND MODULE
 
-All comment-emotion assignments created during the labelling process are stored in a database
-and can be exported in a form of CSV file that may be used to train an NLP model able
-to infer emotions from comments. 
+Its goal is to load comments from YouTube platform and enable users to assign them with an emotion they most likely express. The set of considered emotions consists of:
 
-The application enables also passing a comment so that the NLP model incorporated into the system
-analyses it by itself and returns a deduced emotion. 
+- anger,
+- fear,
+- joy,
+- love,
+- sandess,
+- surprise,
+- unspecifiable - dedicated to comments, which are difficult to infer an emotion from.
 
-All system's functionalities are exposed through a REST API. 
+Based on the labelled comments an NLP model was trained.
+The model is incorporated into the application and is able to infer emotions from given comments.
 
-The backend is implemented with use of Spring Boot framework based on Java 17 programming language, 
-organised with a Maven tool. 
+The backend application is implemented with use of the Spring Boot framework and Java 17 programming language.
 
-To run the project, it needs to be completed with: 
-- YouTube Data API key
-- Firebase API key (with enabled email/password authentication)
-- Firebase private key
-- MongoDB Atlas connection string
+To start the application, three external services need to be configured and run. These services are:
 
-However, for testing reasons the application may also cooperate with a local database 
-running in the Docker environment. The following command enables starting such MongoDB Docker container:
+- YouTube Data API - for downloading comments to be labelled with emotions,
+- MongoDB Atlas - to set up a database for application's data storage,
+- Firebase Authentication - for providing the application with authentication services.
 
-`docker run --name data-labeling-nlp -d -p 27017:27017 mongo:6.0.2`
+Configuration of these services provides information required for establishing communication between them and Emotion Classification backend. This information needs to be included in the project files of Emotion Classification backend.
 
-The application may be run with use of the following command run in the project's root directory: 
+The fifth chapter of the engineering thesis paper (*Emotion Classification backend application from user's point of view*) contains a description of the configuration and application running process. Subchapter 5.1 shows how to connect Emotion Classification backend with the third-party services and how to run it locally or deploy it in the cloud environment.
 
-`./mvnw spring-boot:run`
+Additionally, subchapters 5.2, 5.3, and 5.4 present a user manual containing information on how to use the application, which is already run.
 
-The application has a Swagger UI  configured, which gives access to the application's REST API in a visualized and interactive way. 
-This can be accessed by entering the following url address:
-
-`localhost:8080/`
-or
-`localhost:8080/swagger-ui/index.html`
+The Emotion Classification backend application's code is stored in *emotion-classification-backend.zip* archive file on the disk. However, the engineering thesis paper is stored as *230457_artur_milosz_inz.pdf* file. 
