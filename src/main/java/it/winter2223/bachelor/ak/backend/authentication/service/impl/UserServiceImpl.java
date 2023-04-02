@@ -36,23 +36,21 @@ public class UserServiceImpl implements UserService {
         validateEmail(userInput.email());
         validatePassword(userInput.password());
 
-        GoogleSignUpResponse signUpResponse = firebaseAuthService.signUpUser(userInput);
+        var user = User.builder()
+                .email(userInput.email())
+                .password(passwordEncoder.encode(userInput.password()))
+                .userRole(UserRole.USER)
+                .build();
+        userRepository.save(user);
 
-        firebaseAuthService.setCustomUserClaims(signUpResponse.localId());
-        GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(
-                new RefreshTokenInput(signUpResponse.refreshToken()));
-
-        userRepository.save(
-                User.builder()
-                .userId(refreshTokenResponse.user_id())
-                .build());
+        var jwtToken = jwtService.generateToken(user);
 
         return UserOutput.builder()
-                .email(signUpResponse.email())
-                .userId(refreshTokenResponse.user_id())
-                .idToken(refreshTokenResponse.id_token())
-                .expiresIn(refreshTokenResponse.expires_in())
-                .refreshToken(refreshTokenResponse.refresh_token())
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .accessToken(jwtToken)
+                .expiresIn("360000000000000")
+                .refreshToken("")
                 .build();
     }
 
@@ -60,26 +58,37 @@ public class UserServiceImpl implements UserService {
     public UserOutput signIn(UserInput userInput) {
         validateEmail(userInput.email());
 
-        GoogleSignInResponse signInResponse = firebaseAuthService.signInUser(userInput);
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userInput.email(),
+                        userInput.password()
+                )
+        );
+
+        var user = userRepository.findByEmail(userInput.email())
+                .orElseThrow();
+
+        var jwtToken = jwtService.generateToken(user);
 
         return UserOutput.builder()
-                .email(signInResponse.email())
-                .userId(signInResponse.localId())
-                .idToken(signInResponse.idToken())
-                .expiresIn(signInResponse.expiresIn())
-                .refreshToken(signInResponse.refreshToken())
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .accessToken(jwtToken)
+                .expiresIn("360000000000000")
+                .refreshToken("")
                 .build();
     }
 
+    // TODO: Zrobić to
     @Override
     public RefreshTokenOutput refreshToken(RefreshTokenInput refreshTokenInput) {
-        GoogleRefreshTokenResponse refreshTokenResponse = firebaseAuthService.requestRefreshToken(refreshTokenInput);
+        // refreshTokenInput.refreshToken()
 
         return RefreshTokenOutput.builder()
-                .userId(refreshTokenResponse.user_id())
-                .idToken(refreshTokenResponse.id_token())
-                .expiresIn(refreshTokenResponse.expires_in())
-                .refreshToken(refreshTokenResponse.refresh_token())
+                .userId("")
+                .idToken("")
+                .expiresIn("")
+                .refreshToken("")
                 .build();
     }
 
