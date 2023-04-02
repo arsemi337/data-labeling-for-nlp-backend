@@ -44,7 +44,7 @@ class UserServiceImplTest {
     void shouldSignUpUser() {
         UserInput userInput = new UserInput("email@email.com", "password");
         GoogleSignUpResponse signUpResponse = new GoogleSignUpResponse(
-                "idToken",
+                "accessToken",
                 "email@email.com",
                 "refreshToken",
                 "expiresIn",
@@ -62,11 +62,11 @@ class UserServiceImplTest {
         doNothing().when(firebaseAuthService).setCustomUserClaims(anyString());
         when(firebaseAuthService.requestRefreshToken(any(RefreshTokenInput.class))).thenReturn(refreshTokenResponse);
         when(userRepository.save(any(User.class))).thenReturn(user);
-        UserOutput userOutput = underTest.singUp(userInput);
+        UserOutput userOutput = underTest.signUp(userInput);
 
         assertEquals(userOutput.email(), signUpResponse.email());
         assertEquals(userOutput.userId(), refreshTokenResponse.user_id());
-        assertEquals(userOutput.idToken(), refreshTokenResponse.id_token());
+        assertEquals(userOutput.accessToken(), refreshTokenResponse.id_token());
         assertEquals(userOutput.expiresIn(), refreshTokenResponse.expires_in());
         assertEquals(userOutput.refreshToken(), refreshTokenResponse.refresh_token());
         verify(firebaseAuthService).signUpUser(userInput);
@@ -86,7 +86,7 @@ class UserServiceImplTest {
                         .password("password")
                         .build();
         assertThatExceptionOfType(FirebaseAuthenticationException.class)
-                .isThrownBy(() -> underTest.singUp(userInput)).withMessage(INVALID_EMAIL_ADDRESS.getMessage());
+                .isThrownBy(() -> underTest.signUp(userInput)).withMessage(INVALID_EMAIL_ADDRESS.getMessage());
     }
 
     @ParameterizedTest
@@ -100,7 +100,7 @@ class UserServiceImplTest {
                 .password(password)
                 .build();
         assertThatExceptionOfType(FirebaseAuthenticationException.class)
-                .isThrownBy(() -> underTest.singUp(userInput)).withMessage(INVALID_PASSWORD.getMessage());
+                .isThrownBy(() -> underTest.signUp(userInput)).withMessage(INVALID_PASSWORD.getMessage());
     }
 
     @Test
@@ -115,7 +115,7 @@ class UserServiceImplTest {
                 .thenThrow(new FirebaseAuthenticationException(SIGNING_UP_FAILED.getMessage()));
 
         assertThatExceptionOfType(FirebaseAuthenticationException.class)
-                .isThrownBy(() -> underTest.singUp(userInput)).withMessage(SIGNING_UP_FAILED.getMessage());
+                .isThrownBy(() -> underTest.signUp(userInput)).withMessage(SIGNING_UP_FAILED.getMessage());
 
         verify(firebaseAuthService, never()).setCustomUserClaims(anyString());
         verify(firebaseAuthService, never()).requestRefreshToken(any(RefreshTokenInput.class));
@@ -127,7 +127,7 @@ class UserServiceImplTest {
     void shouldSignInUser() {
         UserInput userInput = new UserInput("email@email.com", "password");
         GoogleSignInResponse signInResponse = new GoogleSignInResponse(
-                "idToken",
+                "accessToken",
                 "email@email.com",
                 "refreshToken",
                 "expiresIn",
@@ -139,7 +139,7 @@ class UserServiceImplTest {
 
         assertEquals(userOutput.email(), signInResponse.email());
         assertEquals(userOutput.userId(), signInResponse.localId());
-        assertEquals(userOutput.idToken(), signInResponse.idToken());
+        assertEquals(userOutput.accessToken(), signInResponse.idToken());
         assertEquals(userOutput.expiresIn(), signInResponse.expiresIn());
         assertEquals(userOutput.refreshToken(), signInResponse.refreshToken());
         verify(firebaseAuthService).signInUser(userInput);
@@ -175,7 +175,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("returns new idToken and refreshToken when valid refreshToken is passed")
+    @DisplayName("returns new accessToken and refreshToken when valid refreshToken is passed")
     void shouldRefreshToken() {
         RefreshTokenInput refreshTokenInput = new RefreshTokenInput("refreshToken");
         GoogleRefreshTokenResponse refreshTokenResponse = new GoogleRefreshTokenResponse(

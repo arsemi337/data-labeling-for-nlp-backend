@@ -1,14 +1,16 @@
 package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 
 import it.winter2223.bachelor.ak.backend.authentication.dto.*;
-import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefreshTokenResponse;
-import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
-import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.persistence.User;
+import it.winter2223.bachelor.ak.backend.authentication.persistence.UserRole;
 import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
+import it.winter2223.bachelor.ak.backend.config.security.JwtService;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.INVALID_EMAIL_ADDRESS;
@@ -18,15 +20,19 @@ import static it.winter2223.bachelor.ak.backend.authentication.exception.Firebas
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final FirebaseAuthService firebaseAuthService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    UserServiceImpl(UserRepository userRepository, FirebaseAuthService firebaseAuthService) {
+    UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
-        this.firebaseAuthService = firebaseAuthService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
-    public UserOutput singUp(UserInput userInput) {
+    public UserOutput signUp(UserInput userInput) {
         validateEmail(userInput.email());
         validatePassword(userInput.password());
 
@@ -88,5 +94,4 @@ public class UserServiceImpl implements UserService {
             throw new FirebaseAuthenticationException(INVALID_PASSWORD.getMessage());
         }
     }
-
 }
