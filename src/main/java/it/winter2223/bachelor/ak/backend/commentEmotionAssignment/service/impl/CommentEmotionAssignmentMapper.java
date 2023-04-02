@@ -1,7 +1,7 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.impl;
 
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentOutput;
-import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.CommentEmotionAssignment;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.model.CommentEmotionAssignment;
 
 class CommentEmotionAssignmentMapper {
 

@@ -1,7 +1,7 @@
 package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
-import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
+import it.winter2223.bachelor.ak.backend.comment.model.Comment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

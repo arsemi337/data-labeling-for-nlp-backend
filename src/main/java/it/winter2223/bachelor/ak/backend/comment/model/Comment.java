@@ -1,4 +1,4 @@
-package it.winter2223.bachelor.ak.backend.comment.persistence;
+package it.winter2223.bachelor.ak.backend.comment.model;
 
 import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
 import lombok.*;

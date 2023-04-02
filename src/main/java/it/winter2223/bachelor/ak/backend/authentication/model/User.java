@@ -1,4 +1,4 @@
-package it.winter2223.bachelor.ak.backend.authentication.persistence;
+package it.winter2223.bachelor.ak.backend.authentication.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

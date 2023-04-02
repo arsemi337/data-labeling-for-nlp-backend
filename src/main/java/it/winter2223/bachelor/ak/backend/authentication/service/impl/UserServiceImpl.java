@@ -2,8 +2,8 @@ package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 
 import it.winter2223.bachelor.ak.backend.authentication.dto.*;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
-import it.winter2223.bachelor.ak.backend.authentication.persistence.User;
-import it.winter2223.bachelor.ak.backend.authentication.persistence.UserRole;
+import it.winter2223.bachelor.ak.backend.authentication.model.User;
+import it.winter2223.bachelor.ak.backend.authentication.model.UserRole;
 import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.authentication.service.UserService;
 import it.winter2223.bachelor.ak.backend.config.security.JwtService;

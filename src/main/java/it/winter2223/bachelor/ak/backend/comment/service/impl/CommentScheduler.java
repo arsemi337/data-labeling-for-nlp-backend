@@ -1,6 +1,6 @@
 package it.winter2223.bachelor.ak.backend.comment.service.impl;
 
-import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
+import it.winter2223.bachelor.ak.backend.comment.model.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.InternetCommentService;
 import org.springframework.context.annotation.Profile;

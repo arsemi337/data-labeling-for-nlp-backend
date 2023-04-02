@@ -1,7 +1,7 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.repository;
 
-import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.CommentEmotionAssignment;
-import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.Emotion;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.model.CommentEmotionAssignment;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.model.Emotion;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

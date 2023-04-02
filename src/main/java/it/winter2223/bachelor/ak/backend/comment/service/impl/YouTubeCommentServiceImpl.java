@@ -5,7 +5,7 @@ import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
-import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
+import it.winter2223.bachelor.ak.backend.comment.model.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.InternetCommentService;
 import it.winter2223.bachelor.ak.backend.comment.service.YouTubeService;

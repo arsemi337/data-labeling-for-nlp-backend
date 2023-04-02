@@ -9,7 +9,7 @@ import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleRefresh
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignInResponse;
 import it.winter2223.bachelor.ak.backend.authentication.dto.google.GoogleSignUpResponse;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
-import it.winter2223.bachelor.ak.backend.authentication.persistence.User;
+import it.winter2223.bachelor.ak.backend.authentication.model.User;
 import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

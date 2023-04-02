@@ -4,11 +4,11 @@ import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthen
 import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.comment.dto.CommentOutput;
 import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
-import it.winter2223.bachelor.ak.backend.comment.persistence.Comment;
+import it.winter2223.bachelor.ak.backend.comment.model.Comment;
 import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
 import it.winter2223.bachelor.ak.backend.comment.service.CommentService;
 import it.winter2223.bachelor.ak.backend.comment.service.InternetCommentService;
-import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence.CommentEmotionAssignment;
+import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.model.CommentEmotionAssignment;
 import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.repository.CommentEmotionAssignmentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

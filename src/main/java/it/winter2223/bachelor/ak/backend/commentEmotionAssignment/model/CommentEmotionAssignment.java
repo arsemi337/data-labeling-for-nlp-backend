@@ -1,4 +1,4 @@
-package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.persistence;
+package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
