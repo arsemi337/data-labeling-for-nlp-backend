@@ -139,7 +139,7 @@
 //
 //        assertEquals(userOutput.email(), signInResponse.email());
 //        assertEquals(userOutput.userId(), signInResponse.localId());
-//        assertEquals(userOutput.accessToken(), signInResponse.idToken());
+//        assertEquals(userOutput.accessToken(), signInResponse.accessToken());
 //        assertEquals(userOutput.expiresIn(), signInResponse.expiresIn());
 //        assertEquals(userOutput.refreshToken(), signInResponse.refreshToken());
 //        verify(firebaseAuthService).signInUser(userInput);
@@ -190,7 +190,7 @@
 //        RefreshTokenOutput refreshTokenOutput = underTest.refreshToken(refreshTokenInput);
 //
 //        assertEquals(refreshTokenOutput.userId(), refreshTokenResponse.user_id());
-//        assertEquals(refreshTokenOutput.idToken(), refreshTokenResponse.id_token());
+//        assertEquals(refreshTokenOutput.accessToken(), refreshTokenResponse.id_token());
 //        assertEquals(refreshTokenOutput.expiresIn(), refreshTokenResponse.expires_in());
 //        assertEquals(refreshTokenOutput.refreshToken(), refreshTokenOutput.refreshToken());
 //        verify(firebaseAuthService).requestRefreshToken(refreshTokenInput);

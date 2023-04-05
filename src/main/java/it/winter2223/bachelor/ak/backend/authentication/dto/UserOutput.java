@@ -2,6 +2,15 @@ package it.winter2223.bachelor.ak.backend.authentication.dto;
 
 import lombok.Builder;
 
+import java.util.UUID;
+
 @Builder
-public record UserOutput(String email, String userId, String accessToken, String expiresIn, String refreshToken) {
+public record UserOutput(
+        UUID userId,
+        String email,
+        UserRoleOutput userRoleOutput,
+        String accessToken,
+        String expiresIn,
+        String refreshToken
+) {
 }
