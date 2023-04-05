@@ -1,6 +1,5 @@
 package it.winter2223.bachelor.ak.backend.commentEmotionAssignment.service.impl;
 
-import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
 import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
 import it.winter2223.bachelor.ak.backend.comment.model.Comment;
@@ -25,7 +24,6 @@ import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
 import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
 import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.*;
 
@@ -80,7 +78,7 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
     private void processAssignmentInput(
             List<CommentEmotionAssignmentOutput> assignmentOutputs,
             CommentEmotionAssignmentInput assignmentInput) {
-        validateUserId(assignmentInput.userId());
+//        validateUserId(assignmentInput.userId());
         Emotion emotion = getEnumFrom(assignmentInput.emotion());
 
         Comment comment = getComment(assignmentInput);
@@ -102,11 +100,11 @@ public class CommentEmotionAssignmentServiceImpl implements CommentEmotionAssign
                                 assignmentRepository.save(commentEmotionAssignment)));
     }
 
-    private void validateUserId(String userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage() + " '" + userId + "'");
-        }
-    }
+//    private void validateUserId(String userId) {
+//        if (!userRepository.existsById(userId)) {
+//            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage() + " '" + userId + "'");
+//        }
+//    }
 
     private Emotion getEnumFrom(String emotion) {
         if (!Emotion.contains(emotion)) {

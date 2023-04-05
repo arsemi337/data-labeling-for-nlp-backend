@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ class CommentEmotionAssignmentControllerTest {
     void shouldPostCommentEmotionAssignment() throws Exception {
         UUID assignmentId = UUID.randomUUID();
         String userId = "userId";
-        String commentId = "commentId";
+        String commentId = "emotionTextId";
 
         when(commentEmotionAssignmentService.postCommentEmotionAssignments(anyList()))
                 .thenReturn(getAssignmentOutput(assignmentId, userId, commentId));
@@ -73,7 +73,7 @@ class CommentEmotionAssignmentControllerTest {
                         [
                             {
                                 "userId": "%s",
-                                "commentId": "%s",
+                                "emotionTextId": "%s",
                                 "emotion": "JOY"
                             }
                         ]

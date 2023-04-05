@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class YouTubeCommentServiceImplTest {
+public class YouTubeEmotionTextServiceImplTest {
 
     @InjectMocks
     YouTubeCommentServiceImpl underTest;
@@ -49,7 +49,7 @@ public class YouTubeCommentServiceImplTest {
                 = underTest.fetchInternetComments();
 
         assertEquals(1, comments.size());
-        assertEquals("commentId", comments.get(0).getCommentId());
+        assertEquals("emotionTextId", comments.get(0).getCommentId());
         assertEquals("To jest przykładowy komentarz po polsku, który ma co najmniej pięć słów.", comments.get(0).getContent());
         verify(youTubeService).fetchMostPopularYTVideos();
         verify(youTubeService).fetchMostPopularYTComments(anyString());
@@ -75,7 +75,7 @@ public class YouTubeCommentServiceImplTest {
                 = underTest.fetchInternetComments();
 
         assertEquals(1, comments.size());
-        assertEquals("commentId", comments.get(0).getCommentId());
+        assertEquals("emotionTextId", comments.get(0).getCommentId());
         assertEquals("To jest przykładowy komentarz z tagiem html", comments.get(0).getContent());
         verify(youTubeService).fetchMostPopularYTVideos();
         verify(youTubeService).fetchMostPopularYTComments(anyString());
@@ -117,7 +117,7 @@ public class YouTubeCommentServiceImplTest {
         Comment ytComment = new Comment();
         CommentSnippet ytCommentSnippet = new CommentSnippet();
 
-        ytComment.setId("commentId");
+        ytComment.setId("emotionTextId");
         ytCommentSnippet.setTextDisplay(commentContent);
         ytComment.setSnippet(ytCommentSnippet);
         ytCommentThreadSnippet.setTopLevelComment(ytComment);

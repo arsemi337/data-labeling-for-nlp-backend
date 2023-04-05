@@ -74,7 +74,7 @@ class CommentControllerTest {
     @WithMockUser(username="user", authorities={"USER_READ_WRITE"})
     @DisplayName("when correct parameters are passed, list of comments to be assigned should be returned")
     void shouldFetchCommentsToBeAssigned() throws Exception {
-        String commentId = "commentId";
+        String commentId = "emotionTextId";
         String userId = "userId";
         String commentsNumber = "1";
 

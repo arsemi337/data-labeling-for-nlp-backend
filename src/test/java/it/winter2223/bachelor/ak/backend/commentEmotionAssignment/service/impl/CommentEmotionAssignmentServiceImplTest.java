@@ -53,11 +53,11 @@ public class CommentEmotionAssignmentServiceImplTest {
     void shouldPostEmotionAssignment(Emotion emotion) {
         List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
-                .commentId("commentId")
+                .commentId("emotionTextId")
                 .emotion(emotion.toString())
                 .build());
         Comment comment = Comment.builder()
-                        .commentId("commentId")
+                        .commentId("emotionTextId")
                         .content("content")
                         .assignmentsNumber(0)
                         .build();
@@ -71,7 +71,7 @@ public class CommentEmotionAssignmentServiceImplTest {
         List<CommentEmotionAssignmentOutput> output = underTest.postCommentEmotionAssignments(input);
 
         assertEquals("userId", output.get(0).userId());
-        assertEquals("commentId", output.get(0).commentId());
+        assertEquals("emotionTextId", output.get(0).commentId());
         assertEquals(emotion.toString(), output.get(0).emotionDto().toString());
         verify(commentRepository).save(any());
         verify(assignmentRepository).save(any());
@@ -83,7 +83,7 @@ public class CommentEmotionAssignmentServiceImplTest {
     void shouldThrowFirebaseAuthenticationExceptionWhenPostingAssignmentForWrongUserId(Emotion emotion) {
         List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
-                .commentId("commentId")
+                .commentId("emotionTextId")
                 .emotion(emotion.toString())
                 .build());
 
@@ -100,7 +100,7 @@ public class CommentEmotionAssignmentServiceImplTest {
     void shouldThrowCommentEmotionAssignmentExceptionWhenPostingAssignmentForWrongEmotion(String emotion) {
         List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
-                .commentId("commentId")
+                .commentId("emotionTextId")
                 .emotion(emotion)
                 .build());
 
@@ -117,7 +117,7 @@ public class CommentEmotionAssignmentServiceImplTest {
     void shouldThrowCommentExceptionWhenPostingAssignmentForWrongCommentId(Emotion emotion) {
         List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
-                .commentId("commentId")
+                .commentId("emotionTextId")
                 .emotion(emotion.toString())
                 .build());
 
@@ -135,17 +135,17 @@ public class CommentEmotionAssignmentServiceImplTest {
     void shouldThrowCommentEmotionAssignmentExceptionWhenTryingToDuplicateAssignment(Emotion emotion) {
         List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
                 .userId("userId")
-                .commentId("commentId")
+                .commentId("emotionTextId")
                 .emotion(emotion.toString())
                 .build());
         Comment comment = Comment.builder()
-                .commentId("commentId")
+                .commentId("emotionTextId")
                 .content("content")
                 .assignmentsNumber(0)
                 .build();
         CommentEmotionAssignment assignment = CommentEmotionAssignment.builder()
                         .userId("userId")
-                        .commentId("commentId")
+                        .commentId("emotionTextId")
                         .build();
 
         when(userRepository.existsById(anyString())).thenReturn(true);
