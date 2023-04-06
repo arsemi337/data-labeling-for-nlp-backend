@@ -11,7 +11,7 @@ public class ControllerExceptionHandler {
     ControllerExceptionHandler() {}
 
     @ExceptionHandler
-    ResponseEntity<String> exceptionHandler(BusinessLogicException e) {
+    ResponseEntity<String> exceptionHandler(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }
