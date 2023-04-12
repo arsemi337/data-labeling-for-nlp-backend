@@ -1,14 +1,13 @@
-package it.nlp.backend.commentEmotionAssignment.exception;
+package it.nlp.backend.exception.messages;
 
-public enum CommentEmotionAssignmentExceptionMessages {
-
+public enum TextEmotionAssignmentExceptionMessages {
     ASSIGNMENT_ALREADY_EXISTS("There already exists this user's assignment for this comment"),
     WRONG_EMOTION("Entered emotion does not exist"),
-    FAILED_TO_WRITE_CSV("Failed to write to csv file. ");
+    FAILED_TO_WRITE_CSV("Failed to write to csv file");
 
     private final String message;
 
-    CommentEmotionAssignmentExceptionMessages(String message) {
+    TextEmotionAssignmentExceptionMessages(String message) {
         this.message = message;
     }
 

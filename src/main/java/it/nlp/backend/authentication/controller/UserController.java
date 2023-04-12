@@ -7,7 +7,6 @@ import it.nlp.backend.authentication.dto.RefreshTokenOutput;
 import it.nlp.backend.authentication.dto.UserInput;
 import it.nlp.backend.authentication.dto.UserOutput;
 import it.nlp.backend.authentication.service.UserService;
-import it.winter2223.bachelor.ak.backend.authentication.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

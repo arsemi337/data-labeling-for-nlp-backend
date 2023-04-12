@@ -1,26 +1,20 @@
 package it.nlp.backend.emotionText.service.impl;
 
-import it.nlp.backend.authentication.exception.FirebaseAuthenticationException;
 import it.nlp.backend.authentication.repository.UserRepository;
-import it.nlp.backend.comment.exception.CommentException;
 import it.nlp.backend.emotionText.dto.EmotionTextOutput;
 import it.nlp.backend.emotionText.model.EmotionText;
 import it.nlp.backend.emotionText.repository.EmotionTextRepository;
 import it.nlp.backend.emotionText.service.EmotionTextService;
 import it.nlp.backend.emotionText.service.InternetCommentService;
+import it.nlp.backend.exception.messages.SecurityExceptionMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static it.nlp.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
-import static it.nlp.backend.comment.exception.CommentExceptionMessages.COMMENTS_NUMBER_IS_NOT_INTEGER;
-import static it.nlp.backend.comment.exception.CommentExceptionMessages.COMMENTS_NUMBER_OUT_OF_RANGE;
+import static it.nlp.backend.exception.messages.TextExceptionMessages.COMMENTS_NUMBER_OUT_OF_RANGE;
 
 @Service
 class EmotionTextServiceImpl implements EmotionTextService {
@@ -79,20 +73,16 @@ class EmotionTextServiceImpl implements EmotionTextService {
 
     private int parseCommentsNumber(String commentsNumber) {
         int number;
-        try {
-            number = Integer.parseInt(commentsNumber);
-        } catch (NumberFormatException e) {
-            throw new CommentException(COMMENTS_NUMBER_IS_NOT_INTEGER.getMessage(), e);
-        }
+        number = Integer.parseInt(commentsNumber);
         if (number < 1 || number > 100) {
-            throw new CommentException(COMMENTS_NUMBER_OUT_OF_RANGE.getMessage());
+            throw new IllegalArgumentException(COMMENTS_NUMBER_OUT_OF_RANGE.getMessage());
         }
         return number;
     }
 
     private void validateUserId(UUID userId) {
         if (!userRepository.existsById(userId)) {
-            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage());
+            throw new NoSuchElementException(SecurityExceptionMessages.NO_USER_WITH_PASSED_ID.getMessage() + userId);
         }
     }
 

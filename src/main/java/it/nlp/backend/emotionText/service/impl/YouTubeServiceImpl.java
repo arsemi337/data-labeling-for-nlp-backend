@@ -4,7 +4,6 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import it.nlp.backend.emotionText.service.YouTubeService;
-import it.nlp.backend.comment.exception.CommentException;
 import it.nlp.backend.config.YouTubeServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +13,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-
-import static it.nlp.backend.comment.exception.CommentExceptionMessages.COMMENTS_FETCHING_ERROR;
-import static it.nlp.backend.comment.exception.CommentExceptionMessages.VIDEOS_FETCHING_ERROR;
 
 @Component
 public class YouTubeServiceImpl implements YouTubeService {
@@ -45,7 +41,7 @@ public class YouTubeServiceImpl implements YouTubeService {
                     .setFields("items(id)")
                     .execute();
         } catch (IOException ioException) {
-            throw new CommentException(VIDEOS_FETCHING_ERROR.getMessage(), ioException);
+            throw new RuntimeException(ioException.getMessage());
         }
         return videos;
     }
@@ -64,7 +60,7 @@ public class YouTubeServiceImpl implements YouTubeService {
                     .execute();
 
         } catch (IOException ioException) {
-            logger.error(COMMENTS_FETCHING_ERROR.getMessage() + videoId);
+            logger.error(ioException.getMessage());
             commentsResponse = null;
         }
         return commentsResponse;

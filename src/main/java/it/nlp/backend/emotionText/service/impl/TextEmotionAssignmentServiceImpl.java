@@ -1,10 +1,6 @@
 package it.nlp.backend.emotionText.service.impl;
 
-import it.nlp.backend.authentication.exception.FirebaseAuthenticationException;
 import it.nlp.backend.authentication.repository.UserRepository;
-import it.nlp.backend.comment.exception.CommentException;
-import it.nlp.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentException;
-import it.nlp.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages;
 import it.nlp.backend.emotionText.dto.TextEmotionAssignmentInput;
 import it.nlp.backend.emotionText.dto.TextEmotionAssignmentOutput;
 import it.nlp.backend.emotionText.model.Emotion;
@@ -22,8 +18,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
-import static it.nlp.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
-import static it.nlp.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
+import static it.nlp.backend.exception.messages.SecurityExceptionMessages.NO_USER_WITH_PASSED_ID;
+import static it.nlp.backend.exception.messages.TextEmotionAssignmentExceptionMessages.*;
+import static it.nlp.backend.exception.messages.TextExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
 
 @Service
 public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentService {
@@ -64,7 +61,7 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
             }
 
         } catch (IOException e) {
-            throw new CommentEmotionAssignmentException(CommentEmotionAssignmentExceptionMessages.FAILED_TO_WRITE_CSV.getMessage(), e);
+            throw new RuntimeException(FAILED_TO_WRITE_CSV.getMessage());
         }
     }
 
@@ -75,7 +72,7 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
         validateUserId(userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(); //TODO: zrobić wyjątki
+                .orElseThrow(() -> new NoSuchElementException(NO_USER_WITH_PASSED_ID.getMessage() + " (" + userId + ")"));
         Emotion emotion = getEnumFrom(assignmentInput.emotion());
 
         EmotionText emotionText = getEmotionText(assignmentInput);
@@ -94,13 +91,13 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
 
     private void validateUserId(UUID userId) {
         if (!userRepository.existsById(userId)) {
-            throw new FirebaseAuthenticationException(NO_USER_WITH_PASSED_ID.getMessage() + " '" + userId + "'");
+            throw new NoSuchElementException(NO_USER_WITH_PASSED_ID.getMessage() + userId);
         }
     }
 
     private Emotion getEnumFrom(String emotion) {
         if (!Emotion.contains(emotion)) {
-            throw new CommentEmotionAssignmentException(CommentEmotionAssignmentExceptionMessages.WRONG_EMOTION.getMessage() + " (" + emotion + ")");
+            throw new IllegalArgumentException(WRONG_EMOTION.getMessage() + " (" + emotion + ")");
         }
         return Emotion.valueOf(emotion);
     }
@@ -108,14 +105,12 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
     private EmotionText getEmotionText(TextEmotionAssignmentInput assignmentInput) {
         UUID textId = UUID.fromString(assignmentInput.userId());
         return textRepository.findById(textId)
-                .orElseThrow(() -> new CommentException(
-                        NO_COMMENT_WITH_ENTERED_ID.getMessage() + " '" + textId + "'"));
+                .orElseThrow(() -> new NoSuchElementException(NO_COMMENT_WITH_ENTERED_ID.getMessage() + textId));
     }
 
     private void checkIfAssignmentExists(List<UUID> userAssignedEmotionTexts, UUID emotionTextId) {
         if (userAssignedEmotionTexts.contains(emotionTextId)) {
-            throw new CommentEmotionAssignmentException(
-                    CommentEmotionAssignmentExceptionMessages.ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + emotionTextId + ")");
+            throw new IllegalArgumentException(ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + emotionTextId + ")");
         }
     }
 

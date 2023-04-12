@@ -4,8 +4,6 @@ import it.nlp.backend.authentication.dto.RefreshTokenInput;
 import it.nlp.backend.authentication.dto.RefreshTokenOutput;
 import it.nlp.backend.authentication.dto.UserInput;
 import it.nlp.backend.authentication.dto.UserOutput;
-import it.nlp.backend.authentication.exception.FirebaseAuthenticationException;
-import it.nlp.backend.authentication.exception.FirebaseAuthenticationExceptionMessages;
 import it.nlp.backend.authentication.model.User;
 import it.nlp.backend.authentication.model.UserRole;
 import it.nlp.backend.authentication.repository.UserRepository;
@@ -19,7 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import static it.nlp.backend.exception.messages.SecurityExceptionMessages.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -91,13 +92,12 @@ public class UserServiceImpl implements UserService {
     public RefreshTokenOutput refreshToken(RefreshTokenInput refreshTokenInput) {
         var refreshToken = refreshTokenInput.refreshTokenValue();
 
-        // TODO: exception - invalid refresh token
         var user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow();
+                .orElseThrow(
+                        () -> new NoSuchElementException(TOKEN_DOES_NOT_EXIST.getMessage() + " (" + refreshToken + ")"));
 
-        // TODO: exception 2 - token expired
         if (!jwtService.isTokenValid(refreshToken, user)) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException(INVALID_REFRESH_TOKEN.getMessage() + " (" + refreshToken + ")");
         }
 
         var jwtRefreshToken = jwtService.generateRefreshToken(user.getUsername());
@@ -114,13 +114,13 @@ public class UserServiceImpl implements UserService {
 
     private void validateEmail(String email) {
         if (!EmailValidator.getInstance().isValid(email)) {
-            throw new FirebaseAuthenticationException(FirebaseAuthenticationExceptionMessages.INVALID_EMAIL_ADDRESS.getMessage());
+            throw new IllegalArgumentException(INVALID_EMAIL_ADDRESS.getMessage());
         }
     }
 
     private void validatePassword(String password) {
         if (password == null || password.length() < 6) {
-            throw new FirebaseAuthenticationException(FirebaseAuthenticationExceptionMessages.INVALID_PASSWORD.getMessage());
+            throw new IllegalArgumentException(INVALID_PASSWORD.getMessage());
         }
     }
 }
