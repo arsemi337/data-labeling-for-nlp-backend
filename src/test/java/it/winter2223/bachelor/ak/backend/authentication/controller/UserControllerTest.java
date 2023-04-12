@@ -34,7 +34,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("when correct body is passed, a user should be signed up")
     void shouldSignUp() throws Exception {
-        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "accessToken", "expiresIn", "refreshToken");
+        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "accessTokenOutput", "expiresIn", "refreshTokenOutput");
 
         when(userService.signUp(any(UserInput.class))).thenReturn(mockedValue);
 
@@ -42,15 +42,15 @@ public class UserControllerTest {
                         .contentType("application/json")
                         .content(getUserInputBody()))
                 .andExpect(jsonPath("$.email", equalTo("email@email.com")))
-                .andExpect(jsonPath("$.idToken", equalTo("accessToken")))
-                .andExpect(jsonPath("$.refreshToken", equalTo("refreshToken")));
+                .andExpect(jsonPath("$.idToken", equalTo("accessTokenOutput")))
+                .andExpect(jsonPath("$.refreshToken", equalTo("refreshTokenOutput")));
         verify(userService).signUp(any(UserInput.class));
     }
 
     @Test
     @DisplayName("when correct body is passed, a user should be signed in")
     void shouldSignIn() throws Exception {
-        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "accessToken", "expiresIn", "refreshToken");
+        UserOutput mockedValue = new UserOutput("email@email.com", "userId", "accessTokenOutput", "expiresIn", "refreshTokenOutput");
 
         when(userService.signIn(any(UserInput.class))).thenReturn(mockedValue);
 
@@ -59,15 +59,15 @@ public class UserControllerTest {
                         .content(getUserInputBody()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.email", equalTo("email@email.com")))
-                .andExpect(jsonPath("$.idToken", equalTo("accessToken")))
-                .andExpect(jsonPath("$.refreshToken", equalTo("refreshToken")));
+                .andExpect(jsonPath("$.idToken", equalTo("accessTokenOutput")))
+                .andExpect(jsonPath("$.refreshToken", equalTo("refreshTokenOutput")));
         verify(userService).signIn(any(UserInput.class));
     }
 
     @Test
     @DisplayName("when correct body is passed, a refreshed token should be returned")
     void shouldReturnRefreshedToken() throws Exception {
-        RefreshTokenOutput mockedValue = new RefreshTokenOutput("userId", "accessToken", "expiresIn", "refreshToken");
+        RefreshTokenOutput mockedValue = new RefreshTokenOutput("userId", "accessTokenOutput", "expiresIn", "refreshTokenOutput");
 
         when(userService.refreshToken(any(RefreshTokenInput.class))).thenReturn(mockedValue);
 
@@ -75,8 +75,8 @@ public class UserControllerTest {
                         .contentType("application/json")
                         .content(getRefreshTokenInputBody()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.idToken", equalTo("accessToken")))
-                .andExpect(jsonPath("$.refreshToken", equalTo("refreshToken")));
+                .andExpect(jsonPath("$.idToken", equalTo("accessTokenOutput")))
+                .andExpect(jsonPath("$.refreshToken", equalTo("refreshTokenOutput")));
         verify(userService).refreshToken(any(RefreshTokenInput.class));
     }
 
@@ -92,7 +92,7 @@ public class UserControllerTest {
     private String getRefreshTokenInputBody() {
         return """
                 {
-                    "refreshToken": "refreshToken"
+                    "refreshTokenOutput": "refreshTokenOutput"
                 }
                """;
     }

@@ -5,8 +5,7 @@ import lombok.Builder;
 @Builder
 public record RefreshTokenOutput(
         String userId,
-        String accessToken,
-        String expiresIn,
-        String refreshToken
+        TokenOutput accessTokenOutput,
+        TokenOutput refreshTokenOutput
 ) {
 }

@@ -20,6 +20,8 @@ public class JwtService {
 
     @Value("${jwt.secret.key}")
     private String SECRET_KEY;
+    public static long ACCESS_TOKEN_EXPIRY_TIME = 1000 * 60;
+    public static long REFRESH_TOKEN_EXPIRY_TIME = 1000L * 60 * 60 * 24 * 30;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -30,19 +32,28 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateAccessToken(String username) {
+        return generateAccessToken(new HashMap<>(), username);
     }
 
-    public String generateToken(
+    public String generateAccessToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails
+            String username
     ) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY_TIME))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY_TIME))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

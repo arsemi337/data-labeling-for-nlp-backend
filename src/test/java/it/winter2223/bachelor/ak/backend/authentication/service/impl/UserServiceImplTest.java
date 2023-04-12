@@ -44,9 +44,9 @@
 //    void shouldSignUpUser() {
 //        UserInput userInput = new UserInput("email@email.com", "password");
 //        GoogleSignUpResponse signUpResponse = new GoogleSignUpResponse(
-//                "accessToken",
+//                "accessTokenOutput",
 //                "email@email.com",
-//                "refreshToken",
+//                "refreshTokenOutput",
 //                "expiresIn",
 //                "localId");
 //        GoogleRefreshTokenResponse refreshTokenResponse = new GoogleRefreshTokenResponse(
@@ -66,12 +66,12 @@
 //
 //        assertEquals(userOutput.email(), signUpResponse.email());
 //        assertEquals(userOutput.userId(), refreshTokenResponse.user_id());
-//        assertEquals(userOutput.accessToken(), refreshTokenResponse.id_token());
+//        assertEquals(userOutput.accessTokenOutput(), refreshTokenResponse.id_token());
 //        assertEquals(userOutput.expiresIn(), refreshTokenResponse.expires_in());
-//        assertEquals(userOutput.refreshToken(), refreshTokenResponse.refresh_token());
+//        assertEquals(userOutput.refreshTokenOutput(), refreshTokenResponse.refresh_token());
 //        verify(firebaseAuthService).signUpUser(userInput);
 //        verify(firebaseAuthService).setCustomUserClaims(signUpResponse.localId());
-//        verify(firebaseAuthService).requestRefreshToken(new RefreshTokenInput(signUpResponse.refreshToken()));
+//        verify(firebaseAuthService).requestRefreshToken(new RefreshTokenInput(signUpResponse.refreshTokenOutput()));
 //        verify(userRepository).save(any(User.class));
 //    }
 //
@@ -127,9 +127,9 @@
 //    void shouldSignInUser() {
 //        UserInput userInput = new UserInput("email@email.com", "password");
 //        GoogleSignInResponse signInResponse = new GoogleSignInResponse(
-//                "accessToken",
+//                "accessTokenOutput",
 //                "email@email.com",
-//                "refreshToken",
+//                "refreshTokenOutput",
 //                "expiresIn",
 //                "localId",
 //                true);
@@ -139,9 +139,9 @@
 //
 //        assertEquals(userOutput.email(), signInResponse.email());
 //        assertEquals(userOutput.userId(), signInResponse.localId());
-//        assertEquals(userOutput.accessToken(), signInResponse.accessToken());
+//        assertEquals(userOutput.accessTokenOutput(), signInResponse.accessTokenOutput());
 //        assertEquals(userOutput.expiresIn(), signInResponse.expiresIn());
-//        assertEquals(userOutput.refreshToken(), signInResponse.refreshToken());
+//        assertEquals(userOutput.refreshTokenOutput(), signInResponse.refreshTokenOutput());
 //        verify(firebaseAuthService).signInUser(userInput);
 //    }
 //
@@ -175,9 +175,9 @@
 //    }
 //
 //    @Test
-//    @DisplayName("returns new accessToken and refreshToken when valid refreshToken is passed")
+//    @DisplayName("returns new accessTokenOutput and refreshTokenOutput when valid refreshTokenOutput is passed")
 //    void shouldRefreshToken() {
-//        RefreshTokenInput refreshTokenInput = new RefreshTokenInput("refreshToken");
+//        RefreshTokenInput refreshTokenInput = new RefreshTokenInput("refreshTokenOutput");
 //        GoogleRefreshTokenResponse refreshTokenResponse = new GoogleRefreshTokenResponse(
 //                "expires_in",
 //                "token_type",
@@ -187,12 +187,12 @@
 //                "project_id");
 //
 //        when(firebaseAuthService.requestRefreshToken(any(RefreshTokenInput.class))).thenReturn(refreshTokenResponse);
-//        RefreshTokenOutput refreshTokenOutput = underTest.refreshToken(refreshTokenInput);
+//        RefreshTokenOutput refreshTokenOutput = underTest.refreshTokenOutput(refreshTokenInput);
 //
 //        assertEquals(refreshTokenOutput.userId(), refreshTokenResponse.user_id());
-//        assertEquals(refreshTokenOutput.accessToken(), refreshTokenResponse.id_token());
+//        assertEquals(refreshTokenOutput.accessTokenOutput(), refreshTokenResponse.id_token());
 //        assertEquals(refreshTokenOutput.expiresIn(), refreshTokenResponse.expires_in());
-//        assertEquals(refreshTokenOutput.refreshToken(), refreshTokenOutput.refreshToken());
+//        assertEquals(refreshTokenOutput.refreshTokenOutput(), refreshTokenOutput.refreshTokenOutput());
 //        verify(firebaseAuthService).requestRefreshToken(refreshTokenInput);
 //    }
 //
@@ -201,12 +201,12 @@
 //            "with TOKEN_REFRESHING_FAILED message should be thrown")
 //    void shouldThrowFirebaseAuthenticationExceptionWhenFailsToRefreshToken() {
 //        RefreshTokenInput refreshTokenInput = RefreshTokenInput.builder()
-//                        .refreshToken("refreshToken")
+//                        .refreshTokenOutput("refreshTokenOutput")
 //                        .build();
 //        when(firebaseAuthService.requestRefreshToken(refreshTokenInput))
 //                .thenThrow(new FirebaseAuthenticationException(TOKEN_REFRESHING_FAILED.getMessage()));
 //
 //        assertThatExceptionOfType(FirebaseAuthenticationException.class)
-//                .isThrownBy(() -> underTest.refreshToken(refreshTokenInput)).withMessage(TOKEN_REFRESHING_FAILED.getMessage());
+//                .isThrownBy(() -> underTest.refreshTokenOutput(refreshTokenInput)).withMessage(TOKEN_REFRESHING_FAILED.getMessage());
 //    }
 //}

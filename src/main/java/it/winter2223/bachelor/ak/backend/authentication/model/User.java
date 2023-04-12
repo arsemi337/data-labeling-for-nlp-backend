@@ -26,6 +26,7 @@ public class User implements UserDetails {
     private String password;
     private UserRole userRole;
     private List<UUID> assignedEmotionTextIds;
+    private String refreshToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

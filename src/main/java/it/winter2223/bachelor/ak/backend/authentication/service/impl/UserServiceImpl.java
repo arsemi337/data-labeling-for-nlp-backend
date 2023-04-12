@@ -1,6 +1,9 @@
 package it.winter2223.bachelor.ak.backend.authentication.service.impl;
 
-import it.winter2223.bachelor.ak.backend.authentication.dto.*;
+import it.winter2223.bachelor.ak.backend.authentication.dto.RefreshTokenInput;
+import it.winter2223.bachelor.ak.backend.authentication.dto.RefreshTokenOutput;
+import it.winter2223.bachelor.ak.backend.authentication.dto.UserInput;
+import it.winter2223.bachelor.ak.backend.authentication.dto.UserOutput;
 import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 import it.winter2223.bachelor.ak.backend.authentication.model.User;
 import it.winter2223.bachelor.ak.backend.authentication.model.UserRole;
@@ -20,8 +23,6 @@ import java.util.UUID;
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.INVALID_EMAIL_ADDRESS;
 import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.INVALID_PASSWORD;
 
-
-// TODO: TOKENS!!!
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -46,6 +47,9 @@ public class UserServiceImpl implements UserService {
         validateEmail(userInput.email());
         validatePassword(userInput.password());
 
+        var jwtRefreshToken = jwtService.generateRefreshToken(userInput.email());
+        var jwtAccessToken = jwtService.generateAccessToken(userInput.email());
+
         var user = User.builder()
                 .userId(UUID.randomUUID())
                 .createdAt(timeSupplier.get())
@@ -53,12 +57,12 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(userInput.password()))
                 .userRole(UserRole.USER)
                 .assignedEmotionTextIds(new ArrayList<>())
+                .refreshToken(jwtRefreshToken)
                 .build();
+
         user = userRepository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
-
-        return userMapper.mapToUserOutput(user, jwtToken);
+        return userMapper.mapToUserOutput(user, jwtAccessToken, jwtRefreshToken);
     }
 
     @Override
@@ -72,25 +76,42 @@ public class UserServiceImpl implements UserService {
                 )
         );
 
+        var jwtRefreshToken = jwtService.generateRefreshToken(userInput.email());
+        var jwtAccessToken = jwtService.generateAccessToken(userInput.email());
+
         var user = userRepository.findByEmail(userInput.email())
                 .orElseThrow();
 
-        var jwtToken = jwtService.generateToken(user);
+        user.setRefreshToken(jwtRefreshToken);
+        userRepository.save(user);
 
-        return userMapper.mapToUserOutput(user, jwtToken);
+
+        return userMapper.mapToUserOutput(user, jwtAccessToken, jwtRefreshToken);
     }
 
-    // TODO: Zrobić to
     @Override
     public RefreshTokenOutput refreshToken(RefreshTokenInput refreshTokenInput) {
-        // refreshTokenInput.refreshToken()
+        var refreshToken = refreshTokenInput.refreshTokenValue();
 
-        return RefreshTokenOutput.builder()
-                .userId("randomId")
-                .accessToken("")
-                .expiresIn("")
-                .refreshToken("")
-                .build();
+        // TODO: exception - invalid refresh token
+        var user = userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow();
+
+        // TODO: exception 2 - token expired
+        if (!jwtService.isTokenValid(refreshToken, user)) {
+            throw new RuntimeException();
+        }
+
+        var jwtRefreshToken = jwtService.generateRefreshToken(user.getUsername());
+        var jwtAccessToken = jwtService.generateAccessToken(user.getUsername());
+
+        user.setRefreshToken(jwtRefreshToken);
+        userRepository.save(user);
+
+        return userMapper.mapToRefreshTokenOutput(
+                user.getUserId().toString(),
+                jwtAccessToken,
+                jwtRefreshToken);
     }
 
     private void validateEmail(String email) {

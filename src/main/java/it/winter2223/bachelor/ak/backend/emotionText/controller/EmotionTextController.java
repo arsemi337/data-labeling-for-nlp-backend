@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static it.winter2223.bachelor.ak.backend.comment.controller.swagger.CommentSwaggerSample.PAGEABLE_EXAMPLE;
+import static it.winter2223.bachelor.ak.backend.emotionText.controller.swagger.EmotionTextSwaggerSample.PAGEABLE_EXAMPLE;
+
 
 @RestController
 @Tag(name = "Emotion text")

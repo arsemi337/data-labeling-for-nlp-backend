@@ -9,8 +9,7 @@ public record UserOutput(
         UUID userId,
         String email,
         UserRoleOutput userRoleOutput,
-        String accessToken,
-        String expiresIn,
-        String refreshToken
+        TokenOutput accessTokenOutput,
+        TokenOutput refreshTokenOutput
 ) {
 }
