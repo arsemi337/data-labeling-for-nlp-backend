@@ -12,9 +12,6 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler
     ResponseEntity<String> exceptionHandler(RuntimeException e) {
-        // e.message
-
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

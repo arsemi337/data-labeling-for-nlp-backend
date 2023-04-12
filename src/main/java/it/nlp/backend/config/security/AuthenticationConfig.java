@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static it.nlp.backend.exception.messages.SecurityExceptionMessages.NO_USER_WITH_PASSED_EMAIL;
+
 @Configuration
 @RequiredArgsConstructor
 public class AuthenticationConfig {
@@ -22,7 +24,7 @@ public class AuthenticationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> repository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User with entered email was not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(NO_USER_WITH_PASSED_EMAIL.getMessage()));
     }
 
     @Bean
