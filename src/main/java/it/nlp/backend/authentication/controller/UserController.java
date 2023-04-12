@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// TODO: Change status code from 403 to 401
 @RestController
 @Tag(name = "Authentication")
 @RequestMapping("/api/v1/auth")
