@@ -46,6 +46,10 @@ public class UserServiceImpl implements UserService {
         validateEmail(userInput.email());
         validatePassword(userInput.password());
 
+        if (userRepository.existsByEmail(userInput.email())) {
+            throw new IllegalArgumentException(EMAIL_ALREADY_TAKEN.getMessage() + " (" + userInput.email() + ")");
+        }
+
         var jwtRefreshToken = jwtService.generateRefreshToken(userInput.email());
         var jwtAccessToken = jwtService.generateAccessToken(userInput.email());
 
