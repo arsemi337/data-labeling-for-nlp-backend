@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @Tag(name = "Emotion text")
-@RequestMapping("/api/v1/emotionTexts")
+@RequestMapping("/api/v1/emotion-texts")
 @SecurityRequirement(name = "Bearer Authentication")
 class EmotionTextController {
     private final EmotionTextService emotionTextService;
