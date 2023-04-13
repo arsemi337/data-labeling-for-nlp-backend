@@ -20,7 +20,7 @@ public class JwtService {
 
     @Value("${jwt.secret.key}")
     private String SECRET_KEY;
-    public static long ACCESS_TOKEN_EXPIRY_TIME = 1000 * 60;
+    public static long ACCESS_TOKEN_EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
     public static long REFRESH_TOKEN_EXPIRY_TIME = 1000L * 60 * 60 * 24 * 30;
 
     public String extractUsername(String token) {
