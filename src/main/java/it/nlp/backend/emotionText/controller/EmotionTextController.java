@@ -29,10 +29,16 @@ class EmotionTextController {
         this.emotionTextService = emotionTextService;
     }
 
-    @GetMapping("/youtube")
-    @Operation(summary = "Fetch comments from You Tube")
-    ResponseEntity<List<EmotionTextOutput>> fetchYTComments() {
-        return ResponseEntity.ok(emotionTextService.fetchYTComments());
+    @GetMapping("/youtube/trending")
+    @Operation(summary = "Fetch comments from trending YouTube videos")
+    ResponseEntity<List<EmotionTextOutput>> fetchYTCommentsFromPopularVideos() {
+        return ResponseEntity.ok(emotionTextService.fetchYTCommentsFromPopularVideos());
+    }
+
+    @GetMapping("/youtube/channels")
+    @Operation(summary = "Fetch comments from videos of saved YouTube channels")
+    ResponseEntity<List<EmotionTextOutput>> fetchYTCommentsFromVideosOfSavedChannels() {
+        return ResponseEntity.ok(emotionTextService.fetchYTCommentsFromVideosOfSavedChannels());
     }
 
     @GetMapping("/all")

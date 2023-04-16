@@ -5,7 +5,7 @@ import it.nlp.backend.emotionText.dto.EmotionTextOutput;
 import it.nlp.backend.emotionText.model.EmotionText;
 import it.nlp.backend.emotionText.repository.EmotionTextRepository;
 import it.nlp.backend.emotionText.service.EmotionTextService;
-import it.nlp.backend.emotionText.service.InternetCommentService;
+import it.nlp.backend.emotionText.service.InternetEmotionTextService;
 import it.nlp.backend.exception.messages.SecurityExceptionMessages;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,28 +22,31 @@ class EmotionTextServiceImpl implements EmotionTextService {
     private final EmotionTextRepository textRepository;
     private final UserRepository userRepository;
     private final EmotionTextRepository emotionTextRepository;
-    private final InternetCommentService internetCommentService;
+    private final InternetEmotionTextService internetEmotionTextService;
     private final EmotionTextMapper emotionTextMapper;
 
     EmotionTextServiceImpl(EmotionTextRepository textRepository,
                            UserRepository userRepository,
                            EmotionTextRepository emotionTextRepository,
-                           InternetCommentService internetCommentService) {
+                           InternetEmotionTextService internetEmotionTextService) {
         this.textRepository = textRepository;
         this.userRepository = userRepository;
         this.emotionTextRepository = emotionTextRepository;
-        this.internetCommentService = internetCommentService;
+        this.internetEmotionTextService = internetEmotionTextService;
         this.emotionTextMapper = new EmotionTextMapper();
     }
 
     @Override
-    public List<EmotionTextOutput> fetchYTComments() {
-        List<EmotionText> emotionTexts;
+    public List<EmotionTextOutput> fetchYTCommentsFromPopularVideos() {
+        return internetEmotionTextService.fetchYTCommentsFromPopularVideos().stream()
+                .map(text -> emotionTextMapper.mapToEmotionTextOutput(textRepository.save(text)))
+                .toList();
+    }
 
-        emotionTexts = internetCommentService.fetchYTCommentsOfPopularVideos();
-
-        return emotionTexts.stream()
-                .map(t -> emotionTextMapper.mapToEmotionTextOutput(textRepository.save(t)))
+    @Override
+    public List<EmotionTextOutput> fetchYTCommentsFromVideosOfSavedChannels() {
+        return internetEmotionTextService.fetchYTCommentsFromVideosOfSavedChannels().stream()
+                .map(text -> emotionTextMapper.mapToEmotionTextOutput(textRepository.save(text)))
                 .toList();
     }
 

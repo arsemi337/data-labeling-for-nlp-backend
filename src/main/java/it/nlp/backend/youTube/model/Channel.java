@@ -22,4 +22,5 @@ public class Channel {
     private BigInteger subscriberCount;
     private BigInteger viewCount;
     private BigInteger videoCount;
+    private String uploadPlaylistId;
 }

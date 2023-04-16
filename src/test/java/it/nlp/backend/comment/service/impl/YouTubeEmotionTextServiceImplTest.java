@@ -41,8 +41,8 @@
 //        CommentThreadListResponse ytComments = getCommentThreadListResponse("To jest przykładowy komentarz po polsku, który ma co najmniej pięć słów.");
 //
 //
-//        when(youTubeService.fetchMostPopularYTVideos()).thenReturn(ytVideos);
-//        when(youTubeService.fetchMostPopularYTComments(anyString())).thenReturn(ytComments);
+//        when(youTubeService.fetchIdsOfMostPopularVideos()).thenReturn(ytVideos);
+//        when(youTubeService.fetchMostPopularComments(anyString())).thenReturn(ytComments);
 //        when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 //
 //        List<it.winter2223.bachelor.ak.backend.comment.model.Comment> comments
@@ -51,8 +51,8 @@
 //        assertEquals(1, comments.size());
 //        assertEquals("emotionTextId", comments.get(0).getCommentId());
 //        assertEquals("To jest przykładowy komentarz po polsku, który ma co najmniej pięć słów.", comments.get(0).getContent());
-//        verify(youTubeService).fetchMostPopularYTVideos();
-//        verify(youTubeService).fetchMostPopularYTComments(anyString());
+//        verify(youTubeService).fetchIdsOfMostPopularVideos();
+//        verify(youTubeService).fetchMostPopularComments(anyString());
 //        verify(commentRepository).findById(anyString());
 //    }
 //
@@ -67,8 +67,8 @@
 //        CommentThreadListResponse ytComments = getCommentThreadListResponse("<p>To jest przykładowy komentarz z tagiem html</p>");
 //
 //
-//        when(youTubeService.fetchMostPopularYTVideos()).thenReturn(ytVideos);
-//        when(youTubeService.fetchMostPopularYTComments(anyString())).thenReturn(ytComments);
+//        when(youTubeService.fetchIdsOfMostPopularVideos()).thenReturn(ytVideos);
+//        when(youTubeService.fetchMostPopularComments(anyString())).thenReturn(ytComments);
 //        when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 //
 //        List<it.winter2223.bachelor.ak.backend.comment.model.Comment> comments
@@ -77,8 +77,8 @@
 //        assertEquals(1, comments.size());
 //        assertEquals("emotionTextId", comments.get(0).getCommentId());
 //        assertEquals("To jest przykładowy komentarz z tagiem html", comments.get(0).getContent());
-//        verify(youTubeService).fetchMostPopularYTVideos();
-//        verify(youTubeService).fetchMostPopularYTComments(anyString());
+//        verify(youTubeService).fetchIdsOfMostPopularVideos();
+//        verify(youTubeService).fetchMostPopularComments(anyString());
 //        verify(commentRepository).findById(anyString());
 //    }
 //
@@ -97,16 +97,16 @@
 //
 //        CommentThreadListResponse ytComments = getCommentThreadListResponse(commentContent);
 //
-//        when(youTubeService.fetchMostPopularYTVideos()).thenReturn(ytVideos);
-//        when(youTubeService.fetchMostPopularYTComments(anyString())).thenReturn(ytComments);
+//        when(youTubeService.fetchIdsOfMostPopularVideos()).thenReturn(ytVideos);
+//        when(youTubeService.fetchMostPopularComments(anyString())).thenReturn(ytComments);
 //        when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 //
 //        List<it.winter2223.bachelor.ak.backend.comment.model.Comment> comments
 //                = underTest.fetchInternetComments();
 //
 //        assertEquals(0, comments.size());
-//        verify(youTubeService).fetchMostPopularYTVideos();
-//        verify(youTubeService).fetchMostPopularYTComments(anyString());
+//        verify(youTubeService).fetchIdsOfMostPopularVideos();
+//        verify(youTubeService).fetchMostPopularComments(anyString());
 //        verify(commentRepository).findById(anyString());
 //    }
 //

@@ -1,6 +1,6 @@
 package it.nlp.backend.emotionText.service.impl;
 
-import it.nlp.backend.emotionText.service.InternetCommentService;
+import it.nlp.backend.emotionText.service.InternetEmotionTextService;
 import it.nlp.backend.emotionText.model.EmotionText;
 import it.nlp.backend.emotionText.repository.EmotionTextRepository;
 import org.springframework.context.annotation.Profile;
@@ -14,19 +14,20 @@ import java.util.List;
 public class EmotionTextScheduler {
 
     private final EmotionTextRepository emotionTextRepository;
-    private final InternetCommentService internetCommentService;
+    private final InternetEmotionTextService internetEmotionTextService;
 
     EmotionTextScheduler(EmotionTextRepository emotionTextRepository,
-                         InternetCommentService internetCommentService) {
+                         InternetEmotionTextService internetEmotionTextService) {
         this.emotionTextRepository = emotionTextRepository;
-        this.internetCommentService = internetCommentService;
+        this.internetEmotionTextService = internetEmotionTextService;
     }
 
+    //TODO: add new method to scheduler
     @Scheduled(cron = "${cron.expression}")
     public void downloadYTComments() {
         List<EmotionText> emotionTexts;
 
-        emotionTexts = internetCommentService.fetchYTCommentsOfPopularVideos();
+        emotionTexts = internetEmotionTextService.fetchYTCommentsFromPopularVideos();
 
         emotionTextRepository.saveAll(emotionTexts);
     }

@@ -1,5 +1,6 @@
 package it.nlp.backend.youTube.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.nlp.backend.youTube.dto.ChannelInput;
@@ -25,16 +26,19 @@ public class ChannelController {
     }
 
     @GetMapping
+    @Operation(summary = "Fetch saved YouTube channels")
     ResponseEntity<Page<ChannelOutput>> fetchChannels(Pageable pageable) {
         return ResponseEntity.ok(channelService.fetchChannels(pageable));
     }
 
     @PostMapping
+    @Operation(summary = "Add new YouTube channel")
     ResponseEntity<List<ChannelOutput>> addChannels(@RequestBody List<ChannelInput> channelInputList) {
         return ResponseEntity.ok(channelService.addChannels(channelInputList));
     }
 
     @DeleteMapping("/{channelId}")
+    @Operation(summary = "Remove YouTube channel")
     void removeChannel(@PathVariable String channelId) {
         channelService.removeChannel(channelId);
     }

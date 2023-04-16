@@ -41,7 +41,7 @@ public class ChannelServiceImpl implements ChannelService {
         List<String> channelIdList = channelInputList.stream()
                 .map(ChannelInput::channelId)
                 .toList();
-        ChannelListResponse channelListResponse = youTubeService.getChannelInformation(channelIdList);
+        ChannelListResponse channelListResponse = youTubeService.fetchChannelInformation(channelIdList);
 
         return channelListResponse.getItems().stream()
                 .map(channelMapper::mapToChannel)

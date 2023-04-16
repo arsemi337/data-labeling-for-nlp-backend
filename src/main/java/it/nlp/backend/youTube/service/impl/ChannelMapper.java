@@ -13,6 +13,7 @@ public class ChannelMapper {
                 .subscriberCount(channel.getSubscriberCount())
                 .viewCount(channel.getViewCount())
                 .videoCount(channel.getVideoCount())
+                .uploadPlaylistId(channel.getUploadPlaylistId())
                 .build();
     }
 
@@ -25,6 +26,7 @@ public class ChannelMapper {
                 .subscriberCount(channel.getStatistics().getSubscriberCount())
                 .viewCount(channel.getStatistics().getViewCount())
                 .videoCount(channel.getStatistics().getVideoCount())
+                .uploadPlaylistId(channel.getContentDetails().getRelatedPlaylists().getUploads())
                 .build();
     }
 }

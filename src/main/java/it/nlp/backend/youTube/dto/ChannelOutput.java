@@ -12,6 +12,7 @@ public record ChannelOutput(
         String customUrl,
         BigInteger subscriberCount,
         BigInteger viewCount,
-        BigInteger videoCount
+        BigInteger videoCount,
+        String uploadPlaylistId
 ) {
 }

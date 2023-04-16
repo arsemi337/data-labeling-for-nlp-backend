@@ -8,9 +8,8 @@ import java.util.List;
 
 public interface EmotionTextService {
 
-    List<EmotionTextOutput> fetchYTComments();
-
+    List<EmotionTextOutput> fetchYTCommentsFromPopularVideos();
+    List<EmotionTextOutput> fetchYTCommentsFromVideosOfSavedChannels();
     Page<EmotionTextOutput> fetchEmotionTexts(Pageable pageable);
-
     List<EmotionTextOutput> fetchEmotionTextsToBeAssigned(String userId, String commentsNumber);
 }
