@@ -43,7 +43,7 @@
 //        when(internetCommentService.fetchInternetComments()).thenReturn(comments);
 //        when(commentRepository.save(any())).thenAnswer(answer -> answer.getArgument(0));
 //
-//        List<CommentOutput> commentOutputs = underTest.fetchYTComments();
+//        List<CommentOutput> commentOutputs = underTest.fetchYTCommentsOfPopularVideos();
 //
 //        assertEquals(2, commentOutputs.size());
 //        assertEquals("testId1", commentOutputs.get(0).commentId());

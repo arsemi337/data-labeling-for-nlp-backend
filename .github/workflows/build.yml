@@ -1,4 +1,4 @@
-#Workflow name
+#Workflow title
 name: Spring Boot CI/CD
 on: push
 jobs:

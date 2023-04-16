@@ -40,7 +40,7 @@ class EmotionTextServiceImpl implements EmotionTextService {
     public List<EmotionTextOutput> fetchYTComments() {
         List<EmotionText> emotionTexts;
 
-        emotionTexts = internetCommentService.fetchYTComments();
+        emotionTexts = internetCommentService.fetchYTCommentsOfPopularVideos();
 
         return emotionTexts.stream()
                 .map(t -> emotionTextMapper.mapToEmotionTextOutput(textRepository.save(t)))

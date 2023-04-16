@@ -36,7 +36,7 @@
 //    void shouldGetYTComments() throws Exception {
 //        String commentId = "randomId";
 //
-//        when(commentService.fetchYTComments()).thenReturn(List.of(getCommentOutput(commentId)));
+//        when(commentService.fetchYTCommentsOfPopularVideos()).thenReturn(List.of(getCommentOutput(commentId)));
 //        CommentOutput commentOutput = getCommentOutput(commentId);
 //
 //
@@ -44,7 +44,7 @@
 //                .andExpect(MockMvcResultMatchers.status().isOk())
 //                .andExpect(jsonPath("$[0].commentId", equalTo(commentOutput.commentId())))
 //                .andExpect(jsonPath("$[0].content", equalTo("Test content")));
-//        verify(commentService).fetchYTComments();
+//        verify(commentService).fetchYTCommentsOfPopularVideos();
 //    }
 //
 //    @Test

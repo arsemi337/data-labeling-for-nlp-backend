@@ -1,6 +1,7 @@
 package it.nlp.backend.emotionText.service.impl;
 
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
 import it.nlp.backend.emotionText.service.YouTubeService;
@@ -64,5 +65,21 @@ public class YouTubeServiceImpl implements YouTubeService {
             commentsResponse = null;
         }
         return commentsResponse;
+    }
+
+    @Override
+    public ChannelListResponse getChannelInformation(List<String> channelIdList) {
+        ChannelListResponse channelListResponse;
+        try {
+            YouTube.Channels.List request = youTube.channels()
+                    .list(List.of("contentDetails","snippet","statistics"));
+            channelListResponse = request.setKey(youtubeApiKey)
+                    .setId(channelIdList)
+                    .setFields("items(id, snippet(title, description, customUrl), statistics)")
+                    .execute();
+        } catch (IOException ioException) {
+            throw new IllegalArgumentException(ioException.getMessage());
+        }
+        return channelListResponse;
     }
 }

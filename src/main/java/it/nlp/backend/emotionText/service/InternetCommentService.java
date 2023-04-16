@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface InternetCommentService {
 
-    List<EmotionText> fetchYTComments();
+    List<EmotionText> fetchYTCommentsOfPopularVideos();
 }

@@ -26,7 +26,7 @@ public class EmotionTextScheduler {
     public void downloadYTComments() {
         List<EmotionText> emotionTexts;
 
-        emotionTexts = internetCommentService.fetchYTComments();
+        emotionTexts = internetCommentService.fetchYTCommentsOfPopularVideos();
 
         emotionTextRepository.saveAll(emotionTexts);
     }

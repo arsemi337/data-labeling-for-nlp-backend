@@ -39,7 +39,7 @@ public class YouTubeCommentServiceImpl implements InternetCommentService {
     }
 
     @Override
-    public List<EmotionText> fetchYTComments() {
+    public List<EmotionText> fetchYTCommentsOfPopularVideos() {
         List<EmotionText> emotionTexts = new ArrayList<>();
 
         VideoListResponse ytVideos = youTubeService.fetchMostPopularYTVideos();
