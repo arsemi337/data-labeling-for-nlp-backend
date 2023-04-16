@@ -2,6 +2,7 @@ package it.nlp.backend.emotionText.service.impl;
 
 import com.github.pemistahl.lingua.api.LanguageDetector;
 import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
+import com.google.api.services.youtube.model.Comment;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
@@ -55,7 +56,7 @@ public class YouTubeCommentServiceImpl implements InternetCommentService {
             }
 
             commentsResponse.getItems().forEach(commentThread -> {
-                com.google.api.services.youtube.model.Comment ytComment = commentThread.getSnippet().getTopLevelComment();
+                Comment ytComment = commentThread.getSnippet().getTopLevelComment();
 
                 String commentId = ytComment.getId();
                 String commentContent = ytComment.getSnippet().getTextDisplay();
