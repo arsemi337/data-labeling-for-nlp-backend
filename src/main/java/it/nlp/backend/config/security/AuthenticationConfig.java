@@ -24,7 +24,7 @@ public class AuthenticationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> repository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(NO_USER_WITH_PASSED_EMAIL.getMessage()));
+                .orElseThrow(() -> new UsernameNotFoundException(NO_USER_WITH_PASSED_EMAIL.getMessage() + email));
     }
 
     @Bean

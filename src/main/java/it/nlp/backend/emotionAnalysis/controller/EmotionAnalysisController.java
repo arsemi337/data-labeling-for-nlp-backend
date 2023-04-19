@@ -3,8 +3,8 @@ package it.nlp.backend.emotionAnalysis.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.nlp.backend.emotionAnalysis.dto.CommentEmotionInput;
-import it.nlp.backend.emotionAnalysis.dto.CommentEmotionOutput;
+import it.nlp.backend.emotionAnalysis.dto.TextEmotionInput;
+import it.nlp.backend.emotionAnalysis.dto.TextEmotionOutput;
 import it.nlp.backend.emotionAnalysis.service.EmotionAnalysisService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Emotion Analysis")
 @RequestMapping("/api/v1/emotion")
+@PreAuthorize("hasAuthority('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
 @Profile("NLPEnabled")
 public class EmotionAnalysisController {
@@ -27,10 +28,9 @@ public class EmotionAnalysisController {
     }
 
     @PostMapping
-    @Operation(summary = "Deduce an emotion from a comment")
-    @PreAuthorize("hasAuthority('USER_READ_WRITE')")
-    ResponseEntity<CommentEmotionOutput> deduceCommentEmotion(
-            @RequestBody CommentEmotionInput commentEmotionInput) {
-        return ResponseEntity.ok(emotionAnalysisService.classifyCommentEmotion(commentEmotionInput));
+    @Operation(summary = "Deduce an emotion from a text")
+    ResponseEntity<TextEmotionOutput> deduceTextEmotion(
+            @RequestBody TextEmotionInput textEmotionInput) {
+        return ResponseEntity.ok(emotionAnalysisService.classifyTextEmotion(textEmotionInput));
     }
 }

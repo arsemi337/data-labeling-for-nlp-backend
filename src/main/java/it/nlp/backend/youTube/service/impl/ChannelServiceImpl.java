@@ -3,6 +3,7 @@ package it.nlp.backend.youTube.service.impl;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import io.micrometer.common.util.StringUtils;
 import it.nlp.backend.emotionText.service.YouTubeService;
+import it.nlp.backend.utils.TimeSupplier;
 import it.nlp.backend.youTube.repository.ChannelRepository;
 import it.nlp.backend.youTube.dto.ChannelInput;
 import it.nlp.backend.youTube.dto.ChannelOutput;
@@ -22,10 +23,12 @@ public class ChannelServiceImpl implements ChannelService {
     private final YouTubeService youTubeService;
     private final ChannelMapper channelMapper;
 
-    public ChannelServiceImpl(ChannelRepository channelRepository, YouTubeService youTubeService) {
+    public ChannelServiceImpl(ChannelRepository channelRepository,
+                              YouTubeService youTubeService,
+                              TimeSupplier timeSupplier) {
         this.channelRepository = channelRepository;
         this.youTubeService = youTubeService;
-        this.channelMapper = new ChannelMapper();
+        this.channelMapper = new ChannelMapper(timeSupplier);
     }
 
     @Override
@@ -56,7 +59,7 @@ public class ChannelServiceImpl implements ChannelService {
             throw new IllegalArgumentException(NULL_CHANNEL_ID.getMessage());
         }
         if (!channelRepository.existsById(channelId)) {
-            throw new IllegalArgumentException(NO_CHANNEL_WITH_ENTERED_ID.getMessage() + " (" + channelId + ")");
+            throw new IllegalArgumentException(NO_CHANNEL_WITH_ENTERED_ID.getMessage() + channelId);
         }
         channelRepository.deleteById(channelId);
     }
@@ -65,9 +68,6 @@ public class ChannelServiceImpl implements ChannelService {
         String channelId = channelInput.channelId();
         if (StringUtils.isBlank(channelId)) {
             throw new IllegalArgumentException(CONTAINS_NULL_CHANNEL_ID.getMessage());
-        }
-        if (channelRepository.existsById(channelId)) {
-            throw new IllegalArgumentException(CHANNEL_ALREADY_EXISTS.getMessage() + " (" + channelId + ")");
         }
     }
 }

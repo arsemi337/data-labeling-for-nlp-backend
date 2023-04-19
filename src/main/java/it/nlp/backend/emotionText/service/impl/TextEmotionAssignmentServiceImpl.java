@@ -1,12 +1,13 @@
 package it.nlp.backend.emotionText.service.impl;
 
+import it.nlp.backend.authentication.model.User;
 import it.nlp.backend.authentication.repository.UserRepository;
 import it.nlp.backend.emotionText.dto.TextEmotionAssignmentInput;
 import it.nlp.backend.emotionText.dto.TextEmotionAssignmentOutput;
+import it.nlp.backend.emotionText.dto.TextEmotionAssignmentsNumberOutput;
 import it.nlp.backend.emotionText.model.Emotion;
 import it.nlp.backend.emotionText.model.EmotionText;
 import it.nlp.backend.emotionText.repository.EmotionTextRepository;
-import it.nlp.backend.authentication.model.User;
 import it.nlp.backend.emotionText.service.TextEmotionAssignmentService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.csv.CSVFormat;
@@ -18,9 +19,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
-import static it.nlp.backend.exception.messages.SecurityExceptionMessages.NO_USER_WITH_PASSED_ID;
+import static it.nlp.backend.exception.messages.SecurityExceptionMessages.NO_USER_WITH_PASSED_EMAIL;
 import static it.nlp.backend.exception.messages.TextEmotionAssignmentExceptionMessages.*;
-import static it.nlp.backend.exception.messages.TextExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
+import static it.nlp.backend.exception.messages.TextExceptionMessages.NO_TEXT_WITH_ENTERED_ID;
 
 @Service
 public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentService {
@@ -38,12 +39,23 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
 
     @Override
     @Transactional
-    public List<TextEmotionAssignmentOutput> postTextEmotionAssignments(List<TextEmotionAssignmentInput> assignmentInputs) {
+    public List<TextEmotionAssignmentOutput> postTextEmotionAssignments(String userEmail,
+                                                                        List<TextEmotionAssignmentInput> assignmentInputs) {
         List<TextEmotionAssignmentOutput> assignmentOutputs = new ArrayList<>();
 
-        assignmentInputs.forEach(assignmentInput -> processAssignmentInput(assignmentOutputs, assignmentInput));
+        assignmentInputs.forEach(assignmentInput -> processAssignmentInput(assignmentOutputs, userEmail, assignmentInput));
 
         return assignmentOutputs;
+    }
+
+    @Override
+    public TextEmotionAssignmentsNumberOutput getNumberOfTextEmotionAssignmentsForUser(String userEmail) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new IllegalStateException(NO_USER_WITH_PASSED_EMAIL.getMessage() + userEmail));
+
+        return TextEmotionAssignmentsNumberOutput.builder()
+                .assignmentsCount(user.getAssignedEmotionTextIds().size())
+                .build();
     }
 
     @Override
@@ -67,12 +79,10 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
 
     private void processAssignmentInput(
             List<TextEmotionAssignmentOutput> assignmentOutputs,
+            String userEmail,
             TextEmotionAssignmentInput assignmentInput) {
-        UUID userId = UUID.fromString(assignmentInput.userId());
-        validateUserId(userId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException(NO_USER_WITH_PASSED_ID.getMessage() + " (" + userId + ")"));
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NoSuchElementException(NO_USER_WITH_PASSED_EMAIL.getMessage() + userEmail));
         Emotion emotion = getEnumFrom(assignmentInput.emotion());
 
         EmotionText emotionText = getEmotionText(assignmentInput);
@@ -86,18 +96,12 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
 
         assignmentOutputs.add(
                 textEmotionAssignmentMapper.mapToTextEmotionAssignmentOutput(
-                        userId, emotionText.getEmotionTextId(), emotion));
-    }
-
-    private void validateUserId(UUID userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NoSuchElementException(NO_USER_WITH_PASSED_ID.getMessage() + userId);
-        }
+                        user.getUserId(), emotionText.getEmotionTextId(), emotion));
     }
 
     private Emotion getEnumFrom(String emotion) {
         if (!Emotion.contains(emotion)) {
-            throw new IllegalArgumentException(WRONG_EMOTION.getMessage() + " (" + emotion + ")");
+            throw new IllegalArgumentException(WRONG_EMOTION.getMessage() + emotion);
         }
         return Emotion.valueOf(emotion);
     }
@@ -105,12 +109,12 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
     private EmotionText getEmotionText(TextEmotionAssignmentInput assignmentInput) {
         UUID textId = UUID.fromString(assignmentInput.textId());
         return textRepository.findById(textId)
-                .orElseThrow(() -> new NoSuchElementException(NO_COMMENT_WITH_ENTERED_ID.getMessage() + textId));
+                .orElseThrow(() -> new NoSuchElementException(NO_TEXT_WITH_ENTERED_ID.getMessage() + textId));
     }
 
     private void checkIfAssignmentExists(List<UUID> userAssignedEmotionTexts, UUID emotionTextId) {
         if (userAssignedEmotionTexts.contains(emotionTextId)) {
-            throw new IllegalArgumentException(ASSIGNMENT_ALREADY_EXISTS.getMessage() + " (" + emotionTextId + ")");
+            throw new IllegalArgumentException(ASSIGNMENT_ALREADY_EXISTS.getMessage() + emotionTextId);
         }
     }
 

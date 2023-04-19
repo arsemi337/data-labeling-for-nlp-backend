@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static it.nlp.backend.exception.messages.TextExceptionMessages.CANNOT_COMPARE_NULL_COMMENT;
+import static it.nlp.backend.exception.messages.TextExceptionMessages.CANNOT_COMPARE_NULL_TEXT;
 
 @Document
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class EmotionText implements Comparable<EmotionText> {
     @Override
     public int compareTo(EmotionText o) {
         if (o == null) {
-            throw new NullPointerException(CANNOT_COMPARE_NULL_COMMENT.getMessage());
+            throw new NullPointerException(CANNOT_COMPARE_NULL_TEXT.getMessage());
         }
         return Integer.compare(assignedEmotions.size(), o.assignedEmotions.size());
     }

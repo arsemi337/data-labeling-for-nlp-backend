@@ -4,7 +4,6 @@ import it.nlp.backend.authentication.dto.RefreshTokenOutput;
 import it.nlp.backend.authentication.dto.TokenOutput;
 import it.nlp.backend.authentication.dto.UserOutput;
 import it.nlp.backend.authentication.model.User;
-import it.nlp.backend.config.security.JwtService;
 import it.nlp.backend.authentication.dto.UserRoleOutput;
 
 public class UserMapper {

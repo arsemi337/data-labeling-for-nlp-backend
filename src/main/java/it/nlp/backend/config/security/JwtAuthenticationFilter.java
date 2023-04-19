@@ -1,5 +1,6 @@
 package it.nlp.backend.config.security;
 
+import it.nlp.backend.authentication.service.impl.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -53,9 +53,9 @@ public class InternetEmotionTextServiceImpl implements InternetEmotionTextServic
 //                .map(CommentThreadListResponse::getItems)
 //                .flatMap(List::stream)
 //                .map(commentThread -> commentThread.getSnippet().getTopLevelComment())
-//                .forEach(comment -> {
-//                    String commentId = comment.getId();
-//                    String commentContent = comment.getSnippet().getTextDisplay();
+//                .forEach(text -> {
+//                    String commentId = text.getId();
+//                    String commentContent = text.getSnippet().getTextDisplay();
 //                    addYTCommentToEmotionTexts(emotionTexts, commentId, commentContent);
 //                });
 

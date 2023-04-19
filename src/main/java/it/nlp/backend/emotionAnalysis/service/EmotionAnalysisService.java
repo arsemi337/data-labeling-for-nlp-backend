@@ -1,8 +1,8 @@
 package it.nlp.backend.emotionAnalysis.service;
 
-import it.nlp.backend.emotionAnalysis.dto.CommentEmotionInput;
-import it.nlp.backend.emotionAnalysis.dto.CommentEmotionOutput;
+import it.nlp.backend.emotionAnalysis.dto.TextEmotionInput;
+import it.nlp.backend.emotionAnalysis.dto.TextEmotionOutput;
 
 public interface EmotionAnalysisService {
-    CommentEmotionOutput classifyCommentEmotion(CommentEmotionInput commentInput);
+    TextEmotionOutput classifyTextEmotion(TextEmotionInput textEmotionInput);
 }

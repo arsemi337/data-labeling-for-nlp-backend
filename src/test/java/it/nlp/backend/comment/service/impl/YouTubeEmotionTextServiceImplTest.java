@@ -1,8 +1,8 @@
-//package it.winter2223.bachelor.ak.backend.comment.service.impl;
+//package it.winter2223.bachelor.ak.backend.text.service.impl;
 //
 //import com.google.api.services.youtube.model.*;
-//import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
-//import it.winter2223.bachelor.ak.backend.comment.service.YouTubeService;
+//import it.winter2223.bachelor.ak.backend.text.repository.CommentRepository;
+//import it.winter2223.bachelor.ak.backend.text.service.YouTubeService;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@
 //    YouTubeService youTubeService;
 //
 //    @Test
-//    @DisplayName("should fetch from youtube one comment")
+//    @DisplayName("should fetch from youtube one text")
 //    void shouldFetchCommentsOfPopularVideos() {
 //        VideoListResponse ytVideos = new VideoListResponse();
 //        Video ytVideo = new Video();
@@ -45,7 +45,7 @@
 //        when(youTubeService.fetchMostPopularComments(anyString())).thenReturn(ytComments);
 //        when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 //
-//        List<it.winter2223.bachelor.ak.backend.comment.model.Comment> comments
+//        List<it.winter2223.bachelor.ak.backend.text.model.Comment> comments
 //                = underTest.fetchInternetComments();
 //
 //        assertEquals(1, comments.size());
@@ -57,7 +57,7 @@
 //    }
 //
 //    @Test
-//    @DisplayName("should fetch from youtube a comment without html tags")
+//    @DisplayName("should fetch from youtube a text without html tags")
 //    void shouldFetchCommentWithRemovedHtmlTags() {
 //        VideoListResponse ytVideos = new VideoListResponse();
 //        Video ytVideo = new Video();
@@ -71,7 +71,7 @@
 //        when(youTubeService.fetchMostPopularComments(anyString())).thenReturn(ytComments);
 //        when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 //
-//        List<it.winter2223.bachelor.ak.backend.comment.model.Comment> comments
+//        List<it.winter2223.bachelor.ak.backend.text.model.Comment> comments
 //                = underTest.fetchInternetComments();
 //
 //        assertEquals(1, comments.size());
@@ -84,11 +84,11 @@
 //
 //    @ParameterizedTest
 //    @ValueSource(strings = {
-//            "This is an example of a non-polish comment with a proper words number",
+//            "This is an example of a non-polish text with a proper words number",
 //            "Zbyt krótki komentarz",
 //            "Zbyt długi komentarz, ma ponad 250 słów, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz, zbyt długi komentarz"
 //    })
-//    @DisplayName("should not fetch from youtube any comment due to their wrong language or words number")
+//    @DisplayName("should not fetch from youtube any text due to their wrong language or words number")
 //    void shouldNotFetchAnyCommentsDueToWrongLanguageOrWordsNumber(String commentContent) {
 //        VideoListResponse ytVideos = new VideoListResponse();
 //        Video ytVideo = new Video();
@@ -101,7 +101,7 @@
 //        when(youTubeService.fetchMostPopularComments(anyString())).thenReturn(ytComments);
 //        when(commentRepository.findById(anyString())).thenReturn(Optional.empty());
 //
-//        List<it.winter2223.bachelor.ak.backend.comment.model.Comment> comments
+//        List<it.winter2223.bachelor.ak.backend.text.model.Comment> comments
 //                = underTest.fetchInternetComments();
 //
 //        assertEquals(0, comments.size());

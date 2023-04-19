@@ -1,4 +1,4 @@
-//package it.nlp.backend.comment.controller;
+//package it.nlp.backend.text.controller;
 //
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@
 //        CommentOutput commentOutput = getCommentOutput(commentId);
 //
 //
-//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment/youtube"))
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/text/youtube"))
 //                .andExpect(MockMvcResultMatchers.status().isOk())
 //                .andExpect(jsonPath("$[0].commentId", equalTo(commentOutput.commentId())))
 //                .andExpect(jsonPath("$[0].content", equalTo("Test content")));
@@ -61,7 +61,7 @@
 //        CommentOutput commentOutput = getCommentOutput(commentId);
 //
 //
-//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment/all?page=" + pageNumber + "&size=" + pageSize))
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/text/all?page=" + pageNumber + "&size=" + pageSize))
 //                .andExpect(MockMvcResultMatchers.status().isOk())
 //                .andExpect(jsonPath("$.content.[0].commentId", equalTo(commentOutput.commentId())))
 //                .andExpect(jsonPath("$.content.[0].content", equalTo("Test content")));
@@ -80,7 +80,7 @@
 //        CommentOutput commentOutput = getCommentOutput(commentId);
 //
 //
-//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comment?userId=" + userId + "&commentsNumber=" + commentsNumber))
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/text?userId=" + userId + "&commentsNumber=" + commentsNumber))
 //                .andExpect(MockMvcResultMatchers.status().isOk())
 //                .andExpect(jsonPath("$[0].commentId", equalTo(commentOutput.commentId())))
 //                .andExpect(jsonPath("$[0].content", equalTo("Test content")));

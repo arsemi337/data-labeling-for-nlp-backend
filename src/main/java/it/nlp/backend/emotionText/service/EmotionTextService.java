@@ -11,5 +11,5 @@ public interface EmotionTextService {
     List<EmotionTextOutput> fetchYTCommentsFromPopularVideos();
     List<EmotionTextOutput> fetchYTCommentsFromVideosOfSavedChannels();
     Page<EmotionTextOutput> fetchEmotionTexts(Pageable pageable);
-    List<EmotionTextOutput> fetchEmotionTextsToBeAssigned(String userId, String commentsNumber);
+    List<EmotionTextOutput> fetchEmotionTextsToBeAssigned(String userEmail, String textsNumber);
 }

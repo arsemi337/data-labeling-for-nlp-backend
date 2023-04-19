@@ -2,9 +2,9 @@
 //
 //import it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationException;
 //import it.winter2223.bachelor.ak.backend.authentication.repository.UserRepository;
-//import it.winter2223.bachelor.ak.backend.comment.exception.CommentException;
-//import it.winter2223.bachelor.ak.backend.comment.model.Comment;
-//import it.winter2223.bachelor.ak.backend.comment.repository.CommentRepository;
+//import it.winter2223.bachelor.ak.backend.text.exception.CommentException;
+//import it.winter2223.bachelor.ak.backend.text.model.Comment;
+//import it.winter2223.bachelor.ak.backend.text.repository.CommentRepository;
 //import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentInput;
 //import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.dto.CommentEmotionAssignmentOutput;
 //import it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentException;
@@ -24,7 +24,7 @@
 //import java.util.Optional;
 //
 //import static it.winter2223.bachelor.ak.backend.authentication.exception.FirebaseAuthenticationExceptionMessages.NO_USER_WITH_PASSED_ID;
-//import static it.winter2223.bachelor.ak.backend.comment.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
+//import static it.winter2223.bachelor.ak.backend.text.exception.CommentExceptionMessages.NO_COMMENT_WITH_ENTERED_ID;
 //import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.ASSIGNMENT_ALREADY_EXISTS;
 //import static it.winter2223.bachelor.ak.backend.commentEmotionAssignment.exception.CommentEmotionAssignmentExceptionMessages.WRONG_EMOTION;
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
@@ -49,21 +49,21 @@
 //
 //    @ParameterizedTest
 //    @EnumSource(Emotion.class)
-//    @DisplayName("when proper assignment input is passed, a comment emotion assignment should be created")
+//    @DisplayName("when proper assignment input is passed, a text emotion assignment should be created")
 //    void shouldPostEmotionAssignment(Emotion emotion) {
 //        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
 //                .userId("userId")
 //                .commentId("emotionTextId")
 //                .emotion(emotion.toString())
 //                .build());
-//        Comment comment = Comment.builder()
+//        Comment text = Comment.builder()
 //                        .commentId("emotionTextId")
 //                        .content("content")
 //                        .assignmentsNumber(0)
 //                        .build();
 //
 //        when(userRepository.existsById(anyString())).thenReturn(true);
-//        when(commentRepository.findByCommentId(anyString())).thenReturn(Optional.of(comment));
+//        when(commentRepository.findByCommentId(anyString())).thenReturn(Optional.of(text));
 //        when(assignmentRepository.findByUserIdAndCommentId(anyString(), anyString())).thenReturn(Optional.empty());
 //        when(commentRepository.save(any(Comment.class))).thenAnswer(answer -> answer.getArgument(0));
 //        when(assignmentRepository.save(any(CommentEmotionAssignment.class))).thenAnswer(answer -> answer.getArgument(0));
@@ -113,7 +113,7 @@
 //
 //    @ParameterizedTest
 //    @EnumSource(Emotion.class)
-//    @DisplayName("when invalid comment id is passed, a CommentException exception should be thrown")
+//    @DisplayName("when invalid text id is passed, a CommentException exception should be thrown")
 //    void shouldThrowCommentExceptionWhenPostingAssignmentForWrongCommentId(Emotion emotion) {
 //        List<CommentEmotionAssignmentInput> input = List.of(CommentEmotionAssignmentInput.builder()
 //                .userId("userId")
@@ -138,7 +138,7 @@
 //                .commentId("emotionTextId")
 //                .emotion(emotion.toString())
 //                .build());
-//        Comment comment = Comment.builder()
+//        Comment text = Comment.builder()
 //                .commentId("emotionTextId")
 //                .content("content")
 //                .assignmentsNumber(0)
@@ -149,7 +149,7 @@
 //                        .build();
 //
 //        when(userRepository.existsById(anyString())).thenReturn(true);
-//        when(commentRepository.findByCommentId(anyString())).thenReturn(Optional.of(comment));
+//        when(commentRepository.findByCommentId(anyString())).thenReturn(Optional.of(text));
 //        when(assignmentRepository.findByUserIdAndCommentId(anyString(), anyString())).thenReturn(Optional.of(assignment));
 //
 //        assertThatExceptionOfType(CommentEmotionAssignmentException.class)

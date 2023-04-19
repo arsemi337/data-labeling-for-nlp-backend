@@ -8,11 +8,12 @@ import it.nlp.backend.authentication.model.User;
 import it.nlp.backend.authentication.model.UserRole;
 import it.nlp.backend.authentication.repository.UserRepository;
 import it.nlp.backend.authentication.service.UserService;
-import it.nlp.backend.config.security.JwtService;
 import it.nlp.backend.utils.TimeSupplier;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserService {
         validatePassword(userInput.password());
 
         if (userRepository.existsByEmail(userInput.email())) {
-            throw new IllegalArgumentException(EMAIL_ALREADY_TAKEN.getMessage() + " (" + userInput.email() + ")");
+            throw new IllegalArgumentException(EMAIL_ALREADY_TAKEN.getMessage() + userInput.email());
         }
 
         var jwtRefreshToken = jwtService.generateRefreshToken(userInput.email());
@@ -72,12 +73,20 @@ public class UserServiceImpl implements UserService {
     public UserOutput signIn(UserInput userInput) {
         validateEmail(userInput.email());
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userInput.email(),
-                        userInput.password()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userInput.email(),
+                            userInput.password()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            if (e instanceof BadCredentialsException) {
+                throw new IllegalArgumentException(BAD_CREDENTIALS.getMessage());
+            } else {
+                throw e;
+            }
+        }
 
         var jwtRefreshToken = jwtService.generateRefreshToken(userInput.email());
         var jwtAccessToken = jwtService.generateAccessToken(userInput.email());
@@ -88,7 +97,6 @@ public class UserServiceImpl implements UserService {
         user.setRefreshToken(jwtRefreshToken);
         userRepository.save(user);
 
-
         return userMapper.mapToUserOutput(user, jwtAccessToken, jwtRefreshToken);
     }
 
@@ -98,10 +106,10 @@ public class UserServiceImpl implements UserService {
 
         var user = userRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(
-                        () -> new NoSuchElementException(TOKEN_DOES_NOT_EXIST.getMessage() + " (" + refreshToken + ")"));
+                        () -> new NoSuchElementException(TOKEN_DOES_NOT_EXIST.getMessage() + refreshToken));
 
         if (!jwtService.isTokenValid(refreshToken, user)) {
-            throw new IllegalArgumentException(INVALID_REFRESH_TOKEN.getMessage() + " (" + refreshToken + ")");
+            throw new IllegalArgumentException(INVALID_REFRESH_TOKEN.getMessage() + refreshToken);
         }
 
         var jwtRefreshToken = jwtService.generateRefreshToken(user.getUsername());

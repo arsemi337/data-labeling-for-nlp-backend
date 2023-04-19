@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Document
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class Channel {
 
     @Id
     private String id;
+    private LocalDateTime createdAt;
     private String title;
     private String description;
     private String customUrl;

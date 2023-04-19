@@ -1,4 +1,4 @@
-package it.nlp.backend.config.security;
+package it.nlp.backend.authentication.service.impl;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

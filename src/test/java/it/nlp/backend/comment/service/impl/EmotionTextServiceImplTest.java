@@ -1,4 +1,4 @@
-//package it.nlp.backend.comment.service.impl;
+//package it.nlp.backend.text.service.impl;
 //
 //import it.nlp.backend.authentication.repository.UserRepository;
 //import org.junit.jupiter.api.DisplayName;

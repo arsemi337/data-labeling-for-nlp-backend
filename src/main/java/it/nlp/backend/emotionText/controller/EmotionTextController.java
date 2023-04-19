@@ -10,6 +10,8 @@ import it.nlp.backend.emotionText.service.EmotionTextService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,18 +32,21 @@ class EmotionTextController {
     }
 
     @GetMapping("/youtube/trending")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Fetch comments from trending YouTube videos")
-    ResponseEntity<List<EmotionTextOutput>> fetchYTCommentsFromPopularVideos() {
+    ResponseEntity<List<EmotionTextOutput>> fetchYTEmotionTextsFromPopularVideos() {
         return ResponseEntity.ok(emotionTextService.fetchYTCommentsFromPopularVideos());
     }
 
     @GetMapping("/youtube/channels")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Fetch comments from videos of saved YouTube channels")
-    ResponseEntity<List<EmotionTextOutput>> fetchYTCommentsFromVideosOfSavedChannels() {
+    ResponseEntity<List<EmotionTextOutput>> fetchYTEmotionTextsFromVideosOfSavedChannels() {
         return ResponseEntity.ok(emotionTextService.fetchYTCommentsFromVideosOfSavedChannels());
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Fetch list of emotion texts from the database (with pagination)")
     ResponseEntity<Page<EmotionTextOutput>> fetchEmotionTexts(
             @Parameter(example = EmotionTextSwaggerSample.PAGEABLE_EXAMPLE)
@@ -50,10 +55,12 @@ class EmotionTextController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @Operation(summary = "Fetch emotion texts to be assigned by the user with userId")
     ResponseEntity<List<EmotionTextOutput>> fetchEmotionTextsToBeAssigned(
-            @RequestParam(name = "userId") String userId,
+            Authentication authentication,
             @RequestParam(name = "emotionTextsNumber") String emotionTextsNumber) {
-        return ResponseEntity.ok(emotionTextService.fetchEmotionTextsToBeAssigned(userId, emotionTextsNumber));
+        String userEmail = authentication.getName();
+        return ResponseEntity.ok(emotionTextService.fetchEmotionTextsToBeAssigned(userEmail, emotionTextsNumber));
     }
 }

@@ -1,7 +1,7 @@
 package it.nlp.backend.emotionAnalysis.service.impl;
 
-import it.nlp.backend.emotionAnalysis.dto.CommentEmotionInput;
-import it.nlp.backend.emotionAnalysis.dto.CommentEmotionOutput;
+import it.nlp.backend.emotionAnalysis.dto.TextEmotionInput;
+import it.nlp.backend.emotionAnalysis.dto.TextEmotionOutput;
 import it.nlp.backend.emotionAnalysis.dto.EmotionDto;
 import it.nlp.backend.emotionAnalysis.exception.EmotionAnalysisException;
 import it.nlp.backend.emotionAnalysis.service.EmotionAnalysisService;
@@ -16,20 +16,20 @@ import org.tensorflow.types.TString;
 
 import java.util.*;
 
-import static it.nlp.backend.emotionAnalysis.exception.EmotionAnalysisExceptionMessages.FAILED_TO_INFER_EMOTION;
-import static it.nlp.backend.emotionAnalysis.exception.EmotionAnalysisExceptionMessages.FAILED_TO_LOAD_NLP_MODEL;
+import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.FAILED_TO_INFER_EMOTION;
+import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.FAILED_TO_LOAD_NLP_MODEL;
 
 @Service
 public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
     @Override
-    public CommentEmotionOutput classifyCommentEmotion(CommentEmotionInput commentInput) {
+    public TextEmotionOutput classifyTextEmotion(TextEmotionInput textEmotionInput) {
         ResourceLoader loader = new DefaultResourceLoader();
         Resource resourceModel = loader.getResource("classpath:/model/");
         try (SavedModelBundle model = SavedModelBundle.load(resourceModel.getFile().getPath(), "serve")) {
             String feedOperation = "serving_default_text_vectorization_input";
             String fetchOperation = "StatefulPartitionedCall_1";
-            try (Tensor input = TString.vectorOf(commentInput.comment());
+            try (Tensor input = TString.vectorOf(textEmotionInput.text());
                  Tensor output = model.session()
                          .runner()
                          .feed(feedOperation, input)
@@ -43,7 +43,7 @@ public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
                 Map.Entry<EmotionDto, Float> maxProbability = Collections.max(emotionToProbabilityMap.entrySet(), Map.Entry.comparingByValue());
 
-                return CommentEmotionOutput.builder()
+                return TextEmotionOutput.builder()
                         .mostProbableEmotion(maxProbability.getKey())
                         .emotionToProbabilityMap(emotionToProbabilityMap)
                         .build();

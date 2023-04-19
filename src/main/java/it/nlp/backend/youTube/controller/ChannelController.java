@@ -9,6 +9,7 @@ import it.nlp.backend.youTube.service.ChannelService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @Tag(name = "YouTube channel")
 @RequestMapping("/api/v1/youtube/channels")
+@PreAuthorize("hasAuthority('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
 public class ChannelController {
 
