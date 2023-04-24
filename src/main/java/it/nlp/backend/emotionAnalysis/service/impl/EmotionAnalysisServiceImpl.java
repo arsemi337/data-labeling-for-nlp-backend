@@ -1,5 +1,6 @@
 package it.nlp.backend.emotionAnalysis.service.impl;
 
+import io.micrometer.common.util.StringUtils;
 import it.nlp.backend.emotionAnalysis.dto.TextEmotionInput;
 import it.nlp.backend.emotionAnalysis.dto.TextEmotionOutput;
 import it.nlp.backend.emotionAnalysis.dto.EmotionDto;
@@ -16,14 +17,14 @@ import org.tensorflow.types.TString;
 
 import java.util.*;
 
-import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.FAILED_TO_INFER_EMOTION;
-import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.FAILED_TO_LOAD_NLP_MODEL;
+import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.*;
 
 @Service
 public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
     @Override
     public TextEmotionOutput classifyTextEmotion(TextEmotionInput textEmotionInput) {
+        validateTextInput(textEmotionInput);
         ResourceLoader loader = new DefaultResourceLoader();
         Resource resourceModel = loader.getResource("classpath:/model/");
         try (SavedModelBundle model = SavedModelBundle.load(resourceModel.getFile().getPath(), "serve")) {
@@ -52,6 +53,12 @@ public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
             }
         } catch (Exception e) {
             throw new EmotionAnalysisException(FAILED_TO_LOAD_NLP_MODEL.getMessage(), e);
+        }
+    }
+
+    private static void validateTextInput(TextEmotionInput textEmotionInput) {
+        if (StringUtils.isBlank(textEmotionInput.text())) {
+            throw new IllegalArgumentException(INPUT_TEXT_EMPTY.getMessage());
         }
     }
 
