@@ -6,6 +6,7 @@ import it.nlp.backend.emotionAnalysis.dto.TextEmotionOutput;
 import it.nlp.backend.emotionAnalysis.dto.EmotionDto;
 import it.nlp.backend.emotionAnalysis.exception.EmotionAnalysisException;
 import it.nlp.backend.emotionAnalysis.service.EmotionAnalysisService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -20,6 +21,7 @@ import java.util.*;
 import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.*;
 
 @Service
+@Slf4j
 public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
 
     @Override
@@ -52,6 +54,7 @@ public class EmotionAnalysisServiceImpl implements EmotionAnalysisService {
                 throw new EmotionAnalysisException(FAILED_TO_INFER_EMOTION.getMessage(), e);
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new EmotionAnalysisException(FAILED_TO_LOAD_NLP_MODEL.getMessage(), e);
         }
     }

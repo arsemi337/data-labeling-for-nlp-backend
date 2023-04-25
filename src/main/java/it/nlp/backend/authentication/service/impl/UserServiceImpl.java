@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return userMapper.mapToRefreshTokenOutput(
-                user.getUserId().toString(),
+                user.getUserId(),
                 jwtAccessToken,
                 jwtRefreshToken);
     }
