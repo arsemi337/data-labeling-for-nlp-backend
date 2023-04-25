@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  nlp-backend:
+    build: nlppolish/backend
+    restart: unless-stopped
+    environment:
+      - SPRING_MONGO_HOST=${MONGO_HOST}
+      - SPRING_MONGO_PORT=${MONGO_PORT}
+      - SPRING_MONGO_URI=${MONGO_URI}
+      - SPRING_JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - SPRING_YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+    ports:
+      - "8080:8080"
+    networks:
+      - nlp-network
+
+  mongo:
+    container_name: nlp-mongo
+    image: mongo:6.0.2
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - nlp-network
+
+networks:
+  nlp-network:
+    name: nlp-network
+    driver: bridge

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.winter2223.bachelor.ak</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<name>data-labeling-for-nlp-backend</name>
 	<description>Backend for data labeling for nlp application</description>
 	<properties>

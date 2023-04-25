@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.nlp.backend.emotionAnalysis.dto.TextEmotionInput;
 import it.nlp.backend.emotionAnalysis.dto.TextEmotionOutput;
 import it.nlp.backend.emotionAnalysis.service.EmotionAnalysisService;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/emotion")
 @PreAuthorize("hasAuthority('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
-@Profile("NLPEnabled")
 public class EmotionAnalysisController {
     private final EmotionAnalysisService emotionAnalysisService;
 
