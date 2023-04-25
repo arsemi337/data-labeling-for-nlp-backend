@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   nlp-backend:
-    build: nlppolish/backend
+    build: .
     restart: unless-stopped
     environment:
       - SPRING_MONGO_HOST=${MONGO_HOST}
@@ -10,6 +10,7 @@ services:
       - SPRING_MONGO_URI=${MONGO_URI}
       - SPRING_JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - SPRING_YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
     ports:
       - "8080:8080"
     networks:

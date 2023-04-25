@@ -1,9 +1,9 @@
 package it.nlp.backend.config.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
-@Profile("securityTurnedOn")
+@ConditionalOnProperty("subprofile.security-turned-on")
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
