@@ -109,7 +109,7 @@ public class TextEmotionAssignmentServiceImpl implements TextEmotionAssignmentSe
     private EmotionText getEmotionText(TextEmotionAssignmentInput assignmentInput) {
         UUID textId = UUID.fromString(assignmentInput.textId());
         return textRepository.findById(textId)
-                .orElseThrow(() -> new NoSuchElementException(NO_TEXT_WITH_ENTERED_ID.getMessage() + textId));
+                .orElseThrow(() -> new IllegalArgumentException(NO_TEXT_WITH_ENTERED_ID.getMessage() + textId));
     }
 
     private void checkIfAssignmentExists(List<UUID> userAssignedEmotionTexts, UUID emotionTextId) {
