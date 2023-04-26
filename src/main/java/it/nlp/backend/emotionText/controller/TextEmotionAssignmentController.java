@@ -42,7 +42,8 @@ public class TextEmotionAssignmentController {
     @GetMapping("/count")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @Operation(summary = "Get number of texts labeled by user")
-    ResponseEntity<TextEmotionAssignmentsNumberOutput> getNumberOfTextEmotionAssignments(Authentication authentication) {
+    ResponseEntity<TextEmotionAssignmentsNumberOutput> getNumberOfTextEmotionAssignments(
+            Authentication authentication) {
         String userEmail = authentication.getName();
         return ResponseEntity.ok(textEmotionAssignmentService.getNumberOfTextEmotionAssignmentsForUser(userEmail));
     }

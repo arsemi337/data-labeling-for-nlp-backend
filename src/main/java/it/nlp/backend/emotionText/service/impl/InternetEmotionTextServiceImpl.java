@@ -47,35 +47,6 @@ public class InternetEmotionTextServiceImpl implements InternetEmotionTextServic
 
         addValidCommentsToEmotionTextList(emotionTextList, mostPopularComments);
 
-//        videoIdList.stream()
-//                .map(youTubeService::fetchMostPopularComments)
-//                .filter(Objects::nonNull)
-//                .map(CommentThreadListResponse::getItems)
-//                .flatMap(List::stream)
-//                .map(commentThread -> commentThread.getSnippet().getTopLevelComment())
-//                .forEach(text -> {
-//                    String commentId = text.getId();
-//                    String commentContent = text.getSnippet().getTextDisplay();
-//                    addYTCommentToEmotionTexts(emotionTexts, commentId, commentContent);
-//                });
-
-//        videoIdList.forEach(videoId -> {
-//            CommentThreadListResponse commentsResponse =
-//                    youTubeService.fetchMostPopularComments(videoId);
-//            if (commentsResponse == null) {
-//                return;
-//            }
-//
-//            commentsResponse.getItems().forEach(commentThread -> {
-//                Comment ytComment = commentThread.getSnippet().getTopLevelComment();
-//
-//                String commentId = ytComment.getId();
-//                String commentContent = ytComment.getSnippet().getTextDisplay();
-//
-//                addYTCommentToEmotionTexts(emotionTexts, commentId, commentContent);
-//            });
-//        });
-
         return emotionTextList;
     }
 
