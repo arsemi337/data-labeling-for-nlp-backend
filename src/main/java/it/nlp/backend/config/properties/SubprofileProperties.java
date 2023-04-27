@@ -1,4 +1,4 @@
-package it.nlp.backend.config;
+package it.nlp.backend.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,4 +9,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 public class SubprofileProperties {
     private Boolean securityTurnedOn;
+    private String modelDestinationPath;
 }

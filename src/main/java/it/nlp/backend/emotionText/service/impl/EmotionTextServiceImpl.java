@@ -19,17 +19,14 @@ import static it.nlp.backend.exception.messages.TextExceptionMessages.TEXTS_NUMB
 @Service
 class EmotionTextServiceImpl implements EmotionTextService {
 
-    private final EmotionTextRepository textRepository;
     private final UserRepository userRepository;
     private final EmotionTextRepository emotionTextRepository;
     private final InternetEmotionTextService internetEmotionTextService;
     private final EmotionTextMapper emotionTextMapper;
 
-    EmotionTextServiceImpl(EmotionTextRepository textRepository,
-                           UserRepository userRepository,
+    EmotionTextServiceImpl(UserRepository userRepository,
                            EmotionTextRepository emotionTextRepository,
                            InternetEmotionTextService internetEmotionTextService) {
-        this.textRepository = textRepository;
         this.userRepository = userRepository;
         this.emotionTextRepository = emotionTextRepository;
         this.internetEmotionTextService = internetEmotionTextService;
@@ -39,20 +36,20 @@ class EmotionTextServiceImpl implements EmotionTextService {
     @Override
     public List<EmotionTextOutput> fetchYTCommentsFromPopularVideos() {
         return internetEmotionTextService.fetchYTCommentsFromPopularVideos().stream()
-                .map(text -> emotionTextMapper.mapToEmotionTextOutput(textRepository.save(text)))
+                .map(text -> emotionTextMapper.mapToEmotionTextOutput(emotionTextRepository.save(text)))
                 .toList();
     }
 
     @Override
     public List<EmotionTextOutput> fetchYTCommentsFromVideosOfSavedChannels() {
         return internetEmotionTextService.fetchYTCommentsFromVideosOfSavedChannels().stream()
-                .map(text -> emotionTextMapper.mapToEmotionTextOutput(textRepository.save(text)))
+                .map(text -> emotionTextMapper.mapToEmotionTextOutput(emotionTextRepository.save(text)))
                 .toList();
     }
 
     @Override
     public Page<EmotionTextOutput> fetchEmotionTexts(Pageable pageable) {
-        return textRepository.findAll(pageable)
+        return emotionTextRepository.findAll(pageable)
                 .map(emotionTextMapper::mapToEmotionTextOutput);
     }
 
