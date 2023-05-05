@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty("subprofile.security-turned-on")
+@ConditionalOnProperty("general.security-turned-on")
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;

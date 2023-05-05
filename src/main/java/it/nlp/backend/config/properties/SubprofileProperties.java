@@ -8,6 +8,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class SubprofileProperties {
-    private Boolean securityTurnedOn;
     private String modelDestinationPath;
 }

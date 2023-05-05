@@ -1,4 +1,4 @@
-package it.nlp.backend.emotionAnalysis.dto;
+package it.nlp.backend.textAnalysis.dto;
 
 import lombok.Builder;
 

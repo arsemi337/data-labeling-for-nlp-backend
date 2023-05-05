@@ -1,7 +1,7 @@
-package it.nlp.backend.emotionAnalysis.service.impl;
+package it.nlp.backend.textAnalysis.service.impl;
 
 import com.google.common.io.Files;
-import it.nlp.backend.emotionAnalysis.service.FileService;
+import it.nlp.backend.textAnalysis.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;

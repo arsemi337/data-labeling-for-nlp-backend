@@ -1,10 +1,10 @@
-package it.nlp.backend.emotionAnalysis.service.impl;
+package it.nlp.backend.textAnalysis.service.impl;
 
 import com.google.protobuf.TextFormat;
-import it.nlp.backend.emotionAnalysis.protos.ModelConfig;
-import it.nlp.backend.emotionAnalysis.protos.ModelConfigList;
-import it.nlp.backend.emotionAnalysis.protos.ModelServerConfig;
-import it.nlp.backend.emotionAnalysis.service.TfServingConfigService;
+import it.nlp.backend.textAnalysis.protos.ModelConfig;
+import it.nlp.backend.textAnalysis.protos.ModelConfigList;
+import it.nlp.backend.textAnalysis.protos.ModelServerConfig;
+import it.nlp.backend.textAnalysis.service.TfServingConfigService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +23,11 @@ public class TfServingConfigServiceImpl implements TfServingConfigService {
     private static final String CONFIG_FILE_NAME = "models.config";
     private static final String TENSORFLOW_MODEL_PLATFORM = "tensorflow";
 
-    @Value("${subprofile.model-destination-path}")
-    private String modelDirPath;
+    @Value("${general.tf-serving-models-base-path}")
+    private String tfServingModelsBasePath;
 
     @Override
-    public void addModelToConfig(String modelName, String modelPath) {
+    public void addModelToConfig(String modelName, String modelDirPath) {
         File modelConfigFile = new File(modelDirPath, CONFIG_FILE_NAME);
 
         ModelServerConfig currentModelServerConfig = getConfigFromFile(modelConfigFile);
@@ -39,7 +39,7 @@ public class TfServingConfigServiceImpl implements TfServingConfigService {
                         .addAllConfig(currentConfigList)
                         .addConfig(ModelConfig.newBuilder()
                                 .setName(modelName)
-                                .setBasePath(modelPath)
+                                .setBasePath(tfServingModelsBasePath + "/" + modelName)
                                 .setModelPlatform(TENSORFLOW_MODEL_PLATFORM)
                                 .build())
                         .build())
@@ -49,7 +49,7 @@ public class TfServingConfigServiceImpl implements TfServingConfigService {
     }
 
     @Override
-    public void removeModelFromConfig(String modelName) {
+    public void removeModelFromConfig(String modelName, String modelDirPath) {
         File modelConfigFile = new File(modelDirPath, CONFIG_FILE_NAME);
         ModelServerConfig currentModelServerConfig = getConfigFromFile(modelConfigFile);
 

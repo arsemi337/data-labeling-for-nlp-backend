@@ -1,4 +1,4 @@
-package it.nlp.backend.emotionAnalysis.service.impl;
+package it.nlp.backend.textAnalysis.service.impl;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
