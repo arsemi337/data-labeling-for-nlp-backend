@@ -3,6 +3,7 @@ package it.nlp.backend.emotionAnalysis.service.impl;
 import it.nlp.backend.emotionAnalysis.dto.ModelOutput;
 import it.nlp.backend.emotionAnalysis.service.FileService;
 import it.nlp.backend.emotionAnalysis.service.ModelsStorageService;
+import it.nlp.backend.emotionAnalysis.service.TfServingConfigService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 @Service
 public class ModelsStorageServiceImpl implements ModelsStorageService {
 
+    private final TfServingConfigService tfServingConfigService;
     private final FileService fileService;
     private final ModelsStorageValidator validator;
     private final static String TEMP_FILE_PREFIX = "temp";
@@ -22,7 +24,8 @@ public class ModelsStorageServiceImpl implements ModelsStorageService {
     @Value("${subprofile.model-destination-path}")
     private String modelDirPath;
 
-    public ModelsStorageServiceImpl(FileService fileService) {
+    public ModelsStorageServiceImpl(TfServingConfigService tfServingConfigService, FileService fileService) {
+        this.tfServingConfigService = tfServingConfigService;
         this.fileService = fileService;
         this.validator = new ModelsStorageValidator();
     }
@@ -47,6 +50,8 @@ public class ModelsStorageServiceImpl implements ModelsStorageService {
         fileService.extractAndDeleteZipFile(tempZip, modelDirPath);
 
         fileService.moveFile(extractedModelDir, modelDirDestination);
+
+        addModelToConfigFile(modelName);
 
         return ModelOutput.builder()
                 .modelName(modelName)
@@ -73,5 +78,15 @@ public class ModelsStorageServiceImpl implements ModelsStorageService {
         File modelDir = new File(modelDirPath, modelName);
         validator.validateModelIsDirectoryAndExists(modelDir);
         fileService.removeDirectory(modelDir);
+        tfServingConfigService.removeModelFromConfig(modelName);
+    }
+
+    private void addModelToConfigFile(String modelName) {
+        try {
+            tfServingConfigService.addModelToConfig(modelName, modelDirPath);
+        } catch (IllegalStateException e) {
+            removeModel(modelName);
+            throw e;
+        }
     }
 }

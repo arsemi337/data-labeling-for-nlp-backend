@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+
+option java_multiple_files = true;
+option java_package = "it.nlp.backend.emotionAnalysis.protos";
+option java_outer_classname = "ModelServerConfigProtos";
+
+message ModelConfig {
+  string name = 1;
+  string base_path = 2;
+  string model_platform = 3;
+}
+
+message ModelConfigList {
+  repeated ModelConfig config = 1;
+}
+
+message ModelServerConfig {
+  ModelConfigList model_config_list = 1;
+}
