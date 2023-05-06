@@ -10,7 +10,7 @@ public interface ModelConfigListOrBuilder extends
   /**
    * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>
    */
-  java.util.List<it.nlp.backend.textAnalysis.protos.ModelConfig>
+  java.util.List<it.nlp.backend.textAnalysis.protos.ModelConfig> 
       getConfigList();
   /**
    * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>
@@ -23,7 +23,7 @@ public interface ModelConfigListOrBuilder extends
   /**
    * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>
    */
-  java.util.List<? extends it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder>
+  java.util.List<? extends it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder> 
       getConfigOrBuilderList();
   /**
    * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>

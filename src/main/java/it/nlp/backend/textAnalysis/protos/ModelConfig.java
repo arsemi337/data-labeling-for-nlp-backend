@@ -352,7 +352,7 @@ private static final long serialVersionUID = 0L;
               it.nlp.backend.textAnalysis.protos.ModelConfig.class, it.nlp.backend.textAnalysis.protos.ModelConfig.Builder.class);
     }
 
-    // Construct using it.nlp.backend.emotionAnalysis.protos.ModelConfig.newBuilder()
+    // Construct using it.nlp.backend.textAnalysis.protos.ModelConfig.newBuilder()
     private Builder() {
 
     }

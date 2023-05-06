@@ -2,19 +2,28 @@ version: "3.8"
 
 services:
   nlp-backend:
+    container_name: nlp-backend
     build: .
+    image: nlp-backend
     restart: unless-stopped
     environment:
+      - SPRING_SERVER_PORT=${SERVER_PORT}
       - SPRING_MONGO_HOST=${MONGO_HOST}
       - SPRING_MONGO_PORT=${MONGO_PORT}
       - SPRING_MONGO_URI=${MONGO_URI}
       - SPRING_JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - SPRING_YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
       - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
-      - SPRING_DEV_DESTINATION_PATH=${DEV_DESTINATION_PATH}
-      - SPRING_PROD_DESTINATION_PATH=${PROD_DESTINATION_PATH}
+      - SPRING_MODELS_APP_DESTINATION_PATH=${MODELS_APP_DESTINATION_PATH}
+      - SPRING_TF_SERVING_CONFIG_FILE_NAME=${TF_SERVING_CONFIG_FILE_NAME}
+      - SPRING_TF_SERVING_HOST=${TF_SERVING_HOST}
+      - SPRING_TF_SERVING_PORT=${TF_SERVING_PORT}
+    volumes:
+      - type: bind
+        source: ${MODELS_HOST_PATH}
+        target: ${MODELS_APP_DESTINATION_PATH}
     ports:
-      - "8080:8080"
+      - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - nlp-network
 
@@ -23,7 +32,23 @@ services:
     image: mongo:6.0.2
     restart: always
     ports:
-      - "27017:27017"
+      - ${MONGO_PORT}:${MONGO_PORT}
+    networks:
+      - nlp-network
+
+  tf-serving:
+    container_name: nlp-tf-serving
+    image: tensorflow/serving:2.12.1
+    restart: always
+    volumes:
+      - type: bind
+        source: ${MODELS_HOST_PATH}
+        target: ${MODELS_APP_DESTINATION_PATH}
+    ports:
+      - ${TF_SERVING_PORT}:${TF_SERVING_PORT}
+    command:
+      - --model_config_file=${MODELS_APP_DESTINATION_PATH}${TF_SERVING_CONFIG_FILE_NAME}
+      - --model_config_file_poll_wait_seconds=${TF_SERING_CONFIG_REFRESH_INTERVAL_SECONDS}
     networks:
       - nlp-network
 

@@ -1,6 +1,5 @@
 package it.nlp.backend.textAnalysis.service.impl;
 
-import com.google.common.io.Files;
 import it.nlp.backend.textAnalysis.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
@@ -26,10 +25,10 @@ public class FileServiceImpl implements FileService {
     @Override
     public void moveFile(File from, File to) {
         try {
-            Files.move(from, to);
+            FileUtils.moveDirectory(from, to);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalStateException(UNEXPECTED_ERROR.getMessage());
+            throw new IllegalStateException(UNEXPECTED_ERROR_MOVING_FILE.getMessage());
         }
     }
 
@@ -40,7 +39,7 @@ public class FileServiceImpl implements FileService {
             tempFile = File.createTempFile(UUID.randomUUID().toString(), prefix);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalStateException(UNEXPECTED_ERROR.getMessage());
+            throw new IllegalStateException(UNEXPECTED_ERROR_CREATING_TEMP.getMessage());
         }
         return tempFile;
     }
@@ -51,7 +50,7 @@ public class FileServiceImpl implements FileService {
             IOUtils.copy(multipartFile.getInputStream(), o);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalStateException(UNEXPECTED_ERROR.getMessage());
+            throw new IllegalStateException(UNEXPECTED_ERROR_READING_MULTIPART.getMessage());
         }
     }
 
@@ -63,7 +62,7 @@ public class FileServiceImpl implements FileService {
             throw new IllegalStateException(FILE_CANNOT_BE_UNZIPPED.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalStateException(UNEXPECTED_ERROR.getMessage());
+            throw new IllegalStateException(UNEXPECTED_ERROR_EXTRACTING.getMessage());
         } finally {
             if (!zip.delete()) {
                 log.error(ZIP_FILE_DELETION_ERROR_MESSAGE + zip.getName());

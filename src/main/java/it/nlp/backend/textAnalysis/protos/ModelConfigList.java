@@ -53,7 +53,7 @@ private static final long serialVersionUID = 0L;
    * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder>
+  public java.util.List<? extends it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder> 
       getConfigOrBuilderList() {
     return config_;
   }
@@ -257,7 +257,7 @@ private static final long serialVersionUID = 0L;
               it.nlp.backend.textAnalysis.protos.ModelConfigList.class, it.nlp.backend.textAnalysis.protos.ModelConfigList.Builder.class);
     }
 
-    // Construct using it.nlp.backend.emotionAnalysis.protos.ModelConfigList.newBuilder()
+    // Construct using it.nlp.backend.textAnalysis.protos.ModelConfigList.newBuilder()
     private Builder() {
 
     }
@@ -615,7 +615,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>
      */
-    public java.util.List<? extends it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder>
+    public java.util.List<? extends it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder> 
          getConfigOrBuilderList() {
       if (configBuilder_ != null) {
         return configBuilder_.getMessageOrBuilderList();
@@ -641,12 +641,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>repeated .tensorflow.serving.ModelConfig config = 1;</code>
      */
-    public java.util.List<it.nlp.backend.textAnalysis.protos.ModelConfig.Builder>
+    public java.util.List<it.nlp.backend.textAnalysis.protos.ModelConfig.Builder> 
          getConfigBuilderList() {
       return getConfigFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        it.nlp.backend.textAnalysis.protos.ModelConfig, it.nlp.backend.textAnalysis.protos.ModelConfig.Builder, it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder>
+        it.nlp.backend.textAnalysis.protos.ModelConfig, it.nlp.backend.textAnalysis.protos.ModelConfig.Builder, it.nlp.backend.textAnalysis.protos.ModelConfigOrBuilder> 
         getConfigFieldBuilder() {
       if (configBuilder_ == null) {
         configBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<

@@ -244,7 +244,7 @@ private static final long serialVersionUID = 0L;
               it.nlp.backend.textAnalysis.protos.ModelServerConfig.class, it.nlp.backend.textAnalysis.protos.ModelServerConfig.Builder.class);
     }
 
-    // Construct using it.nlp.backend.emotionAnalysis.protos.ModelServerConfig.newBuilder()
+    // Construct using it.nlp.backend.textAnalysis.protos.ModelServerConfig.newBuilder()
     private Builder() {
 
     }
@@ -474,7 +474,7 @@ private static final long serialVersionUID = 0L;
      * <code>.tensorflow.serving.ModelConfigList model_config_list = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        it.nlp.backend.textAnalysis.protos.ModelConfigList, it.nlp.backend.textAnalysis.protos.ModelConfigList.Builder, it.nlp.backend.textAnalysis.protos.ModelConfigListOrBuilder>
+        it.nlp.backend.textAnalysis.protos.ModelConfigList, it.nlp.backend.textAnalysis.protos.ModelConfigList.Builder, it.nlp.backend.textAnalysis.protos.ModelConfigListOrBuilder> 
         getModelConfigListFieldBuilder() {
       if (modelConfigListBuilder_ == null) {
         modelConfigListBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Profile("NLPEnabled")
+@Profile("prod")
 public class EmotionTextScheduler {
 
     private final EmotionTextRepository emotionTextRepository;
@@ -22,13 +22,16 @@ public class EmotionTextScheduler {
         this.internetEmotionTextService = internetEmotionTextService;
     }
 
-    //TODO: add new method to scheduler
-    @Scheduled(cron = "${cron.expression}")
+//    @Scheduled(cron = "${cron.expression}")
     public void downloadYTComments() {
         List<EmotionText> emotionTexts;
-
         emotionTexts = internetEmotionTextService.fetchYTCommentsFromPopularVideos();
-
         emotionTextRepository.saveAll(emotionTexts);
+    }
+
+    @Scheduled(cron = "${cron.expression}")
+    public void downloadYTCommentsFromVideosOfSavedChannels() {
+        emotionTextRepository.saveAll(
+                internetEmotionTextService.fetchYTCommentsFromVideosOfSavedChannels());
     }
 }

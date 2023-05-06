@@ -29,7 +29,7 @@ public class ModelsStorageServiceImpl implements ModelsStorageService {
     private final ModelsStorageValidator validator;
     private final static String TEMP_FILE_PREFIX = "temp";
 
-    @Value("${subprofile.model-destination-path}")
+    @Value("${general.models-app-destination-path}")
     private String modelDirPath;
 
     public ModelsStorageServiceImpl(TfServingConfigService tfServingConfigService,
@@ -59,7 +59,7 @@ public class ModelsStorageServiceImpl implements ModelsStorageService {
 
         validator.validateModelDoesNotExist(modelName, modelDirDestination);
 
-        fileService.extractAndDeleteZipFile(tempZip, modelDirPath);
+        fileService.extractAndDeleteZipFile(tempZip, extractedModelDir.getAbsolutePath());
 
         fileService.moveFile(extractedModelDir, modelDirDestination);
 

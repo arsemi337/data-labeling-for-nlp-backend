@@ -60,7 +60,7 @@ public class YouTubeServiceImpl implements YouTubeService {
             commentsResponse = commentsRequest.setKey(youtubeApiKey)
                     .setPart(List.of("snippet"))
                     .setVideoId(videoId)
-                    .setMaxResults(10L)
+                    .setMaxResults(50L)
                     .setOrder("relevance")
                     .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
                     .execute();
@@ -96,7 +96,7 @@ public class YouTubeServiceImpl implements YouTubeService {
             YouTube.PlaylistItems.List request = youTube.playlistItems()
                     .list(List.of("contentDetails"));
             playlistItemListResponse = request.setKey(youtubeApiKey)
-                    .setMaxResults(5L)
+                    .setMaxResults(2L)
                     .setPlaylistId(channelUploadPlaylistId)
                     .setFields("items(contentDetails(videoId))")
                     .execute();

@@ -9,9 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 public class DataLabelingForNlpBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(DataLabelingForNlpBackendApplication.class);
-		application.setAdditionalProfiles("dev");
-		application.run(args);
-//		SpringApplication.run(DataLabelingForNlpBackendApplication.class, args);
+		SpringApplication.run(DataLabelingForNlpBackendApplication.class, args);
 	}
 }

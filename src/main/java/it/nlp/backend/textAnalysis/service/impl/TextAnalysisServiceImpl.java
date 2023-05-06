@@ -17,8 +17,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.INPUT_TEXT_EMPTY;
-import static it.nlp.backend.exception.messages.EmotionAnalysisExceptionMessages.UNEXPECTED_ERROR;
+import static it.nlp.backend.exception.messages.TextAnalysisExceptionMessages.INPUT_TEXT_EMPTY;
+import static it.nlp.backend.exception.messages.TextAnalysisExceptionMessages.UNEXPECTED_ERROR;
 
 @Service
 @Slf4j

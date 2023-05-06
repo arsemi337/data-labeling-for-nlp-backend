@@ -3,7 +3,7 @@ syntax = "proto3";
 package tensorflow.serving;
 
 option java_multiple_files = true;
-option java_package = "it.nlp.backend.emotionAnalysis.protos";
+option java_package = "it.nlp.backend.textAnalysis.protos";
 option java_outer_classname = "ModelServerConfigProtos";
 
 message ModelConfig {

@@ -44,9 +44,9 @@ public final class ModelServerConfigProtos {
       "figList\022/\n\006config\030\001 \003(\0132\037.tensorflow.ser" +
       "ving.ModelConfig\"S\n\021ModelServerConfig\022>\n" +
       "\021model_config_list\030\001 \001(\0132#.tensorflow.se" +
-      "rving.ModelConfigListBB\n%it.nlp.backend." +
-      "emotionAnalysis.protosB\027ModelServerConfi" +
-      "gProtosP\001b\006proto3"
+      "rving.ModelConfigListB?\n\"it.nlp.backend." +
+      "textAnalysis.protosB\027ModelServerConfigPr" +
+      "otosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

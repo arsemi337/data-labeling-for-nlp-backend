@@ -20,15 +20,16 @@ import static it.nlp.backend.exception.messages.ModelExceptionMessages.*;
 @Service
 public class TfServingConfigServiceImpl implements TfServingConfigService {
 
-    private static final String CONFIG_FILE_NAME = "models.config";
     private static final String TENSORFLOW_MODEL_PLATFORM = "tensorflow";
 
-    @Value("${general.tf-serving-models-base-path}")
+    @Value("${general.models-app-destination-path}")
     private String tfServingModelsBasePath;
+    @Value("${general.tf-serving-config-file-name}")
+    private String tfServingConfigFileName;
 
     @Override
     public void addModelToConfig(String modelName, String modelDirPath) {
-        File modelConfigFile = new File(modelDirPath, CONFIG_FILE_NAME);
+        File modelConfigFile = new File(modelDirPath, tfServingConfigFileName);
 
         ModelServerConfig currentModelServerConfig = getConfigFromFile(modelConfigFile);
 
@@ -50,7 +51,7 @@ public class TfServingConfigServiceImpl implements TfServingConfigService {
 
     @Override
     public void removeModelFromConfig(String modelName, String modelDirPath) {
-        File modelConfigFile = new File(modelDirPath, CONFIG_FILE_NAME);
+        File modelConfigFile = new File(modelDirPath, tfServingConfigFileName);
         ModelServerConfig currentModelServerConfig = getConfigFromFile(modelConfigFile);
 
         List<ModelConfig> currentConfigList = currentModelServerConfig.getModelConfigList().getConfigList();
