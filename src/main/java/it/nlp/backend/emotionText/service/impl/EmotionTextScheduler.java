@@ -4,7 +4,6 @@ import it.nlp.backend.emotionText.service.InternetEmotionTextService;
 import it.nlp.backend.emotionText.model.EmotionText;
 import it.nlp.backend.emotionText.repository.EmotionTextRepository;
 import org.springframework.context.annotation.Profile;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class EmotionTextScheduler {
         emotionTextRepository.saveAll(emotionTexts);
     }
 
-    @Scheduled(cron = "${cron.expression}")
+//    @Scheduled(cron = "${cron.expression}")
     public void downloadYTCommentsFromVideosOfSavedChannels() {
         emotionTextRepository.saveAll(
                 internetEmotionTextService.fetchYTCommentsFromVideosOfSavedChannels());

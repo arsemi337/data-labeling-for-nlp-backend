@@ -13,4 +13,7 @@ public class GeneralProperties {
     private String tfServingConfigFileName;
     private String tfServingHost;
     private String tfServingPort;
+    private Long ytVideosMaxResults;
+    private Long ytCommentsMaxResults;
+    private Long ytChannelVideosMaxResults;
 }

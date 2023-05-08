@@ -22,6 +22,12 @@ public class YouTubeServiceImpl implements YouTubeService {
 
     @Value("${youtube.api.key}")
     private String youtubeApiKey;
+    @Value("${general.yt-videos-max-results}")
+    private Long ytVideosMaxResults;
+    @Value("${general.yt-comments-max-results}")
+    private Long ytCommentsMaxResults;
+    @Value("${general.yt-channel-videos-max-results}")
+    private Long ytChannelVideosMaxResults;
     private final YouTube youTube;
     private final Logger logger;
 
@@ -41,7 +47,7 @@ public class YouTubeServiceImpl implements YouTubeService {
             videos = request.setKey(youtubeApiKey)
                     .setChart("mostPopular")
                     .setRegionCode("pl")
-                    .setMaxResults(50L)
+                    .setMaxResults(ytVideosMaxResults)
                     .setFields("items(id)")
                     .execute();
 
@@ -60,11 +66,10 @@ public class YouTubeServiceImpl implements YouTubeService {
             commentsResponse = commentsRequest.setKey(youtubeApiKey)
                     .setPart(List.of("snippet"))
                     .setVideoId(videoId)
-                    .setMaxResults(50L)
+                    .setMaxResults(ytCommentsMaxResults)
                     .setOrder("relevance")
                     .setFields("items(snippet(topLevelComment(id))), items(snippet(topLevelComment(snippet(textDisplay))))")
                     .execute();
-
         } catch (IOException ioException) {
             logger.error(ioException.getMessage());
             commentsResponse = null;
@@ -96,7 +101,7 @@ public class YouTubeServiceImpl implements YouTubeService {
             YouTube.PlaylistItems.List request = youTube.playlistItems()
                     .list(List.of("contentDetails"));
             playlistItemListResponse = request.setKey(youtubeApiKey)
-                    .setMaxResults(2L)
+                    .setMaxResults(ytChannelVideosMaxResults)
                     .setPlaylistId(channelUploadPlaylistId)
                     .setFields("items(contentDetails(videoId))")
                     .execute();
